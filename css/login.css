@@ -1,0 +1,107 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: linear-gradient(45deg, rgb(24, 161, 24), rgb(255, 136, 0));
+  height: 100vh;
+  width: 100vw;
+}
+
+.caja {
+  background: rgb(255, 248, 214);
+  width: 60vw;
+  height: 80vh;
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 2rem;
+  box-shadow: 10px 10px 10px 3px rgb(49, 49, 49);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo{
+  background: black;
+  width: 8rem;
+  height: 8rem;
+  position: absolute;
+  top: 20%;
+}
+
+.titulo {
+  position: absolute;
+  top: 10%;
+  letter-spacing: 2px;
+}
+
+.input1 {
+  position: absolute;
+  width: 75%;
+  top: 55%;
+  display: flex;
+  justify-content: center;
+}
+
+.input2 {
+  position: relative;
+  width: 75%;
+  top: 65%;
+  display: flex;
+  justify-content: center;
+}
+
+input{
+  width: 100%;
+  padding: .6rem;
+  border-radius: 1rem;
+  border: none;
+  box-shadow: 0px 0px 10px .5px rgb(130, 0, 0);
+}
+
+i{
+  margin: .7rem;
+}
+
+.visibilidad{
+  position: absolute;
+  right: .2rem;
+  cursor: pointer;
+}
+
+input:focus{
+  border: none;
+  box-shadow: 0px 0px 10px .5px rgb(16, 112, 9);
+  outline: none;
+}
+
+.boton{
+  position: absolute;
+  top: 77%;
+  padding: 1rem;
+  font-weight: bold;
+  font-size: 1.3rem;
+  border: none;
+  border-radius: .7rem;
+  width: 10rem;
+  background: linear-gradient(to bottom, rgb(121, 230, 255), rgb(0, 162, 255), rgb(121, 230, 255));
+  color: aliceblue;
+  cursor: pointer;
+  transition-property: background, transform;
+  transition-duration: .5s, .5s;
+  transition-timing-function: ease-in-out;
+  transform: scale(1);
+}
+
+.boton:hover{
+  transform: scale(1.1);
+  background: linear-gradient(to bottom, rgb(121, 210, 255), rgb(0, 142, 255), rgb(121, 210, 255));
+}
+
+.boton:active{
+  transform: scale(1.15);
+  transition: .2s;
+}
