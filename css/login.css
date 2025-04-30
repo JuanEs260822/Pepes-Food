@@ -33,6 +33,11 @@ body {
   border-radius: 100%;
 }
 
+img {
+  width: 8rem;
+  height: 8rem;
+}
+
 .titulo {
   position: absolute;
   top: 8%;
