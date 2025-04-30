@@ -10,7 +10,7 @@ body {
 }
 
 .caja {
-  background: rgb(255, 248, 214);
+  background: rgb(255, 249, 216);
   width: 60vw;
   height: 80vh;
   position: relative;
@@ -30,12 +30,15 @@ body {
   height: 8rem;
   position: absolute;
   top: 20%;
+  border-radius: 100%;
 }
 
 .titulo {
   position: absolute;
-  top: 10%;
+  top: 8%;
+  text-align: center;
   letter-spacing: 2px;
+  font-size: 2.3rem;
 }
 
 .input1 {
@@ -60,6 +63,8 @@ input{
   border-radius: 1rem;
   border: none;
   box-shadow: 0px 0px 10px .5px rgb(130, 0, 0);
+  font-size: 1rem;
+  font-weight: bold;
 }
 
 i{
@@ -79,6 +84,7 @@ input:focus{
 }
 
 .boton{
+  --angulo: 0deg;
   position: absolute;
   top: 77%;
   padding: 1rem;
@@ -90,15 +96,31 @@ input:focus{
   background: linear-gradient(to bottom, rgb(121, 230, 255), rgb(0, 162, 255), rgb(121, 230, 255));
   color: aliceblue;
   cursor: pointer;
-  transition-property: background, transform;
-  transition-duration: .5s, .5s;
-  transition-timing-function: ease-in-out;
   transform: scale(1);
+  transition: .5s ease-in-out;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.boton::before{
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, rgb(121, 210, 255), rgb(0, 142, 255), rgb(121, 210, 255));
+  opacity: 0;
+  transition: opacity .5s ease;
+  z-index: -1;
+}
+
+.boton:hover::before{
+  opacity: 1;
 }
 
 .boton:hover{
   transform: scale(1.1);
-  background: linear-gradient(to bottom, rgb(121, 210, 255), rgb(0, 142, 255), rgb(121, 210, 255));
 }
 
 .boton:active{
