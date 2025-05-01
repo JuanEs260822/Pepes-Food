@@ -125,10 +125,10 @@ input:focus{
 }
 
 .boton:hover{
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .boton:active{
-  transform: scale(1.15);
+  transform: scale(1.1);
   transition: .2s;
 }
