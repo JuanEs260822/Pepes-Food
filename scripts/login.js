@@ -1,13 +1,14 @@
-const visibilidad = document.querySelector('.visibilidad');
-const tipo_input = document.getElementById('password1');
-visibilidad.addEventListener("click", () => {
-  if (visibilidad.classList.contains('fa-eye-slash')) {
-    visibilidad.classList.remove('fa-eye-slash');
-    visibilidad.classList.add('fa-eye');
-    tipo_input.type = "password";
+document.querySelector('.visibilidad').addEventListener('click', function() {
+  const passwordInput = document.getElementById('password1');
+  const icon = this;
+  
+  if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      icon.classList.remove('fa-eye');
+      icon.classList.add('fa-eye-slash');
   } else {
-    visibilidad.classList.remove('fa-eye');
-    visibilidad.classList.add('fa-eye-slash');
-    tipo_input.type = "text";
+      passwordInput.type = 'password';
+      icon.classList.remove('fa-eye-slash');
+      icon.classList.add('fa-eye');
   }
 });

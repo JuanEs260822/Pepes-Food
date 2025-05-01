@@ -1,29 +1,33 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pepes Food</title>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <link rel="stylesheet" href="css/login.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pepes Food</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/login.css">
 </head>
 <body>
-  <div class="caja">
-    <h1 class="titulo">Bienvenido</h1>
-    <div class="logo">
-      <img src="imagenes/logo/logo.png" alt="logo">
+    <div class="caja">
+        <h1 class="titulo">Bienvenido</h1>
+        <div class="logo">
+            <img src="imagenes/logo/logo.png" alt="logo">
+        </div>
+        <div class="input-container">
+            <i class="fa-regular fa-user input-icon"></i>
+            <input type="email" placeholder="Correo">
+        </div>
+        <div class="input-container">
+            <i class="fa-solid fa-key input-icon"></i>
+            <input type="password" placeholder="Contraseña" id="password1">
+            <i class="fa-regular fa-eye visibilidad"></i>
+        </div>
+        <button class="boton">Entrar</button>
     </div>
-    <div class="input1">
-      <i class="fa-regular fa-user"></i><input type="email" placeholder="Correo">
-    </div>
-    <div class="input2">
-      <i class="fa-solid fa-key"></i><input type="password" placeholder="Contraseña" id="password1"><i class="fa-regular fa-eye visibilidad"></i>
-    </div>
-    <button class="boton">Entrar</button>
-  </div>
-  <script src="scripts/login.js"></script>
+
+    <script src="scripts/login.js"></script>
 </body>
 </html>
