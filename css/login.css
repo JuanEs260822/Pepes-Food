@@ -25,7 +25,7 @@ body {
 }
 
 .logo{
-  background: black;
+  background: none;
   width: 8rem;
   height: 8rem;
   position: absolute;
