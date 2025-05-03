@@ -129,17 +129,42 @@
   <script src="js/firebase-init.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/pages/charge-order.js"></script>
+  <script src="js/direct-mobile-menu.js"></script>
   
   <script>
     // Cargar componente de navegación
     document.addEventListener('DOMContentLoaded', function() {
       fetch('components/nav.html')
-        .then(response => response.text())
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Error al cargar la navegación: ' + response.status);
+          }
+          return response.text();
+        })
         .then(data => {
-          document.getElementById('nav-container').innerHTML = data;
+          // Extraer solo el HTML sin las etiquetas script
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = data;
+          
+          // Remover todos los scripts
+          tempDiv.querySelectorAll('script').forEach(script => {
+            script.remove();
+          });
+          
+          // Insertar el HTML sin scripts
+          document.getElementById('nav-container').innerHTML = tempDiv.innerHTML;
+          
+          // Notificar que la navegación se ha cargado
+          document.dispatchEvent(new CustomEvent('navLoaded'));
         })
         .catch(error => {
           console.error('Error al cargar la navegación:', error);
+          // Mensaje de error para el usuario
+          document.getElementById('nav-container').innerHTML = `
+            <div class="error-mensaje">
+              Error al cargar la navegación. Por favor, recarga la página.
+            </div>
+          `;
         });
     });
   </script>

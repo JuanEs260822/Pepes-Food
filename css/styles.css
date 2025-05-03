@@ -28,6 +28,43 @@ body {
   display: flex;
   flex-direction: column;
   color: var(--color-texto);
+  overflow-x: hidden; /* Prevenir scroll horizontal */
+}
+
+/* Animación para el menú móvil */
+@keyframes menuFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 1100px) {
+  .nav-link {
+    opacity: 0;
+    animation: menuFadeIn 0.3s ease forwards;
+  }
+  
+  .nav-link:nth-child(1) { animation-delay: 0.1s; }
+  .nav-link:nth-child(2) { animation-delay: 0.15s; }
+  .nav-link:nth-child(3) { animation-delay: 0.2s; }
+  .nav-link:nth-child(4) { animation-delay: 0.25s; }
+  .nav-link:nth-child(5) { animation-delay: 0.3s; }
+  .nav-link:nth-child(6) { animation-delay: 0.35s; }
+  .nav-link:nth-child(7) { animation-delay: 0.4s; }
+  .nav-link:nth-child(8) { animation-delay: 0.45s; }
+  .nav-link:nth-child(9) { animation-delay: 0.5s; }
+  .nav-link:nth-child(10) { animation-delay: 0.55s; }
+  
+  .btn-cerrar-sesion {
+    opacity: 0;
+    animation: menuFadeIn 0.3s ease forwards;
+    animation-delay: 0.6s;
+  }
 }
 
 /* Contenedor principal para páginas internas */
@@ -49,11 +86,14 @@ body {
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 2px 5px var(--color-sombra);
+  position: relative;
+  z-index: 1002; /* Mayor que el menú móvil */
 }
 
 .header-logo {
   display: flex;
   align-items: center;
+  z-index: 1002; /* Mayor que el menú móvil */
 }
 
 .header-logo img {
@@ -67,6 +107,249 @@ body {
   color: var(--color-primario);
 }
 
+/* Menú móvil y botón de hamburguesa */
+.menu-toggle {
+  display: none;
+  background-color: var(--color-secundario);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  width: 40px;
+  height: 40px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 1002;
+  transition: background-color 0.3s ease;
+  margin-left: auto;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.menu-toggle:hover {
+  background-color: #e67a00;
+}
+
+.menu-toggle:active {
+  transform: scale(0.95);
+}
+
+/* Estilos para menú móvil (a partir de 1100px) */
+@media (max-width: 1100px) {
+  .menu-toggle {
+    display: flex;
+  }
+  
+  .nav-container {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 280px;
+    height: 100vh;
+    background-color: var(--color-fondo);
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 80px 20px 20px;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 1000;
+    overflow-y: auto;
+  }
+  
+  .nav-container.active {
+    right: 0;
+  }
+  
+  /* Forzar visualización del overlay cuando el menú está activo */
+  .menu-overlay {
+    transition: opacity 0.3s ease;
+  }
+  
+  .nav-container.active + .menu-overlay,
+  .nav-container.active ~ .menu-overlay {
+    display: block;
+    opacity: 1;
+  }
+}
+
+/* Overlay para menú móvil */
+.menu-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Estilos para menú móvil (a partir de 1100px) */
+@media (max-width: 1100px) {
+  .menu-toggle {
+    display: block;
+  }
+  
+  .nav-container {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 280px;
+    height: 100vh;
+    background-color: var(--color-fondo);
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 80px 20px 20px;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    overflow-y: auto;
+  }
+  
+  .nav-container.active {
+    right: 0;
+  }
+  
+  .nav-menu {
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  .nav-link {
+    width: 100%;
+    padding: 12px 15px;
+    text-align: left;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+  }
+  
+  .nav-link:active {
+    background-color: var(--color-secundario);
+    color: white;
+  }
+  
+  .btn-cerrar-sesion {
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    font-size: 1.1rem;
+  }
+  
+  /* Ajustar container para compensar cambio en header */
+  .container {
+    margin-top: 15px;
+  }
+  
+  /* Agregar íconos a los enlaces del menú móvil */
+  #nav-dashboard::before {
+    content: '\f015';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+  }
+  
+  #nav-add-order::before {
+    content: '\f067';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+  }
+  
+  #nav-orders::before {
+    content: '\f15c';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+  }
+  
+  #nav-charge::before {
+    content: '\f155';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+  }
+  
+  #nav-products::before {
+    content: '\f0c9';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+  }
+  
+  #nav-past-orders::before {
+    content: '\f1da';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+  }
+  
+  #nav-expenses::before {
+    content: '\f0d6';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+  }
+  
+  #nav-finances::before {
+    content: '\f201';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+  }
+  
+  #nav-users::before {
+    content: '\f007';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+  }
+  
+  #nav-vip::before {
+    content: '\f005';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+  }
+}
+
+/* Contenedor de navegación */
+.nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-grow: 1;
+}
+
 .nav-menu {
   display: flex;
   gap: 10px;
@@ -78,6 +361,7 @@ body {
   text-decoration: none;
   border-radius: 4px;
   transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 .nav-link:hover {
@@ -97,10 +381,56 @@ body {
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 .btn-cerrar-sesion:hover {
   background-color: #c82333;
+}
+
+/* Estilos para menú móvil (a partir de 1100px) */
+@media (max-width: 1100px) {
+  .menu-toggle {
+    display: block;
+  }
+  
+  .nav-container {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 280px;
+    height: 100vh;
+    background-color: var(--color-fondo);
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 80px 20px 20px;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 1000;
+    overflow-y: auto;
+  }
+  
+  .nav-container.active {
+    right: 0;
+  }
+  
+  .nav-menu {
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+  }
+  
+  .nav-link {
+    width: 100%;
+    padding: 12px 15px;
+    text-align: left;
+    border-radius: 4px;
+  }
+  
+  .btn-cerrar-sesion {
+    margin-top: 20px;
+    width: 100%;
+  }
 }
 
 /* Títulos de sección */
@@ -423,24 +753,25 @@ body {
 }
 
 /* Diseño responsivo */
+@media (max-width: 1100px) {
+  .container {
+    margin: 15px;
+    padding: 15px;
+  }
+  
+  .dashboard-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+}
+
 @media (max-width: 768px) {
   .container {
     margin: 10px;
     padding: 15px;
   }
   
-  .header {
-    flex-direction: column;
-    padding: 10px;
-  }
-  
   .header-logo {
-    margin-bottom: 10px;
-  }
-  
-  .nav-menu {
-    flex-wrap: wrap;
-    justify-content: center;
+    margin-bottom: 0;
   }
   
   .dashboard-grid {
@@ -469,6 +800,14 @@ body {
   .container {
     margin: 5px;
     padding: 10px;
+  }
+  
+  .header-logo img {
+    height: 40px;
+  }
+  
+  .header-titulo {
+    font-size: 1.2rem;
   }
   
   .dashboard-grid {
