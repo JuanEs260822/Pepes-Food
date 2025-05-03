@@ -1,0 +1,355 @@
+/* Estilos para la página de cobrar órdenes */
+
+/* Panel grid de dos columnas */
+.panel-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 20px;
+  height: calc(100vh - 280px);
+  min-height: 500px;
+}
+
+/* Panel de órdenes */
+.panel-ordenes {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Panel de cobro */
+.panel-cobro {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Títulos de panel */
+.panel-titulo {
+  margin: 0;
+  padding: 15px;
+  background-color: var(--color-secundario);
+  color: white;
+  font-size: 1.2rem;
+}
+
+/* Lista de órdenes */
+.ordenes-lista {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+/* Ítem de orden */
+.orden-item {
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.orden-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.orden-item.selected {
+  border: 2px solid var(--color-primario);
+}
+
+.orden-header {
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.orden-header.activo {
+  background-color: var(--color-info);
+  color: white;
+}
+
+.orden-header.ordenado {
+  background-color: var(--color-advertencia);
+  color: var(--color-texto);
+}
+
+.orden-header.cocinado {
+  background-color: var(--color-exito);
+  color: white;
+}
+
+.orden-header.pagado {
+  background-color: var(--color-secundario);
+  color: white;
+}
+
+.orden-header.entregado {
+  background-color: #6c757d;
+  color: white;
+}
+
+.orden-numero {
+  font-weight: bold;
+}
+
+.orden-hora {
+  font-size: 0.9rem;
+}
+
+.orden-body {
+  padding: 10px 15px;
+}
+
+.orden-cliente {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.orden-mesa {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+}
+
+.orden-cantidad {
+  margin-top: 5px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.orden-total {
+  font-weight: bold;
+  color: var(--color-primario);
+  margin-top: 10px;
+}
+
+/* Panel de cobro - detalles */
+.cobro-detalles {
+  flex: 1;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.cobro-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #888;
+  text-align: center;
+}
+
+.cobro-vacio i {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  opacity: 0.5;
+}
+
+.cobro-info-orden {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.cobro-info-cliente {
+  margin-bottom: 20px;
+}
+
+.info-label {
+  font-weight: bold;
+  color: #666;
+  margin-bottom: 3px;
+}
+
+.info-valor.estado {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.info-valor.estado.activo {
+  background-color: var(--color-info);
+  color: white;
+}
+
+.info-valor.estado.ordenado {
+  background-color: var(--color-advertencia);
+  color: var(--color-texto);
+}
+
+.info-valor.estado.cocinado {
+  background-color: var(--color-exito);
+  color: white;
+}
+
+.info-valor.estado.pagado {
+  background-color: var(--color-secundario);
+  color: white;
+}
+
+.info-valor.estado.entregado {
+  background-color: #6c757d;
+  color: white;
+}
+
+/* Lista de productos */
+.cobro-productos {
+  margin-bottom: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.cobro-productos-titulo {
+  font-weight: bold;
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #eee;
+}
+
+.producto-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.producto-info {
+  flex: 1;
+}
+
+.producto-nombre {
+  font-weight: bold;
+}
+
+.producto-cantidad-precio {
+  display: flex;
+  gap: 10px;
+  color: #666;
+  font-size: 0.9rem;
+  margin-top: 3px;
+}
+
+.producto-subtotal {
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+
+/* Resumen de cobro */
+.cobro-resumen {
+  margin-top: auto;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.resumen-fila {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.resumen-etiqueta {
+  font-weight: bold;
+  color: #666;
+}
+
+.resumen-fila.total {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 10px;
+  color: var(--color-primario);
+}
+
+/* Botones de acción */
+.cobro-acciones {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* Modal de pago */
+.pago-resumen {
+  background-color: #f8f8f8;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.cambio-container {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #e8f7e8;
+  border-radius: 4px;
+}
+
+.cambio-label {
+  font-weight: bold;
+}
+
+.cambio-valor {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--color-exito);
+}
+
+/* Para dispositivos móviles */
+@media (max-width: 992px) {
+  .panel-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .filtros-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filtro-item, 
+  .busqueda-container {
+    margin-bottom: 10px;
+  }
+  
+  .modal-acciones {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .cobro-acciones {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* Animaciones */
+@keyframes destacar {
+  0% {
+    background-color: rgba(40, 167, 69, 0.2);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.destacar {
+  animation: destacar 1.5s ease;
+}

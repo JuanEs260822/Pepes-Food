@@ -1,0 +1,80 @@
+<!-- Componente de navegación para incluir en todas las páginas del dashboard -->
+<header class="header">
+  <div class="header-logo">
+    <img src="assets/images/logo.png" alt="Pepe's Food Logo">
+    <div class="header-titulo">Pepe's Food</div>
+  </div>
+  
+  <nav class="nav-menu">
+    <a href="dashboard.html" class="nav-link" id="nav-dashboard">Panel</a>
+    <a href="add-order.html" class="nav-link" id="nav-add-order">Crear Orden</a>
+    <a href="orders.html" class="nav-link" id="nav-orders">Órdenes</a>
+    <a href="charge-order.html" class="nav-link" id="nav-charge">Cobrar</a>
+    <a href="products.html" class="nav-link" id="nav-products">Productos</a>
+    <a href="past-orders.html" class="nav-link" id="nav-past-orders">Historial</a>
+    <a href="expenses.html" class="nav-link" id="nav-expenses">Gastos</a>
+    <a href="finances.html" class="nav-link" id="nav-finances">Finanzas</a>
+    <a href="users.html" class="nav-link" id="nav-users">Usuarios</a>
+    <a href="vip.html" class="nav-link" id="nav-vip">VIP</a>
+  </nav>
+  
+  <button class="btn-cerrar-sesion" id="btn-logout">
+    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+  </button>
+</header>
+
+<script>
+// Marcar el enlace activo en el menú
+document.addEventListener('DOMContentLoaded', function() {
+  const currentPage = window.location.pathname.split('/').pop();
+  
+  // Remover la clase activa de todos los enlaces
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.classList.remove('active');
+  });
+  
+  // Agregar la clase activa al enlace correspondiente a la página actual
+  switch (currentPage) {
+    case 'dashboard.html':
+      document.getElementById('nav-dashboard').classList.add('active');
+      break;
+    case 'add-order.html':
+      document.getElementById('nav-add-order').classList.add('active');
+      break;
+    case 'orders.html':
+      document.getElementById('nav-orders').classList.add('active');
+      break;
+    case 'charge-order.html':
+      document.getElementById('nav-charge').classList.add('active');
+      break;
+    case 'products.html':
+      document.getElementById('nav-products').classList.add('active');
+      break;
+    case 'past-orders.html':
+      document.getElementById('nav-past-orders').classList.add('active');
+      break;
+    case 'expenses.html':
+      document.getElementById('nav-expenses').classList.add('active');
+      break;
+    case 'finances.html':
+      document.getElementById('nav-finances').classList.add('active');
+      break;
+    case 'users.html':
+      document.getElementById('nav-users').classList.add('active');
+      break;
+    case 'vip.html':
+      document.getElementById('nav-vip').classList.add('active');
+      break;
+  }
+  
+  // Configurar el botón de cierre de sesión
+  document.getElementById('btn-logout').addEventListener('click', function() {
+    // Llamar a la función de cerrar sesión definida en firebase-init.js
+    cerrarSesion()
+      .catch(error => {
+        console.error('Error al cerrar sesión:', error);
+        alert('Error al cerrar sesión. Por favor, intenta de nuevo.');
+      });
+  });
+});
+</script>

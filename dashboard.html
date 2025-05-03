@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Control - Pepe's Food</title>
+  
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  
+  <!-- Chart.js para gráficos -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Estilos -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+  <!-- Incluir navegación compartida -->
+  <div id="nav-container"></div>
+  
+  <div class="container">
+    <h1 class="seccion-titulo">Panel de Control</h1>
+    
+    <!-- Resumen de hoy -->
+    <section class="carta">
+      <h2 class="carta-titulo">Resumen del Día</h2>
+      <div class="dashboard-grid">
+        <div class="dashboard-card">
+          <div class="dashboard-card-icon"><i class="fas fa-receipt"></i></div>
+          <div class="dashboard-card-title">Órdenes Hoy</div>
+          <div class="dashboard-card-value" id="ordenes-hoy">-</div>
+        </div>
+        
+        <div class="dashboard-card">
+          <div class="dashboard-card-icon"><i class="fas fa-money-bill-wave"></i></div>
+          <div class="dashboard-card-title">Ventas Hoy</div>
+          <div class="dashboard-card-value" id="ventas-hoy">-</div>
+        </div>
+        
+        <div class="dashboard-card">
+          <div class="dashboard-card-icon"><i class="fas fa-shopping-cart"></i></div>
+          <div class="dashboard-card-title">Órdenes Activas</div>
+          <div class="dashboard-card-value" id="ordenes-activas">-</div>
+        </div>
+        
+        <div class="dashboard-card">
+          <div class="dashboard-card-icon"><i class="fas fa-utensils"></i></div>
+          <div class="dashboard-card-title">Productos Populares</div>
+          <div class="dashboard-card-value" id="productos-populares">-</div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Acceso rápido a funciones -->
+    <section class="carta">
+      <h2 class="carta-titulo">Acceso Rápido</h2>
+      <div class="dashboard-grid">
+        <a href="add-order.html" class="dashboard-card">
+          <div class="dashboard-card-icon"><i class="fas fa-plus-circle"></i></div>
+          <div class="dashboard-card-title">Nueva Orden</div>
+        </a>
+        
+        <a href="charge-order.html" class="dashboard-card">
+          <div class="dashboard-card-icon"><i class="fas fa-cash-register"></i></div>
+          <div class="dashboard-card-title">Cobrar Orden</div>
+        </a>
+        
+        <a href="products.html" class="dashboard-card">
+          <div class="dashboard-card-icon"><i class="fas fa-hamburger"></i></div>
+          <div class="dashboard-card-title">Gestionar Productos</div>
+        </a>
+        
+        <a href="expenses.html" class="dashboard-card">
+          <div class="dashboard-card-icon"><i class="fas fa-receipt"></i></div>
+          <div class="dashboard-card-title">Registrar Gasto</div>
+        </a>
+      </div>
+    </section>
+    
+    <!-- Gráfico de ventas recientes -->
+    <section class="carta">
+      <h2 class="carta-titulo">Ventas Recientes</h2>
+      <div class="canvas-container" style="position: relative; height: 300px;">
+        <canvas id="ventas-chart"></canvas>
+      </div>
+    </section>
+    
+    <!-- Órdenes activas -->
+    <section class="carta">
+      <h2 class="carta-titulo">Órdenes Activas</h2>
+      <div id="ordenes-activas-container">
+        <p class="cargando-mensaje">Cargando órdenes activas...</p>
+        <!-- Las órdenes activas se cargarán aquí dinámicamente -->
+      </div>
+    </section>
+  </div>
+  
+  <!-- Scripts -->
+  <script src="js/firebase-init.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/pages/dashboard.js"></script>
+  
+  <script>
+    // Cargar componente de navegación
+    document.addEventListener('DOMContentLoaded', function() {
+      fetch('components/nav.html')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('nav-container').innerHTML = data;
+        })
+        .catch(error => {
+          console.error('Error al cargar la navegación:', error);
+        });
+    });
+  </script>
+</body>
+
+</html>

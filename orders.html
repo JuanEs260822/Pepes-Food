@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Órdenes - Pepe's Food</title>
+  
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  
+  <!-- Estilos -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/pages/orders.css">
+</head>
+
+<body>
+  <!-- Incluir navegación compartida -->
+  <div id="nav-container"></div>
+  
+  <div class="container">
+    <h1 class="seccion-titulo">Gestión de Órdenes</h1>
+    
+    <div class="filtros-container">
+      <div class="filtro-item">
+        <label class="filtro-label" for="filtro-fecha">Fecha:</label>
+        <input type="date" id="filtro-fecha" class="filtro-input">
+      </div>
+      
+      <div class="filtro-item">
+        <label class="filtro-label" for="filtro-estado">Estado:</label>
+        <select id="filtro-estado" class="filtro-input">
+          <option value="">Todos</option>
+          <option value="activo" selected>Activo</option>
+          <option value="ordenado">Ordenado</option>
+          <option value="cocinado">Cocinado</option>
+          <option value="pagado">Pagado</option>
+          <option value="entregado">Entregado</option>
+        </select>
+      </div>
+      
+      <div class="busqueda-container">
+        <input type="text" id="busqueda" class="busqueda-input" placeholder="Buscar por número o cliente...">
+        <i class="fas fa-search busqueda-icon"></i>
+      </div>
+      
+      <button id="btn-refrescar" class="btn btn-secundario">
+        <i class="fas fa-sync-alt"></i> Refrescar
+      </button>
+    </div>
+    
+    <!-- Datos de órdenes -->
+    <div id="ordenes-container">
+      <p class="cargando-mensaje">Cargando órdenes...</p>
+    </div>
+    
+    <!-- Botón flotante para nueva orden -->
+    <a href="add-order.html" class="btn-flotante">
+      <i class="fas fa-plus"></i>
+    </a>
+  </div>
+  
+  <!-- Modal de detalles de orden -->
+  <div id="modal-detalles" class="modal">
+    <div class="modal-contenido modal-grande">
+      <span class="cerrar-modal">&times;</span>
+      <h2>Detalles de Orden <span id="detalle-numero-orden">#1</span></h2>
+      
+      <div class="detalles-grid">
+        <div class="detalles-info">
+          <div class="info-grupo">
+            <div class="info-etiqueta">Estado:</div>
+            <div class="info-valor">
+              <select id="detalle-estado" class="estado-select">
+                <option value="activo">Activo</option>
+                <option value="ordenado">Ordenado</option>
+                <option value="cocinado">Cocinado</option>
+                <option value="pagado">Pagado</option>
+                <option value="entregado">Entregado</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="info-grupo">
+            <div class="info-etiqueta">Cliente:</div>
+            <div class="info-valor" id="detalle-cliente">-</div>
+          </div>
+          
+          <div class="info-grupo">
+            <div class="info-etiqueta">Mesa/Llevar:</div>
+            <div class="info-valor" id="detalle-mesa">-</div>
+          </div>
+          
+          <div class="info-grupo">
+            <div class="info-etiqueta">Fecha:</div>
+            <div class="info-valor" id="detalle-fecha">-</div>
+          </div>
+          
+          <div class="info-grupo">
+            <div class="info-etiqueta">Nota:</div>
+            <div class="info-valor nota" id="detalle-nota">-</div>
+          </div>
+        </div>
+        
+        <div class="detalles-productos">
+          <h3>Productos</h3>
+          <div id="detalle-productos" class="productos-lista">
+            <!-- Se generará dinámicamente -->
+          </div>
+          
+          <div class="resumen-orden">
+            <div class="resumen-fila">
+              <span class="resumen-etiqueta">Subtotal:</span>
+              <span class="resumen-valor" id="detalle-subtotal">-</span>
+            </div>
+            <div class="resumen-fila">
+              <span class="resumen-etiqueta">Descuento:</span>
+              <span class="resumen-valor" id="detalle-descuento">-</span>
+            </div>
+            <div class="resumen-fila total">
+              <span class="resumen-etiqueta">Total:</span>
+              <span class="resumen-valor" id="detalle-total">-</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="detalles-acciones">
+        <button id="btn-guardar-estado" class="btn btn-primario">
+          <i class="fas fa-save"></i> Guardar Cambios
+        </button>
+        
+        <button id="btn-ir-cobrar" class="btn btn-secundario">
+          <i class="fas fa-cash-register"></i> Ir a Cobrar
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Scripts -->
+  <script src="js/firebase-init.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/pages/orders.js"></script>
+  
+  <script>
+    // Cargar componente de navegación
+    document.addEventListener('DOMContentLoaded', function() {
+      fetch('components/nav.html')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('nav-container').innerHTML = data;
+        })
+        .catch(error => {
+          console.error('Error al cargar la navegación:', error);
+        });
+    });
+  </script>
+</body>
+
+</html>

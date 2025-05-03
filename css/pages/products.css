@@ -1,0 +1,250 @@
+/* Estilos específicos para la página de gestión de productos */
+
+/* Tabla de productos */
+.productos-tabla {
+  width: 100%;
+}
+
+.productos-tabla .acciones {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+}
+
+.btn-accion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btn-accion.editar {
+  background-color: var(--color-info);
+}
+
+.btn-accion.editar:hover {
+  background-color: #138496;
+}
+
+.btn-accion.eliminar {
+  background-color: var(--color-error);
+}
+
+.btn-accion.eliminar:hover {
+  background-color: #bd2130;
+}
+
+/* Indicador de disponibilidad */
+.disponibilidad {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.indicador {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.indicador.disponible {
+  background-color: var(--color-exito);
+}
+
+.indicador.no-disponible {
+  background-color: var(--color-error);
+}
+
+/* Thumbnail de imagen de producto */
+.producto-imagen {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.imagen-placeholder {
+  width: 50px;
+  height: 50px;
+  background-color: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  color: #888;
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-contenido {
+  background-color: white;
+  margin: 5% auto;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 80%;
+  max-width: 600px;
+  position: relative;
+  animation: modalAnimar 0.3s ease;
+}
+
+.modal-pequeno {
+  max-width: 400px;
+}
+
+.cerrar-modal {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #aaa;
+}
+
+.cerrar-modal:hover {
+  color: black;
+}
+
+@keyframes modalAnimar {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Formulario de producto */
+.form-input-file {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.imagen-preview {
+  width: 100%;
+  height: 150px;
+  margin-top: 10px;
+  background-color: #f8f8f8;
+  border: 1px dashed #ddd;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.imagen-preview img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.imagen-preview-placeholder {
+  color: #888;
+  font-size: 14px;
+}
+
+/* Mensaje de no resultados */
+.no-resultados {
+  text-align: center;
+  padding: 20px;
+  color: #888;
+  font-style: italic;
+}
+
+/* Estilos para mobile */
+@media (max-width: 768px) {
+  .filtros-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filtro-item, .busqueda-container {
+    margin-bottom: 10px;
+  }
+  
+  .modal-contenido {
+    width: 95%;
+    margin: 10% auto;
+  }
+  
+  .productos-tabla {
+    font-size: 14px;
+  }
+  
+  .btn-accion {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* Truncar textos largos en la tabla */
+.texto-truncado {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Estilos para los estados de carga */
+.cargando-mensaje {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+/* Estilos para los tooltips */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltip-texto {
+  visibility: hidden;
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 5px 10px;
+  border-radius: 4px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.tooltip:hover .tooltip-texto {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Destacar filas al pasar el mouse */
+.productos-tabla tbody tr:hover {
+  background-color: rgba(255, 136, 0, 0.1);
+}
