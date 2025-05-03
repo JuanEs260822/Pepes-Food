@@ -145,6 +145,6 @@ document.addEventListener('keydown', function(event) {
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
     // El usuario ya está autenticado, redirigir a la página principal
-    window.location.href = 'panel_admin.html'; // Cambia esto a tu página principal
+    window.location.href = 'dashboard.html'; // Cambia esto a tu página principal
   }
 });
