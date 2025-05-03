@@ -57,15 +57,14 @@
           <i class="fas fa-mug-hot"></i>
           <span>Bebidas</span>
         </button>
+        <!--<button class="categoria-principal">
+          <i class="fas fa-search"></i>
+          <span>Buscar</span>
+        </button>-->
       </div>
       
       <!-- Panel central (productos y subcategorías) -->
       <div class="panel-central tab-content" id="productos-tab">
-        <!-- Barra de búsqueda -->
-        <div class="busqueda-container">
-          <input type="text" id="buscar-producto" placeholder="Buscar producto...">
-          <i class="fas fa-search"></i>
-        </div>
         
         <!-- Subcategorías -->
         <div class="subcategorias-container" id="subcategorias-container">
@@ -73,9 +72,16 @@
         </div>
         
         <!-- Productos -->
-        <div class="productos-grid" id="productos-grid">
-          <!-- Los productos se cargarán dinámicamente -->
-          <div class="cargando-mensaje">Cargando productos...</div>
+         <div class="productos-container">
+          <!-- Barra de búsqueda -->
+          <div class="busqueda-container busqueda-display">
+            <input type="text" id="buscar-producto" placeholder="Buscar producto...">
+            <i class="fas fa-search"></i>
+          </div>
+          <div class="productos-grid" id="productos-grid">
+            <!-- Los productos se cargarán dinámicamente -->
+            <div class="cargando-mensaje">Cargando productos...</div>
+          </div>
         </div>
       </div>
       

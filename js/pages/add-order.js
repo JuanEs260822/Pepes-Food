@@ -218,13 +218,20 @@ function actualizarSubcategorias() {
   container.innerHTML = '';
   
   // Si no es una categoría específica, ocultar container
+  // --- habilitar barra de busqueda solo en "todos"
+  const barraBusqueda = document.querySelector('.busqueda-container');
+
   if (filtroCategoria === 'todos') {
-    container.style.display = 'none';
+    container.innerHTML = '<div class="subcategorias-placeholder"></div>';
+
+    // --- habilitar barra de busqueda solo en "todos"
+    barraBusqueda.classList.remove('busqueda-display')
     return;
-  }
-  
-  // Mostrar container
-  container.style.display = 'flex';
+  } else {
+
+    //--- este else tambien es para habilitar la barra de busqueda solo en "todos"
+    barraBusqueda.classList.add('busqueda-display')
+  };
   
   // Opción "Todas"
   const btnTodas = document.createElement('button');
