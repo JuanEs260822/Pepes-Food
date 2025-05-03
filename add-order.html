@@ -25,37 +25,62 @@
   <div id="nav-container"></div>
   
   <div class="container">
-    <h1 class="seccion-titulo">Crear Nueva Orden</h1>
+    <!-- <h1 class="seccion-titulo">Crear Nueva Orden</h1> -->
     
-    <div class="orden-grid">
-      <!-- Panel de productos -->
-      <div class="panel-productos">
-        <div class="filtros-productos">
-          <div class="filtro-categorias">
-            <button class="categoria-btn active" data-categoria="todos">Todos</button>
-            <button class="categoria-btn" data-categoria="comida">Comida</button>
-            <button class="categoria-btn" data-categoria="snacks">Snacks</button>
-            <button class="categoria-btn" data-categoria="bebidas">Bebidas</button>
-          </div>
-          
-          <div class="busqueda-productos">
-            <input type="text" id="buscar-producto" placeholder="Buscar producto...">
-            <i class="fas fa-search"></i>
-          </div>
+    <!-- Tabs para modo móvil -->
+    <div class="tabs-container">
+      <button class="tab-btn active" data-tab="productos-tab">
+        <i class="fas fa-list"></i> Productos
+      </button>
+      <button class="tab-btn" data-tab="orden-tab">
+        <i class="fas fa-shopping-cart"></i> Orden
+        <span class="orden-contador">0</span>
+      </button>
+    </div>
+    
+    <div class="orden-layout">
+      <!-- Panel de categorías principales (izquierda) -->
+      <div class="panel-categorias">
+        <button class="categoria-principal active" data-categoria="todos">
+          <i class="fas fa-border-all"></i>
+          <span>Todos</span>
+        </button>
+        <button class="categoria-principal" data-categoria="comida">
+          <i class="fas fa-utensils"></i>
+          <span>Comida</span>
+        </button>
+        <button class="categoria-principal" data-categoria="snacks">
+          <i class="fas fa-cookie"></i>
+          <span>Snacks</span>
+        </button>
+        <button class="categoria-principal" data-categoria="bebidas">
+          <i class="fas fa-mug-hot"></i>
+          <span>Bebidas</span>
+        </button>
+      </div>
+      
+      <!-- Panel central (productos y subcategorías) -->
+      <div class="panel-central tab-content" id="productos-tab">
+        <!-- Barra de búsqueda -->
+        <div class="busqueda-container">
+          <input type="text" id="buscar-producto" placeholder="Buscar producto...">
+          <i class="fas fa-search"></i>
         </div>
         
+        <!-- Subcategorías -->
         <div class="subcategorias-container" id="subcategorias-container">
-          <!-- Las subcategorías se cargarán dinámicamente según la categoría seleccionada -->
+          <!-- Las subcategorías se cargarán dinámicamente -->
         </div>
         
+        <!-- Productos -->
         <div class="productos-grid" id="productos-grid">
           <!-- Los productos se cargarán dinámicamente -->
           <div class="cargando-mensaje">Cargando productos...</div>
         </div>
       </div>
       
-      <!-- Panel de orden actual -->
-      <div class="panel-orden">
+      <!-- Panel de orden actual (derecha) -->
+      <div class="panel-orden tab-content" id="orden-tab">
         <div class="orden-header">
           <h2>Orden Actual</h2>
           <button id="btn-limpiar-orden" class="btn-limpiar-orden" title="Limpiar orden">
@@ -111,9 +136,13 @@
             <span>Total:</span>
             <span id="orden-total">$0.00</span>
           </div>
-          <div class="resumen-fila">
-            <label for="orden-nota">Nota:</label>
-            <textarea id="orden-nota" placeholder="Notas o instrucciones especiales..."></textarea>
+          <div class="resumen-fila nota-container">
+            <button id="toggle-nota" class="btn-toggle-nota">
+              <i class="fas fa-sticky-note"></i> Instrucciones especiales
+            </button>
+            <div class="nota-input-container" style="display: none;">
+              <textarea id="orden-nota" placeholder="Notas o instrucciones especiales..."></textarea>
+            </div>
           </div>
         </div>
         
@@ -124,29 +153,23 @@
         </div>
       </div>
     </div>
-    <!-- Modal para cantidad de producto -->
-    <div id="modal-cantidad" class="modal">
+    
+    <!-- Modal para instrucciones especiales por producto -->
+    <div id="modal-instrucciones" class="modal">
       <div class="modal-contenido modal-pequeno">
         <span class="cerrar-modal">&times;</span>
-        <h2>Agregar <span id="modal-producto-nombre">Producto</span></h2>
+        <h2>Instrucciones para <span id="modal-producto-nombre-instr">Producto</span></h2>
         
-        <div class="cantidad-container">
-          <button id="btn-reducir" class="btn-cantidad">
-            <i class="fas fa-minus"></i>
-          </button>
-          <input type="number" id="producto-cantidad" value="1" min="1" max="99">
-          <button id="btn-aumentar" class="btn-cantidad">
-            <i class="fas fa-plus"></i>
-          </button>
+        <div class="instrucciones-container">
+          <textarea id="producto-instrucciones" placeholder="Instrucciones especiales para este producto..."></textarea>
         </div>
         
         <div class="modal-acciones">
-          <button id="btn-agregar-producto" class="btn btn-primario">Agregar</button>
+          <button id="btn-guardar-instrucciones" class="btn btn-primario">Guardar</button>
         </div>
       </div>
     </div>
   </div>
-  
   
   <!-- Scripts -->
   <script src="js/firebase-init.js"></script>
@@ -176,6 +199,8 @@
           
           // Insertar el HTML sin scripts
           document.getElementById('nav-container').innerHTML = tempDiv.innerHTML;
+
+          document.querySelector('.header-titulo').textContent += ' - Crear Nueva Orden'
           
           // Notificar que la navegación se ha cargado
           document.dispatchEvent(new CustomEvent('navLoaded'));

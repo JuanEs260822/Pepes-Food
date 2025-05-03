@@ -131,6 +131,8 @@
           
           // Insertar el HTML sin scripts
           document.getElementById('nav-container').innerHTML = tempDiv.innerHTML;
+
+          document.querySelector('.header-titulo').textContent += ' - Panel'
           
           // Notificar que la navegación se ha cargado
           document.dispatchEvent(new CustomEvent('navLoaded'));

@@ -1,4 +1,4 @@
-// add-order.js - Lógica para la página de crear orden
+// add-order.js - Lógica para la página de crear orden (versión mejorada)
 
 // Variables globales
 let productosData = [];
@@ -17,7 +17,7 @@ let filtroCategoria = 'todos';
 let filtroSubcategoria = '';
 let filtroBusqueda = '';
 
-// Mapeo de subcategorías por categoría (el mismo que en products.js)
+// Mapeo de subcategorías por categoría
 const subcategoriasPorCategoria = {
   'comida': [
     { id: 'tortas', nombre: 'Tortas' },
@@ -55,9 +55,9 @@ const subcategoriasPorCategoria = {
   ]
 };
 
-// Variables para el modal de cantidad
-let productoSeleccionado = null;
-let indexItemEditar = -1;
+// Variables para modales e instrucciones especiales
+let productoSeleccionadoInstr = null;
+let indexItemEditarInstr = -1;
 
 document.addEventListener('DOMContentLoaded', function() {
   // Verificar autenticación
@@ -77,10 +77,10 @@ function inicializarPagina() {
   cargarProductos();
   
   // Configurar eventos de filtros de categoría
-  document.querySelectorAll('.categoria-btn').forEach(btn => {
+  document.querySelectorAll('.categoria-principal').forEach(btn => {
     btn.addEventListener('click', function() {
       // Actualizar UI
-      document.querySelectorAll('.categoria-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.categoria-principal').forEach(b => b.classList.remove('active'));
       this.classList.add('active');
       
       // Actualizar filtro
@@ -113,6 +113,18 @@ function inicializarPagina() {
     ordenActual.mesa = this.value;
   });
   
+  // Botón para mostrar/ocultar notas
+  document.getElementById('toggle-nota').addEventListener('click', function() {
+    const notaContainer = document.querySelector('.nota-input-container');
+    if (notaContainer.style.display === 'none') {
+      notaContainer.style.display = 'block';
+      this.innerHTML = '<i class="fas fa-sticky-note"></i> Ocultar instrucciones';
+    } else {
+      notaContainer.style.display = 'none';
+      this.innerHTML = '<i class="fas fa-sticky-note"></i> Instrucciones especiales';
+    }
+  });
+  
   document.getElementById('orden-nota').addEventListener('input', function() {
     ordenActual.nota = this.value.trim();
   });
@@ -123,26 +135,38 @@ function inicializarPagina() {
   // Botón para crear orden
   document.getElementById('btn-crear-orden').addEventListener('click', crearOrden);
   
-  // Eventos para el modal de cantidad
-  document.querySelector('.cerrar-modal').addEventListener('click', cerrarModal);
-  
-  document.getElementById('btn-reducir').addEventListener('click', function() {
-    const input = document.getElementById('producto-cantidad');
-    const valor = parseInt(input.value) - 1;
-    if (valor >= 1) {
-      input.value = valor;
-    }
+  // Configurar tabs para modo móvil
+  document.querySelectorAll('.tab-btn').forEach(tab => {
+    tab.addEventListener('click', function() {
+      const tabId = this.getAttribute('data-tab');
+      
+      // Activar tab
+      document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      
+      // Mostrar contenido
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.style.display = 'none';
+        content.classList.remove('active');
+      });
+      
+      const tabContent = document.getElementById(tabId);
+      tabContent.style.display = 'block';
+      tabContent.classList.add('active');
+    });
   });
   
-  document.getElementById('btn-aumentar').addEventListener('click', function() {
-    const input = document.getElementById('producto-cantidad');
-    const valor = parseInt(input.value) + 1;
-    if (valor <= 99) {
-      input.value = valor;
-    }
+  // Eventos para el modal de instrucciones
+  document.querySelectorAll('.cerrar-modal').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.getElementById('modal-instrucciones').style.display = 'none';
+    });
   });
   
-  document.getElementById('btn-agregar-producto').addEventListener('click', agregarProductoAOrden);
+  document.getElementById('btn-guardar-instrucciones').addEventListener('click', guardarInstrucciones);
+  
+  // Inicializar estado de la orden
+  actualizarOrdenUI();
 }
 
 async function cargarProductos() {
@@ -315,93 +339,56 @@ function filtrarProductos() {
       
       // Verificar disponibilidad
       if (producto && producto.disponible !== false) {
-        abrirModalCantidad(producto);
+        // En lugar de abrir modal, agregar directamente a la orden
+        agregarProductoDirecto(producto);
       }
     });
   });
 }
 
-function abrirModalCantidad(producto, editar = false, index = -1) {
-  // Guardar referencia al producto
-  productoSeleccionado = producto;
-  indexItemEditar = editar ? index : -1;
+function agregarProductoDirecto(producto) {
+  // Verificar si el producto ya está en la orden
+  const itemExistente = ordenActual.items.findIndex(i => i.id === producto.id);
   
-  // Actualizar título del modal
-  document.getElementById('modal-producto-nombre').textContent = producto.nombre;
-  
-  // Establecer cantidad por defecto
-  let cantidad = 1;
-  
-  // Si estamos editando, usar la cantidad existente
-  if (editar && index >= 0 && index < ordenActual.items.length) {
-    cantidad = ordenActual.items[index].cantidad;
-  }
-  
-  document.getElementById('producto-cantidad').value = cantidad;
-  
-  // Actualizar texto del botón
-  document.getElementById('btn-agregar-producto').textContent = editar ? 'Actualizar' : 'Agregar';
-  
-  // Mostrar modal
-  document.getElementById('modal-cantidad').style.display = 'block';
-}
-
-function cerrarModal() {
-  document.getElementById('modal-cantidad').style.display = 'none';
-}
-
-function agregarProductoAOrden() {
-  if (!productoSeleccionado) return;
-  
-  // Obtener cantidad
-  const cantidadInput = document.getElementById('producto-cantidad');
-  const cantidad = parseInt(cantidadInput.value) || 1;
-  
-  // Validar cantidad
-  if (cantidad < 1 || cantidad > 99) {
-    mostrarNotificacion('La cantidad debe estar entre 1 y 99', 'error');
-    return;
-  }
-  
-  // Preparar item
-  const item = {
-    id: productoSeleccionado.id,
-    nombre: productoSeleccionado.nombre,
-    precio: productoSeleccionado.precio || 0,
-    cantidad: cantidad,
-    subtotal: (productoSeleccionado.precio || 0) * cantidad
-  };
-  
-  // Si estamos editando, actualizar item existente
-  if (indexItemEditar >= 0 && indexItemEditar < ordenActual.items.length) {
-    ordenActual.items[indexItemEditar] = item;
+  if (itemExistente >= 0) {
+    // Aumentar cantidad y subtotal
+    ordenActual.items[itemExistente].cantidad += 1;
+    ordenActual.items[itemExistente].subtotal = 
+      ordenActual.items[itemExistente].precio * ordenActual.items[itemExistente].cantidad;
   } else {
-    // Verificar si el producto ya está en la orden
-    const itemExistente = ordenActual.items.findIndex(i => i.id === item.id);
+    // Agregar nuevo item
+    const item = {
+      id: producto.id,
+      nombre: producto.nombre,
+      precio: producto.precio || 0,
+      cantidad: 1,
+      subtotal: producto.precio || 0,
+      instrucciones: ''
+    };
     
-    if (itemExistente >= 0) {
-      // Actualizar cantidad y subtotal
-      ordenActual.items[itemExistente].cantidad += cantidad;
-      ordenActual.items[itemExistente].subtotal = 
-        ordenActual.items[itemExistente].precio * ordenActual.items[itemExistente].cantidad;
-    } else {
-      // Agregar nuevo item
-      ordenActual.items.push(item);
-    }
+    ordenActual.items.push(item);
   }
   
   // Actualizar UI
   actualizarOrdenUI();
   
-  // Cerrar modal
-  cerrarModal();
-  
   // Notificación
-  mostrarNotificacion('Producto agregado a la orden', 'success');
+  mostrarNotificacion(`${producto.nombre} agregado a la orden`, 'success');
+  
+  // Si estamos en modo móvil, cambiar a la tab de orden
+  if (window.innerWidth <= 768) {
+    const ordenTab = document.querySelector('.tab-btn[data-tab="orden-tab"]');
+    if (ordenTab) {
+      ordenTab.click();
+    }
+  }
 }
 
 function actualizarOrdenUI() {
   const container = document.getElementById('orden-items');
+  
+  // Actualizar contador de items para la tab móvil
+  document.querySelector('.orden-contador').textContent = ordenActual.items.length;
   
   // Si no hay items, mostrar mensaje vacío
   if (ordenActual.items.length === 0) {
@@ -422,17 +409,27 @@ function actualizarOrdenUI() {
   let html = '';
   
   ordenActual.items.forEach((item, index) => {
+    const tieneInstrucciones = item.instrucciones && item.instrucciones.trim() !== '';
+    
     html += `
       <div class="orden-item">
         <div class="orden-item-cantidad">${item.cantidad}x</div>
         <div class="orden-item-info">
           <div class="orden-item-nombre">${item.nombre}</div>
           <div class="orden-item-precio">${formatearMoneda(item.precio)} c/u</div>
+          ${tieneInstrucciones ? 
+            `<div class="orden-item-instrucciones">${item.instrucciones}</div>` : ''}
         </div>
         <div class="orden-item-total">${formatearMoneda(item.subtotal)}</div>
         <div class="orden-item-acciones">
-          <button class="orden-item-btn btn-editar" data-index="${index}" title="Editar">
-            <i class="fas fa-edit"></i>
+          <button class="orden-item-btn btn-instrucciones" data-index="${index}" title="Instrucciones">
+            <i class="fas fa-comment-dots"></i>
+          </button>
+          <button class="orden-item-btn btn-reducir" data-index="${index}" title="Reducir">
+            <i class="fas fa-minus"></i>
+          </button>
+          <button class="orden-item-btn btn-aumentar" data-index="${index}" title="Aumentar">
+            <i class="fas fa-plus"></i>
           </button>
           <button class="orden-item-btn btn-eliminar" data-index="${index}" title="Eliminar">
             <i class="fas fa-trash"></i>
@@ -445,19 +442,47 @@ function actualizarOrdenUI() {
   container.innerHTML = html;
   
   // Agregar eventos a los botones
-  document.querySelectorAll('.btn-editar').forEach(btn => {
+  document.querySelectorAll('.btn-instrucciones').forEach(btn => {
     btn.addEventListener('click', function() {
       const index = parseInt(this.getAttribute('data-index'));
       
       if (index >= 0 && index < ordenActual.items.length) {
         const item = ordenActual.items[index];
-        
-        // Buscar producto completo
-        const producto = productosData.find(p => p.id === item.id);
-        
-        if (producto) {
-          abrirModalCantidad(producto, true, index);
+        abrirModalInstrucciones(item, index);
+      }
+    });
+  });
+  
+  document.querySelectorAll('.btn-reducir').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const index = parseInt(this.getAttribute('data-index'));
+      
+      if (index >= 0 && index < ordenActual.items.length) {
+        if (ordenActual.items[index].cantidad > 1) {
+          // Reducir cantidad
+          ordenActual.items[index].cantidad -= 1;
+          ordenActual.items[index].subtotal = 
+            ordenActual.items[index].precio * ordenActual.items[index].cantidad;
+          
+          // Actualizar UI
+          actualizarOrdenUI();
         }
+      }
+    });
+  });
+  
+  document.querySelectorAll('.btn-aumentar').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const index = parseInt(this.getAttribute('data-index'));
+      
+      if (index >= 0 && index < ordenActual.items.length) {
+        // Aumentar cantidad
+        ordenActual.items[index].cantidad += 1;
+        ordenActual.items[index].subtotal = 
+          ordenActual.items[index].precio * ordenActual.items[index].cantidad;
+        
+        // Actualizar UI
+        actualizarOrdenUI();
       }
     });
   });
@@ -481,6 +506,40 @@ function actualizarOrdenUI() {
   
   // Calcular total
   calcularTotal();
+}
+
+function abrirModalInstrucciones(item, index) {
+  // Guardar referencia al ítem
+  productoSeleccionadoInstr = item;
+  indexItemEditarInstr = index;
+  
+  // Actualizar título del modal
+  document.getElementById('modal-producto-nombre-instr').textContent = item.nombre;
+  
+  // Establecer instrucciones actuales
+  document.getElementById('producto-instrucciones').value = item.instrucciones || '';
+  
+  // Mostrar modal
+  document.getElementById('modal-instrucciones').style.display = 'flex';
+}
+
+function guardarInstrucciones() {
+  if (indexItemEditarInstr >= 0 && indexItemEditarInstr < ordenActual.items.length) {
+    // Obtener instrucciones
+    const instrucciones = document.getElementById('producto-instrucciones').value.trim();
+    
+    // Actualizar item
+    ordenActual.items[indexItemEditarInstr].instrucciones = instrucciones;
+    
+    // Actualizar UI
+    actualizarOrdenUI();
+    
+    // Cerrar modal
+    document.getElementById('modal-instrucciones').style.display = 'none';
+    
+    // Notificación
+    mostrarNotificacion('Instrucciones guardadas', 'success');
+  }
 }
 
 function calcularTotal() {
@@ -540,6 +599,8 @@ function limpiarOrden() {
   mostrarNotificacion('Orden limpiada', 'info');
 }
 
+// Continuación del archivo add-order.js
+
 async function crearOrden() {
   // Validar que haya productos
   if (ordenActual.items.length === 0) {
@@ -592,7 +653,8 @@ async function crearOrden() {
         nombre: item.nombre,
         precio: item.precio,
         cantidad: item.cantidad,
-        subtotal: item.subtotal
+        subtotal: item.subtotal,
+        instrucciones: item.instrucciones || ''
       })),
       subtotal: ordenActual.subtotal,
       descuento: ordenActual.descuento,
@@ -626,3 +688,62 @@ async function crearOrden() {
     mostrarCargando(false);
   }
 }
+
+// Funciones auxiliares (mantener compatibilidad con el código original)
+function obtenerFechaInicioDia() {
+  const ahora = new Date();
+  ahora.setHours(0, 0, 0, 0);
+  return firebase.firestore.Timestamp.fromDate(ahora);
+}
+
+function obtenerFechaFinDia() {
+  const ahora = new Date();
+  ahora.setHours(23, 59, 59, 999);
+  return firebase.firestore.Timestamp.fromDate(ahora);
+}
+
+// Función para verificar si estamos en modo móvil
+function esModoMovil() {
+  return window.innerWidth <= 768;
+}
+
+// Escuchar cambios en el tamaño de la ventana
+window.addEventListener('resize', function() {
+  const esMovil = esModoMovil();
+  
+  // Mostrar/ocultar tabs según corresponda
+  const tabsContainer = document.querySelector('.tabs-container');
+  tabsContainer.style.display = esMovil ? 'flex' : 'none';
+  
+  // Restablecer layout en modo escritorio
+  if (!esMovil) {
+    document.getElementById('productos-tab').style.display = 'block';
+    document.getElementById('orden-tab').style.display = 'block';
+  } else {
+    // En modo móvil, mostrar solo la tab activa
+    const tabActiva = document.querySelector('.tab-btn.active').getAttribute('data-tab');
+    document.querySelectorAll('.tab-content').forEach(content => {
+      content.style.display = content.id === tabActiva ? 'block' : 'none';
+    });
+  }
+});
+
+// Comprobación inicial del modo
+document.addEventListener('DOMContentLoaded', function() {
+  // Verificar modo móvil al cargar
+  const esMovil = esModoMovil();
+  
+  // Configurar UI según el modo
+  const tabsContainer = document.querySelector('.tabs-container');
+  tabsContainer.style.display = esMovil ? 'flex' : 'none';
+  
+  if (esMovil) {
+    // En modo móvil, mostrar solo la primera tab
+    document.getElementById('productos-tab').style.display = 'block';
+    document.getElementById('orden-tab').style.display = 'none';
+  } else {
+    // En modo escritorio, mostrar ambos paneles
+    document.getElementById('productos-tab').style.display = 'block';
+    document.getElementById('orden-tab').style.display = 'block';
+  }
+});
