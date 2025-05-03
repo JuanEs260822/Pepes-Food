@@ -42,7 +42,7 @@ body {
     transform: translateX(0);
   }
 }
-
+/*
 @media (max-width: 1100px) {
   .nav-link {
     opacity: 0;
@@ -65,7 +65,7 @@ body {
     animation: menuFadeIn 0.3s ease forwards;
     animation-delay: 0.6s;
   }
-}
+}*/
 
 /* Contenedor principal para páginas internas */
 .container {
@@ -88,11 +88,13 @@ body {
   box-shadow: 0 2px 5px var(--color-sombra);
   position: relative;
   z-index: 1002; /* Mayor que el menú móvil */
+  justify-content: center;
 }
 
 .header-logo {
   display: flex;
   align-items: center;
+  justify-content: center;
   z-index: 1002; /* Mayor que el menú móvil */
 }
 
@@ -107,7 +109,7 @@ body {
   color: var(--color-primario);
 }
 
-/* Menú móvil y botón de hamburguesa */
+/* Menú móvil y botón de hamburguesa 
 .menu-toggle {
   display: none;
   background-color: var(--color-secundario);
@@ -132,9 +134,9 @@ body {
 
 .menu-toggle:active {
   transform: scale(0.95);
-}
+}*/
 
-/* Estilos para menú móvil (a partir de 1100px) */
+/* Estilos para menú móvil (a partir de 1100px) 
 @media (max-width: 1100px) {
   .menu-toggle {
     display: flex;
@@ -158,9 +160,9 @@ body {
   
   .nav-container.active {
     right: 0;
-  }
+  }*/
   
-  /* Forzar visualización del overlay cuando el menú está activo */
+  /* Forzar visualización del overlay cuando el menú está activo 
   .menu-overlay {
     transition: opacity 0.3s ease;
   }
@@ -170,9 +172,9 @@ body {
     display: block;
     opacity: 1;
   }
-}
+}*/
 
-/* Overlay para menú móvil */
+/* Overlay para menú móvil 
 .menu-overlay {
   display: none;
   position: fixed;
@@ -184,9 +186,9 @@ body {
   z-index: 999;
   opacity: 0;
   transition: opacity 0.3s ease;
-}
+}*/
 
-/* Estilos para menú móvil (a partir de 1100px) */
+/* Estilos para menú móvil (a partir de 1100px) 
 @media (max-width: 1100px) {
   .menu-toggle {
     display: block;
@@ -243,14 +245,14 @@ body {
     gap: 8px;
     padding: 12px;
     font-size: 1.1rem;
-  }
+  }*/
   
-  /* Ajustar container para compensar cambio en header */
+  /* Ajustar container para compensar cambio en header 
   .container {
     margin-top: 15px;
-  }
+  }*/
   
-  /* Agregar íconos a los enlaces del menú móvil */
+  /* Agregar íconos a los enlaces del menú móvil 
   #nav-dashboard::before {
     content: '\f015';
     font-family: 'Font Awesome 5 Free';
@@ -340,7 +342,7 @@ body {
     width: 20px;
     text-align: center;
   }
-}
+}*/
 
 /* Contenedor de navegación */
 .nav-container {
@@ -390,9 +392,9 @@ body {
 
 /* Estilos para menú móvil (a partir de 1100px) */
 @media (max-width: 1100px) {
-  .menu-toggle {
+ /* .menu-toggle {
     display: block;
-  }
+  }*/
   
   .nav-container {
     position: fixed;
@@ -414,7 +416,7 @@ body {
     right: 0;
   }
   
-  .nav-menu {
+ /*.nav-menu {
     flex-direction: column;
     gap: 5px;
     width: 100%;
@@ -430,7 +432,7 @@ body {
   .btn-cerrar-sesion {
     margin-top: 20px;
     width: 100%;
-  }
+  }*/
 }
 
 /* Títulos de sección */

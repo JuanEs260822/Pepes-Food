@@ -3,10 +3,10 @@
 
 (function() {
   // Detectar si estamos en móvil
-  const isMobile = window.matchMedia('(max-width: 1100px)').matches;
+  //const isMobile = window.matchMedia('(max-width: 1100px)').matches;
   
   // Solo proceder si estamos en móvil
-  if (!isMobile) return;
+  //if (!isMobile) return;
   
   // Crear botón de menú móvil directo
   const menuButton = document.createElement('button');
