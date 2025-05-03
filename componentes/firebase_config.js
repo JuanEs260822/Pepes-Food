@@ -1,9 +1,4 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
+// Configuración de Firebase para la aplicación Pepes Food
 const firebaseConfig = {
   apiKey: "AIzaSyAxTJlYJLLtBS_fs8uB6xJ3ZHegRmeebhc",
   authDomain: "pepesfood-353c2.firebaseapp.com",
@@ -13,5 +8,5 @@ const firebaseConfig = {
   appId: "1:1046402267675:web:c9471ecff5d9c3e1c0d6be"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Inicializar Firebase con compatibilidad para versiones anteriores
+firebase.initializeApp(firebaseConfig);
