@@ -11,7 +11,7 @@
 
 /* Panel de categorías principales (izquierda) */
 .panel-categorias {
-  width: 120px;
+  width: 100px;
   display: flex;
   flex-direction: column;
   gap: 10px;

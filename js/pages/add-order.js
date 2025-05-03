@@ -139,7 +139,7 @@ function inicializarPagina() {
   document.querySelectorAll('.tab-btn').forEach(tab => {
     tab.addEventListener('click', function() {
       const tabId = this.getAttribute('data-tab');
-      
+
       // Activar tab
       document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
       this.classList.add('active');
@@ -153,6 +153,15 @@ function inicializarPagina() {
       const tabContent = document.getElementById(tabId);
       tabContent.style.display = 'block';
       tabContent.classList.add('active');
+
+       // --- quitar panel de categorias en la tab orden
+      const panelCategorias = document.querySelector('.panel-categorias');
+      if (tabId === 'orden-tab') {
+        panelCategorias.style.display = 'none';
+      } else {
+        panelCategorias.style.display = 'flex';
+      };
+
     });
   });
   
@@ -375,13 +384,14 @@ function agregarProductoDirecto(producto) {
   // Notificación
   mostrarNotificacion(`${producto.nombre} agregado a la orden`, 'success');
   
+  // --- no lo necesitamos
   // Si estamos en modo móvil, cambiar a la tab de orden
-  if (window.innerWidth <= 768) {
+  /*if (window.innerWidth <= 768) {
     const ordenTab = document.querySelector('.tab-btn[data-tab="orden-tab"]');
     if (ordenTab) {
       ordenTab.click();
     }
-  }
+  }*/
 }
 
 function actualizarOrdenUI() {
@@ -714,14 +724,29 @@ window.addEventListener('resize', function() {
   // Mostrar/ocultar tabs según corresponda
   const tabsContainer = document.querySelector('.tabs-container');
   tabsContainer.style.display = esMovil ? 'flex' : 'none';
+
+  // --- quitar panel de categorias en la tab orden
+  const panelCategorias = document.querySelector('.panel-categorias');
+  panelCategorias.style.display = esMovil ? 'flex' : 'none';
   
   // Restablecer layout en modo escritorio
   if (!esMovil) {
     document.getElementById('productos-tab').style.display = 'block';
     document.getElementById('orden-tab').style.display = 'block';
+
+    // --- mostrar panel de categorias en tab orden
+    document.querySelector('.panel-categorias').style.display = 'flex';
   } else {
     // En modo móvil, mostrar solo la tab activa
     const tabActiva = document.querySelector('.tab-btn.active').getAttribute('data-tab');
+
+    // --- mostrar panel de categorias en tab orden
+    if (tabActiva === 'orden-tab') {
+    document.querySelector('.panel-categorias').style.display = 'none'
+    } else {
+      document.querySelector('.panel-categorias').style.display = 'flex'
+    };
+
     document.querySelectorAll('.tab-content').forEach(content => {
       content.style.display = content.id === tabActiva ? 'block' : 'none';
     });
@@ -736,6 +761,10 @@ document.addEventListener('DOMContentLoaded', function() {
   // Configurar UI según el modo
   const tabsContainer = document.querySelector('.tabs-container');
   tabsContainer.style.display = esMovil ? 'flex' : 'none';
+
+  // --- quitar panel de categorias en la tab orden
+  const panelCategorias = document.querySelector('.panel-categorias');
+  panelCategorias.style.display = esMovil ? 'flex' : 'none';
   
   if (esMovil) {
     // En modo móvil, mostrar solo la primera tab
