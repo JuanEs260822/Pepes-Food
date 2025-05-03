@@ -1,0 +1,8 @@
+[
+  {
+    "origin": ["https://juanes260822.github.io"],
+    "method": ["GET", "HEAD", "OPTIONS", "POST", "PUT", "DELETE"],
+    "maxAgeSeconds": 3600,
+    "responseHeader": ["Content-Type", "Content-Disposition", "Cache-Control"]
+  }
+]
