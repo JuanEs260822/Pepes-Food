@@ -3,12 +3,12 @@
 
 // Configuración de Firebase
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY", // Reemplazar con tu API key real
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com", // Reemplazar con tu dominio
-  projectId: "YOUR_PROJECT_ID", // Reemplazar con tu ID de proyecto
-  storageBucket: "YOUR_PROJECT_ID.appspot.com", // Reemplazar con tu bucket
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID", // Reemplazar con tu ID de mensajería
-  appId: "YOUR_APP_ID" // Reemplazar con tu App ID
+  apiKey: "AIzaSyAxTJlYJLLtBS_fs8uB6xJ3ZHegRmeebhc",
+  authDomain: "pepesfood-353c2.firebaseapp.com",
+  projectId: "pepesfood-353c2",
+  storageBucket: "pepesfood-353c2.firebasestorage.app",
+  messagingSenderId: "1046402267675",
+  appId: "1:1046402267675:web:c9471ecff5d9c3e1c0d6be"
 };
 
 // Inicializar Firebase (versión compat para compatibilidad)
