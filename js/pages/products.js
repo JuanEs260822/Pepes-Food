@@ -15,7 +15,7 @@ const subcategoriasPorCategoria = {
     { id: 'tortas', nombre: 'Tortas' },
     { id: 'hamburguesas', nombre: 'Hamburguesas' },
     { id: 'pizzas', nombre: 'Pizzas' },
-    { id: 'alitas', nombre: 'Alitas (boneless y tradicionales)' },
+    { id: 'alitas', nombre: 'Alitas' },
     { id: 'hotdogs', nombre: 'Hot Dogs' },
     { id: 'sincronizadas', nombre: 'Sincronizadas' },
     { id: 'papasfritas', nombre: 'Papas Fritas' },
@@ -26,24 +26,26 @@ const subcategoriasPorCategoria = {
     { id: 'dorilocos', nombre: 'Dorilocos' },
     { id: 'doriesquites', nombre: 'Doriesquites' },
     { id: 'esquites', nombre: 'Esquites' },
-    { id: 'frituras', nombre: 'Sabritas y Cheetos' },
-    { id: 'pringles', nombre: 'Pringles (chicas y grandes)' },
-    { id: 'barras', nombre: 'Barras de arroz inflado (varios sabores)' },
-    { id: 'galletas', nombre: 'Galletas grandes y chicas (gran variedad)' },
-    { id: 'gomitas', nombre: 'Gomitas (variedad de sabores)' }
+    { id: 'frituras', nombre: 'Sabritas' },
+    { id: 'pringles', nombre: 'Pringles' },
+    { id: 'barras', nombre: 'Barras' },
+    { id: 'galletas', nombre: 'Galletas' },
+    { id: 'gomitas', nombre: 'Gomitas' }
   ],
   'bebidas': [
-    { id: 'refresco_botella', nombre: 'Refrescos embotellados (varios tamaños)' },
-    { id: 'refresco_lata', nombre: 'Refrescos en lata' },
-    { id: 'agua', nombre: 'Agua embotellada' },
-    { id: 'agua_sabor', nombre: 'Aguas saborizadas' },
-    { id: 'cerveza', nombre: 'Cervezas (lata, botella de vidrio y caguamas)' },
-    { id: 'micheladas', nombre: 'New Mix, micheladas grandes y chicas con sabor "azulito"' },
-    { id: 'jugos', nombre: 'Jugos en lata y botella de vidrio' },
+    { id: 'refresco_botella', nombre: 'Sodas-Botella' },
+    { id: 'refresco_lata', nombre: 'Sodas-Lata' },
+    { id: 'agua', nombre: 'Agua-Botella' },
+    { id: 'agua_sabor', nombre: 'Aguas-Frescas' },
+    { id: 'cerveza', nombre: 'Cerveza' },
+    { id: 'michelada', nombre: 'Michelada' },
+    { id: 'new_mix', nombre: 'New Mix' },
+    { id: 'jugo_botella', nombre: 'Jugo-Botella' },
+    { id: 'jugo_lata', nombre: 'Jugo-Lata' },
     { id: 'energeticas', nombre: 'Bebidas energéticas' },
-    { id: 'malteadas', nombre: 'Malteadas (grandes y chicas)' },
-    { id: 'frappe', nombre: 'Bebidas frías' },
-    { id: 'raspados', nombre: 'Raspados (grandes y chicos)' }
+    { id: 'malteadas', nombre: 'Malteadas' },
+    { id: 'frappe', nombre: 'Frappe' },
+    { id: 'raspados', nombre: 'Raspados' }
   ]
 };
 
@@ -183,6 +185,7 @@ function renderizarProductos() {
           <th>Categoría</th>
           <th>Precio</th>
           <th>Disponible</th>
+          <th>Cantidad</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -231,6 +234,7 @@ function renderizarProductos() {
         <td>${categoriaTexto}${producto.subcategoria ? ' - ' + obtenerNombreSubcategoria(producto.categoria, producto.subcategoria) : ''}</td>
         <td>${precioFormateado}</td>
         <td>${disponibleHTML}</td>
+        <td>${producto.cantidad}</td>
         <td class="acciones">
           <button class="btn-accion editar" data-id="${producto.id}" title="Editar">
             <i class="fas fa-edit"></i>
@@ -375,6 +379,7 @@ async function abrirModalEditarProducto(id) {
   actualizarSubcategorias();
   document.getElementById('producto-subcategoria').value = producto.subcategoria || '';
   document.getElementById('producto-precio').value = producto.precio || '';
+  document.getElementById('producto-cantidad').value = producto.cantidad || '';
   document.getElementById('producto-descripcion').value = producto.descripcion || '';
   document.getElementById('producto-disponible').value = producto.disponible === false ? 'false' : 'true';
   
@@ -470,6 +475,7 @@ async function guardarProducto(event) {
     const categoria = document.getElementById('producto-categoria').value;
     const subcategoria = document.getElementById('producto-subcategoria').value;
     const precio = parseFloat(document.getElementById('producto-precio').value);
+    const cantidad = document.getElementById('producto-cantidad').value;
     const descripcion = document.getElementById('producto-descripcion').value.trim();
     const disponible = document.getElementById('producto-disponible').value === 'true';
     
@@ -483,6 +489,7 @@ async function guardarProducto(event) {
       categoria,
       subcategoria: subcategoria || null,
       precio,
+      cantidad,
       descripcion,
       disponible,
       fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()

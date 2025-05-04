@@ -94,24 +94,29 @@
           <label class="form-label" for="producto-precio">Precio:</label>
           <input type="number" id="producto-precio" class="form-input" placeholder="Precio" min="0" step="0.5" required>
         </div>
+
+        <div class="form-grupo">
+          <label class="form-label" for="producto-cantidad">Cantidad:</label>
+          <input type="number" id="producto-cantidad" class="form-input" placeholder="Cantidad" min="0" step="1" required>
+        </div>
         
         <div class="form-grupo">
           <label class="form-label" for="producto-descripcion">Descripción:</label>
           <textarea id="producto-descripcion" class="form-textarea" placeholder="Descripción del producto"></textarea>
         </div>
-        
-        <div class="form-grupo">
-          <label class="form-label" for="producto-imagen">Imagen:</label>
-          <input type="file" id="producto-imagen" class="form-input-file" accept="image/*">
-          <div id="imagen-preview" class="imagen-preview"></div>
-        </div>
-        
+
         <div class="form-grupo">
           <label class="form-label" for="producto-disponible">Disponibilidad:</label>
           <select id="producto-disponible" class="form-select" required>
             <option value="true">Disponible</option>
             <option value="false">No Disponible</option>
           </select>
+        </div>
+        
+        <div class="form-grupo">
+          <label class="form-label" for="producto-imagen">Imagen:</label>
+          <input type="file" id="producto-imagen" class="form-input-file" accept="image/*">
+          <div id="imagen-preview" class="imagen-preview"></div>
         </div>
         
         <div class="btn-grupo">
