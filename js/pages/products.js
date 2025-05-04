@@ -89,7 +89,7 @@ function inicializarPagina() {
   });
 
   // --- sorting controls to the page
-  agregarControlesDeSorting();
+  //agregarControlesDeSorting();
 
   // --- reemplazar la input de imagen con un boton para abrir el seleccionador de imagenes (CHECAR SI ESTA OPCION SE PUEDE AÑADIR EN HTML DIRECTAMENTE)
   const imagenInput = document.getElementById('producto-imagen');
@@ -196,7 +196,7 @@ function agregarEstilosSelector() {
 }
 
 // --- Function to add sorting controls
-function agregarControlesDeSorting() {
+/*function agregarControlesDeSorting() {
   // Create the sorting controls container
   const sortControls = document.createElement('div');
   sortControls.className = 'sorting-controls';
@@ -294,10 +294,10 @@ function agregarControlesDeSorting() {
     }
   `;
   document.head.appendChild(style);
-}
+} */
 
 // --- Function to update sorting button states
-function actualizarBotonesSorting() {
+/* function actualizarBotonesSorting() {
   document.querySelectorAll('.sort-btn').forEach(btn => {
     const field = btn.getAttribute('data-field');
     const icon = btn.querySelector('.sort-icon');
@@ -314,7 +314,7 @@ function actualizarBotonesSorting() {
       icon.className = 'fas fa-sort sort-icon';
     }
   });
-}
+} */
 
 // --- Function to sort products based on current sort settings
 function ordenarProductos() {
@@ -328,12 +328,12 @@ function ordenarProductos() {
         valorB = b.nombre || '';
         break;
       case 'precio':
-        valorA = a.precio || 0;
-        valorB = b.precio || 0;
+        valorA = parseFloat(a.precio || 0);
+        valorB = parseFloat(b.precio || 0);
         break;
       case 'cantidad':
-        valorA = a.cantidad || 0;
-        valorB = b.cantidad || 0;
+        valorA = parseInt(a.cantidad || 0, 10);
+        valorB = parseInt(b.cantidad || 0, 10);
         break;
       default:
         valorA = a.nombre || '';
@@ -587,11 +587,12 @@ function renderizarProductos() {
       }
       
       // --- Update sorting buttons state
-      actualizarBotonesSorting();
+      //actualizarBotonesSorting();
       
       // --- Sort and re-render
       ordenarProductos();
       renderizarProductos();
+      renderizarPaginacion();
     });
   });
 }
