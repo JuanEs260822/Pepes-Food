@@ -20,42 +20,484 @@ let filtroBusqueda = '';
 // Mapeo de subcategorías por categoría
 const subcategoriasPorCategoria = {
   'comida': [
-    { id: 'tortas', nombre: 'Tortas' },
-    { id: 'hamburguesas', nombre: 'Hamburguesas' },
-    { id: 'pizzas', nombre: 'Pizzas' },
-    { id: 'alitas', nombre: 'Alitas' },
-    { id: 'hotdogs', nombre: 'Hot Dogs' },
-    { id: 'sincronizadas', nombre: 'Sincronizadas' },
-    { id: 'papasfritas', nombre: 'Papas Fritas' },
-    { id: 'salchipapas', nombre: 'Salchipapas' },
-    { id: 'papotas', nombre: 'Papotas' }
+    { id: 'tortas', nombre: 'Tortas', imagen: 'images/subcategorias/torta.jpg' },
+    { id: 'hamburguesas', nombre: 'Hamburguesas', imagen: 'images/subcategorias/hamburguesa.jpg' },
+    { id: 'pizzas', nombre: 'Pizzas', imagen: 'images/subcategorias/pizza.jpg' },
+    { id: 'alitas', nombre: 'Alitas', imagen: 'images/subcategorias/alitas.jpg' },
+    { id: 'hotdogs', nombre: 'Hot Dogs', imagen: 'images/subcategorias/hotdog.jpg' },
+    { id: 'sincronizadas', nombre: 'Sincronizadas', imagen: 'images/subcategorias/sincronizada.jpg' },
+    { id: 'papasfritas', nombre: 'Papas Fritas', imagen: 'images/subcategorias/papas.jpg' },
+    { id: 'salchipapas', nombre: 'Salchipapas', imagen: 'images/subcategorias/salchipapas.jpg' },
+    { id: 'papotas', nombre: 'Papotas', imagen: 'images/subcategorias/papotas.jpg' }
   ],
   'snacks': [
-    { id: 'dorilocos', nombre: 'Dorilocos' },
-    { id: 'doriesquites', nombre: 'Doriesquites' },
-    { id: 'esquites', nombre: 'Esquites' },
-    { id: 'frituras', nombre: 'Sabritas' },
-    { id: 'pringles', nombre: 'Pringles' },
-    { id: 'barras', nombre: 'Barras' },
-    { id: 'galletas', nombre: 'Galletas' },
-    { id: 'gomitas', nombre: 'Gomitas' }
+    { id: 'dorilocos', nombre: 'Dorilocos', imagen: 'images/subcategorias/dorilocos.jpg' },
+    { id: 'doriesquites', nombre: 'Doriesquites', imagen: 'images/subcategorias/doriesquites.jpg' },
+    { id: 'esquites', nombre: 'Esquites', imagen: 'images/subcategorias/esquites.jpg' },
+    { id: 'frituras', nombre: 'Sabritas', imagen: 'images/subcategorias/sabritas.jpg' },
+    { id: 'pringles', nombre: 'Pringles', imagen: 'images/subcategorias/pringles.jpg' },
+    { id: 'barras', nombre: 'Barras', imagen: 'images/subcategorias/barras.jpg' },
+    { id: 'galletas', nombre: 'Galletas', imagen: 'images/subcategorias/galletas.jpg' },
+    { id: 'gomitas', nombre: 'Gomitas', imagen: 'images/subcategorias/gomitas.jpg' }
   ],
   'bebidas': [
-    { id: 'refresco_botella', nombre: 'Sodas-Botella' },
-    { id: 'refresco_lata', nombre: 'Sodas-Lata' },
-    { id: 'agua', nombre: 'Agua-Botella' },
-    { id: 'agua_sabor', nombre: 'Aguas-Frescas' },
-    { id: 'cerveza', nombre: 'Cerveza' },
-    { id: 'michelada', nombre: 'Michelada' },
-    { id: 'new_mix', nombre: 'New Mix' },
-    { id: 'jugo_botella', nombre: 'Jugo-Botella' },
-    { id: 'jugo_lata', nombre: 'Jugo-Lata' },
-    { id: 'energeticas', nombre: 'Bebidas energéticas' },
-    { id: 'malteadas', nombre: 'Malteadas' },
-    { id: 'frappe', nombre: 'Frappe' },
-    { id: 'raspados', nombre: 'Raspados' }
+    { id: 'refresco_botella', nombre: 'Sodas-Botella', imagen: 'images/subcategorias/refresco_botella.jpg' },
+    { id: 'refresco_lata', nombre: 'Sodas-Lata', imagen: 'images/subcategorias/refresco_lata.jpg' },
+    { id: 'agua', nombre: 'Agua-Botella', imagen: 'images/subcategorias/agua.jpg' },
+    { id: 'agua_sabor', nombre: 'Aguas-Frescas', imagen: 'images/subcategorias/agua_fresca.jpg' },
+    { id: 'cerveza', nombre: 'Cerveza', imagen: 'images/subcategorias/cerveza.jpg' },
+    { id: 'michelada', nombre: 'Michelada', imagen: 'images/subcategorias/michelada.jpg' },
+    { id: 'new_mix', nombre: 'New Mix', imagen: 'images/subcategorias/new_mix.jpg' },
+    { id: 'jugo_botella', nombre: 'Jugo-Botella', imagen: 'images/subcategorias/jugo_botella.jpg' },
+    { id: 'jugo_lata', nombre: 'Jugo-Lata', imagen: 'images/subcategorias/jugo_lata.jpg' },
+    { id: 'energeticas', nombre: 'Bebidas energéticas', imagen: 'images/subcategorias/energeticas.jpg' },
+    { id: 'malteadas', nombre: 'Malteadas', imagen: 'images/subcategorias/malteada.jpg' },
+    { id: 'frappe', nombre: 'Frappe', imagen: 'images/subcategorias/frappe.jpg' },
+    { id: 'raspados', nombre: 'Raspados', imagen: 'images/subcategorias/raspado.jpg' }
   ]
 };
+
+// List of products with special instructions (ingredientes)
+const productosConInstrucciones = [
+  'hamburguesa_sencilla', 'hamburguesa_doble', 'hamburguesa_hawaiana', 
+  'torta_jamon', 'torta_milanesa', 'pizza_pepperoni', 'pizza_hawaiana',
+  'hotdog_sencillo', 'sincronizada_jamon'
+];
+
+// Catálogo de ingredientes por tipo de producto
+const ingredientesPorProducto = {
+  // Hamburguesas
+  'hamburguesa_sencilla': [
+    { id: 'lechuga', nombre: 'Lechuga', precio: 0, default: true },
+    { id: 'tomate', nombre: 'Tomate', precio: 0, default: true },
+    { id: 'cebolla', nombre: 'Cebolla', precio: 0, default: true },
+    { id: 'pepinillos', nombre: 'Pepinillos', precio: 0, default: true },
+    { id: 'queso', nombre: 'Queso extra', precio: 10, default: false },
+    { id: 'tocino', nombre: 'Tocino', precio: 15, default: false },
+    { id: 'champinones', nombre: 'Champiñones', precio: 12, default: false },
+    { id: 'jalapeño', nombre: 'Jalapeño', precio: 8, default: false },
+    { id: 'guacamole', nombre: 'Guacamole', precio: 15, default: false }
+  ],
+  'hamburguesa_doble': [
+    { id: 'lechuga', nombre: 'Lechuga', precio: 0, default: true },
+    { id: 'tomate', nombre: 'Tomate', precio: 0, default: true },
+    { id: 'cebolla', nombre: 'Cebolla', precio: 0, default: true },
+    { id: 'pepinillos', nombre: 'Pepinillos', precio: 0, default: true },
+    { id: 'queso', nombre: 'Queso extra', precio: 10, default: false },
+    { id: 'tocino', nombre: 'Tocino', precio: 15, default: true },
+    { id: 'champinones', nombre: 'Champiñones', precio: 12, default: false },
+    { id: 'jalapeño', nombre: 'Jalapeño', precio: 8, default: false },
+    { id: 'guacamole', nombre: 'Guacamole', precio: 15, default: false }
+  ],
+  'hamburguesa_hawaiana': [
+    { id: 'lechuga', nombre: 'Lechuga', precio: 0, default: true },
+    { id: 'tomate', nombre: 'Tomate', precio: 0, default: true },
+    { id: 'cebolla', nombre: 'Cebolla', precio: 0, default: true },
+    { id: 'piña', nombre: 'Piña', precio: 0, default: true },
+    { id: 'queso', nombre: 'Queso extra', precio: 10, default: false },
+    { id: 'tocino', nombre: 'Tocino', precio: 15, default: false },
+    { id: 'jalapeño', nombre: 'Jalapeño', precio: 8, default: false }
+  ],
+  
+  // Tortas
+  'torta_jamon': [
+    { id: 'lechuga', nombre: 'Lechuga', precio: 0, default: true },
+    { id: 'tomate', nombre: 'Tomate', precio: 0, default: true },
+    { id: 'cebolla', nombre: 'Cebolla', precio: 0, default: true },
+    { id: 'aguacate', nombre: 'Aguacate', precio: 10, default: true },
+    { id: 'queso', nombre: 'Queso', precio: 10, default: true },
+    { id: 'jalapeño', nombre: 'Jalapeño', precio: 5, default: false }
+  ],
+  'torta_milanesa': [
+    { id: 'lechuga', nombre: 'Lechuga', precio: 0, default: true },
+    { id: 'tomate', nombre: 'Tomate', precio: 0, default: true },
+    { id: 'cebolla', nombre: 'Cebolla', precio: 0, default: true },
+    { id: 'aguacate', nombre: 'Aguacate', precio: 10, default: true },
+    { id: 'queso', nombre: 'Queso', precio: 10, default: true },
+    { id: 'jalapeño', nombre: 'Jalapeño', precio: 5, default: false }
+  ],
+  
+  // Pizzas
+  'pizza_pepperoni': [
+    { id: 'queso_extra', nombre: 'Queso extra', precio: 15, default: false },
+    { id: 'champiñones', nombre: 'Champiñones', precio: 10, default: false },
+    { id: 'pimiento', nombre: 'Pimiento', precio: 10, default: false },
+    { id: 'cebolla', nombre: 'Cebolla', precio: 10, default: false },
+    { id: 'aceitunas', nombre: 'Aceitunas', precio: 10, default: false },
+    { id: 'jalapeño', nombre: 'Jalapeño', precio: 8, default: false }
+  ],
+  'pizza_hawaiana': [
+    { id: 'queso_extra', nombre: 'Queso extra', precio: 15, default: false },
+    { id: 'piña_extra', nombre: 'Piña extra', precio: 10, default: false },
+    { id: 'jamón_extra', nombre: 'Jamón extra', precio: 15, default: false },
+    { id: 'champiñones', nombre: 'Champiñones', precio: 10, default: false },
+    { id: 'jalapeño', nombre: 'Jalapeño', precio: 8, default: false }
+  ],
+  
+  // Hot Dogs
+  'hotdog_sencillo': [
+    { id: 'cebolla', nombre: 'Cebolla', precio: 0, default: true },
+    { id: 'tomate', nombre: 'Tomate', precio: 0, default: true },
+    { id: 'jalapeño', nombre: 'Jalapeño', precio: 5, default: false },
+    { id: 'tocino', nombre: 'Tocino', precio: 15, default: false },
+    { id: 'queso', nombre: 'Queso cheddar', precio: 10, default: false }
+  ],
+  
+  // Sincronizadas
+  'sincronizada_jamon': [
+    { id: 'queso_extra', nombre: 'Queso extra', precio: 10, default: false },
+    { id: 'champiñones', nombre: 'Champiñones', precio: 10, default: false },
+    { id: 'jalapeño', nombre: 'Jalapeño', precio: 5, default: false }
+  ]
+};
+
+// Variables para la navegación entre categorías y subcategorías
+let vistaActual = 'categorias'; // puede ser 'categorias', 'subcategorias', 'productos'
+let categoriaActual = '';
+let subcategoriaActual = '';
+let ingredientesSeleccionados = [];
+
+// Función para verificar si un producto tiene ingredientes personalizables
+function tieneIngredientes(productoId) {
+  return ingredientesPorProducto.hasOwnProperty(productoId);
+}
+
+// Updated function to show subcategories as a grid
+function mostrarSubcategoriasGrid() {
+  const container = document.getElementById('productos-grid');
+  const subcategorias = subcategoriasPorCategoria[categoriaActual] || [];
+  
+  // Ocultar el contenedor de subcategorías horizontal
+  document.getElementById('subcategorias-container').style.display = 'none';
+  
+  // Limpiar el contenedor de productos
+  container.innerHTML = '';
+  
+  // Crear tarjetas para cada subcategoría
+  subcategorias.forEach(subcategoria => {
+    // Verificar si hay una imagen, si no, usar placeholder
+    let imagenHTML = '';
+    if (subcategoria.imagen) {
+      imagenHTML = `<img src="${subcategoria.imagen}" alt="${subcategoria.nombre}" loading="lazy">`;
+    } else {
+      imagenHTML = `<i class="fas fa-folder" style="font-size: 2rem; color: #ddd;"></i>`;
+    }
+    
+    // Crear tarjeta de subcategoría
+    const subcategoriaCard = document.createElement('div');
+    subcategoriaCard.className = 'producto-card subcategoria-card';
+    subcategoriaCard.setAttribute('data-subcategoria', subcategoria.id);
+    subcategoriaCard.innerHTML = `
+      <div class="producto-imagen">
+        ${imagenHTML}
+      </div>
+      <div class="producto-info">
+        <div class="producto-nombre">${subcategoria.nombre}</div>
+      </div>
+    `;
+    
+    // Evento al hacer clic en la subcategoría
+    subcategoriaCard.addEventListener('click', function() {
+      filtroSubcategoria = subcategoria.id;
+      subcategoriaActual = subcategoria.id;
+      vistaActual = 'productos';
+      
+      // Mostrar productos de esta subcategoría
+      mostrarProductosDeSubcategoria();
+    });
+    
+    container.appendChild(subcategoriaCard);
+  });
+}
+
+// Nueva función para mostrar productos de una subcategoría específica
+function mostrarProductosDeSubcategoria() {
+  // Habilitar botón para volver a subcategorías
+  mostrarBotonVolver();
+  
+  // Filtrar y mostrar productos
+  filtrarProductos();
+}
+
+// Función para mostrar el botón de volver
+function mostrarBotonVolver() {
+  // Crear botón volver si no existe
+  if (!document.getElementById('btn-volver')) {
+    const volverBtn = document.createElement('button');
+    volverBtn.id = 'btn-volver';
+    volverBtn.className = 'btn-volver';
+    volverBtn.innerHTML = '<i class="fas fa-arrow-left"></i> Volver a ' + 
+      (categoriaActual === 'todos' ? 'categorías' : getCategoriaName(categoriaActual));
+    
+    volverBtn.addEventListener('click', function() {
+      if (vistaActual === 'productos' && subcategoriaActual) {
+        // Volver a la vista de subcategorías
+        vistaActual = 'subcategorias';
+        subcategoriaActual = '';
+        filtroSubcategoria = '';
+        mostrarSubcategoriasGrid();
+        this.remove();
+      }
+    });
+    
+    // Insertar antes del grid de productos
+    const productoContainer = document.querySelector('.productos-container');
+    productoContainer.insertBefore(volverBtn, productoContainer.firstChild);
+  }
+}
+
+// Función para obtener el nombre de la categoría
+function getCategoriaName(categoria) {
+  const categorias = {
+    'comida': 'Comida',
+    'snacks': 'Snacks',
+    'bebidas': 'Bebidas'
+  };
+  return categorias[categoria] || 'Categorías';
+}
+
+// Modificación del modal de instrucciones para usar el mismo estilo de los otros modales
+function abrirModalProductoInstrucciones(producto) {
+  productoSeleccionadoInstr = producto;
+  indexItemEditarInstr = -1; // -1 indica que es un nuevo producto, no una edición
+  
+  // Actualizar título del modal
+  document.getElementById('modal-producto-nombre-instr').textContent = producto.nombre;
+  
+  // Reiniciar ingredientes
+  ingredientesSeleccionados = [];
+  
+  // Verificar si el producto tiene ingredientes
+  const seccionIngredientes = document.getElementById('ingredientes-seccion');
+  const listaIngredientes = document.getElementById('ingredientes-lista');
+  
+  if (tieneIngredientes(producto.id)) {
+    // Limpiar lista de ingredientes
+    listaIngredientes.innerHTML = '';
+    
+    // Mostrar sección de ingredientes
+    seccionIngredientes.style.display = 'block';
+    
+    // Cargar ingredientes específicos del producto
+    const ingredientes = ingredientesPorProducto[producto.id] || [];
+    
+    ingredientes.forEach(ingrediente => {
+      // Crear elemento para cada ingrediente
+      const ingredienteItem = document.createElement('div');
+      ingredienteItem.className = 'ingrediente-item';
+      
+      // Crear checkbox
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.className = 'ingrediente-checkbox';
+      checkbox.id = 'ingrediente-' + ingrediente.id;
+      checkbox.checked = ingrediente.default;
+      
+      // Si está marcado por defecto, agregarlo a la lista
+      if (ingrediente.default) {
+        ingredientesSeleccionados.push({
+          id: ingrediente.id,
+          nombre: ingrediente.nombre,
+          precio: ingrediente.precio
+        });
+      }
+      
+      checkbox.addEventListener('change', function() {
+        if (this.checked) {
+          // Agregar a seleccionados
+          ingredientesSeleccionados.push({
+            id: ingrediente.id,
+            nombre: ingrediente.nombre,
+            precio: ingrediente.precio
+          });
+        } else {
+          // Quitar de seleccionados
+          const index = ingredientesSeleccionados.findIndex(i => i.id === ingrediente.id);
+          if (index >= 0) {
+            ingredientesSeleccionados.splice(index, 1);
+          }
+        }
+        
+        // Actualizar precio si hay ingredientes con costo adicional
+        actualizarPrecioModal();
+      });
+      
+      // Crear label para el nombre
+      const nombre = document.createElement('label');
+      nombre.htmlFor = 'ingrediente-' + ingrediente.id;
+      nombre.className = 'ingrediente-nombre';
+      nombre.textContent = ingrediente.nombre;
+      
+      // Elemento para el precio si tiene
+      let precioElement = null;
+      if (ingrediente.precio > 0) {
+        precioElement = document.createElement('span');
+        precioElement.className = 'ingrediente-precio';
+        precioElement.textContent = '+ ' + formatearMoneda(ingrediente.precio);
+      }
+      
+      // Agregar elementos al item
+      ingredienteItem.appendChild(checkbox);
+      ingredienteItem.appendChild(nombre);
+      if (precioElement) {
+        ingredienteItem.appendChild(precioElement);
+      }
+      
+      // Agregar a la lista
+      listaIngredientes.appendChild(ingredienteItem);
+    });
+  } else {
+    // Ocultar sección de ingredientes
+    seccionIngredientes.style.display = 'none';
+  }
+  
+  // Limpiar instrucciones anteriores
+  document.getElementById('producto-instrucciones').value = '';
+  
+  // Mostrar modal
+  document.getElementById('modal-instrucciones').style.display = 'flex';
+  
+  // Cambiar el texto del botón
+  document.getElementById('btn-guardar-instrucciones').textContent = 'Agregar a la orden';
+}
+
+// Función para actualizar el precio en el modal basado en los ingredientes seleccionados
+function actualizarPrecioModal() {
+  if (!productoSeleccionadoInstr) return;
+  
+  // Calcular precio adicional
+  const precioAdicional = ingredientesSeleccionados.reduce((total, ingrediente) => {
+    return total + (ingrediente.precio || 0);
+  }, 0);
+  
+  // Actualizar texto del botón si hay precio adicional
+  const botonGuardar = document.getElementById('btn-guardar-instrucciones');
+  
+  if (precioAdicional > 0) {
+    const precioTotal = (productoSeleccionadoInstr.precio || 0) + precioAdicional;
+    botonGuardar.textContent = `Agregar (${formatearMoneda(precioTotal)})`;
+  } else {
+    botonGuardar.textContent = 'Agregar a la orden';
+  }
+}
+
+// Modal mejorado para editar instrucciones de productos ya en la orden
+function abrirModalEdicionItem(item, index) {
+  productoSeleccionadoInstr = item;
+  indexItemEditarInstr = index;
+  
+  // Actualizar título del modal
+  document.getElementById('modal-producto-nombre-instr').textContent = item.nombre;
+  
+  // Verificar si el producto tiene ingredientes
+  const seccionIngredientes = document.getElementById('ingredientes-seccion');
+  const listaIngredientes = document.getElementById('ingredientes-lista');
+  
+  if (tieneIngredientes(item.id)) {
+    // Limpiar lista de ingredientes
+    listaIngredientes.innerHTML = '';
+    
+    // Mostrar sección de ingredientes
+    seccionIngredientes.style.display = 'block';
+    
+    // Reiniciar ingredientes seleccionados
+    ingredientesSeleccionados = item.ingredientes || [];
+    
+    // Cargar ingredientes específicos del producto
+    const ingredientesDisponibles = ingredientesPorProducto[item.id] || [];
+    
+    ingredientesDisponibles.forEach(ingrediente => {
+      // Verificar si está seleccionado
+      const estaSeleccionado = ingredientesSeleccionados.some(i => i.id === ingrediente.id);
+      
+      // Crear elemento para cada ingrediente
+      const ingredienteItem = document.createElement('div');
+      ingredienteItem.className = 'ingrediente-item';
+      
+      // Crear checkbox
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.className = 'ingrediente-checkbox';
+      checkbox.id = 'ingrediente-' + ingrediente.id;
+      checkbox.checked = estaSeleccionado;
+      
+      checkbox.addEventListener('change', function() {
+        if (this.checked) {
+          // Agregar a seleccionados si no existe
+          const yaExiste = ingredientesSeleccionados.some(i => i.id === ingrediente.id);
+          if (!yaExiste) {
+            ingredientesSeleccionados.push({
+              id: ingrediente.id,
+              nombre: ingrediente.nombre,
+              precio: ingrediente.precio
+            });
+          }
+        } else {
+          // Quitar de seleccionados
+          const index = ingredientesSeleccionados.findIndex(i => i.id === ingrediente.id);
+          if (index >= 0) {
+            ingredientesSeleccionados.splice(index, 1);
+          }
+        }
+        
+        // Actualizar precio si hay ingredientes con costo adicional
+        actualizarPrecioModal();
+      });
+      
+      // Crear label para el nombre
+      const nombre = document.createElement('label');
+      nombre.htmlFor = 'ingrediente-' + ingrediente.id;
+      nombre.className = 'ingrediente-nombre';
+      nombre.textContent = ingrediente.nombre;
+      
+      // Elemento para el precio si tiene
+      let precioElement = null;
+      if (ingrediente.precio > 0) {
+        precioElement = document.createElement('span');
+        precioElement.className = 'ingrediente-precio';
+        precioElement.textContent = '+ ' + formatearMoneda(ingrediente.precio);
+      }
+      
+      // Agregar elementos al item
+      ingredienteItem.appendChild(checkbox);
+      ingredienteItem.appendChild(nombre);
+      if (precioElement) {
+        ingredienteItem.appendChild(precioElement);
+      }
+      
+      // Agregar a la lista
+      listaIngredientes.appendChild(ingredienteItem);
+    });
+  } else {
+    // Ocultar sección de ingredientes
+    seccionIngredientes.style.display = 'none';
+  }
+  
+  // Establecer instrucciones actuales
+  document.getElementById('producto-instrucciones').value = item.instrucciones || '';
+  
+  // Cambiar texto del botón
+  document.getElementById('btn-guardar-instrucciones').textContent = 'Actualizar';
+  
+  // Mostrar modal
+  document.getElementById('modal-instrucciones').style.display = 'flex';
+}
+
+// Función modificada para mostrar todos los productos
+function mostrarProductos() {
+  document.getElementById('subcategorias-container').style.display = 'none';
+  
+  // Quitar botón volver si existe
+  const btnVolver = document.getElementById('btn-volver');
+  if (btnVolver) btnVolver.remove();
+  
+  filtrarProductos();
+}
+
+// Función para determinar si un producto tiene instrucciones o ingredientes
+function tieneInstrucciones(productoId) {
+  return productosConInstrucciones.includes(productoId) || tieneIngredientes(productoId);
+}
 
 // Variables para modales e instrucciones especiales
 let productoSeleccionadoInstr = null;
@@ -87,15 +529,27 @@ function inicializarPagina() {
       
       // Actualizar filtro
       filtroCategoria = this.getAttribute('data-categoria');
+      categoriaActual = filtroCategoria;
       
       // Reiniciar subcategoría si cambiamos de categoría
       filtroSubcategoria = '';
-      
-      // Actualizar subcategorías
-      actualizarSubcategorias();
-      
-      // Filtrar productos
-      filtrarProductos();
+      subcategoriaActual = '';
+
+      if (filtroCategoria === 'todos') {
+        // Mostrar todos los productos
+        vistaActual = 'productos';
+        mostrarProductos();
+        // Actualizar subcategorías
+        actualizarSubcategorias();
+        
+        // Filtrar productos
+        filtrarProductos();
+
+      } else {
+        // Mostrar subcategorías como grid
+        vistaActual = 'subcategorias';
+        mostrarSubcategoriasGrid();
+      }
     });
   });
   
@@ -317,9 +771,10 @@ function filtrarProductos() {
     return;
   }
   
-  // Crear las tarjetas de producto
-  let html = '';
+  // Limpiar el contenedor
+  container.innerHTML = '';
   
+  // Crear las tarjetas de producto
   productosFiltrados.forEach(producto => {
     // Imagen del producto
     let imagenHTML = '';
@@ -329,26 +784,28 @@ function filtrarProductos() {
       imagenHTML = `<i class="fas fa-image" style="font-size: 2rem; color: #ddd;"></i>`;
     }
     
-    // Crear tarjeta
-    html += `
-      <div class="producto-card" data-id="${producto.id}">
-        <div class="producto-imagen">
-          ${imagenHTML}
-          ${!producto.disponible ? '<div class="producto-no-disponible">No Disponible</div>' : ''}
-        </div>
-        <div class="producto-info">
-          <div class="producto-nombre">${producto.nombre}</div>
-          <div class="producto-precio">${formatearMoneda(producto.precio || 0)}</div>
-        </div>
+    // Verificar si tiene instrucciones o ingredientes
+    const conInstrucciones = tieneInstrucciones(producto.id);
+    
+    // Crear tarjeta con indicador
+    const productoCard = document.createElement('div');
+    productoCard.className = 'producto-card';
+    productoCard.setAttribute('data-id', producto.id);
+    
+    productoCard.innerHTML = `
+      <div class="producto-imagen">
+        ${imagenHTML}
+        ${!producto.disponible ? '<div class="producto-no-disponible">No Disponible</div>' : ''}
+        ${conInstrucciones ? '<div class="tiene-instrucciones" title="Este producto tiene opciones para personalizar"><i class="fas fa-utensils"></i></div>' : ''}
+      </div>
+      <div class="producto-info">
+        <div class="producto-nombre">${producto.nombre}</div>
+        <div class="producto-precio">${formatearMoneda(producto.precio || 0)}</div>
       </div>
     `;
-  });
-  
-  container.innerHTML = html;
-  
-  // Agregar eventos a las tarjetas
-  document.querySelectorAll('.producto-card').forEach(card => {
-    card.addEventListener('click', function() {
+    
+    // Evento al hacer clic
+    productoCard.addEventListener('click', function() {
       // Obtener ID del producto
       const productoId = this.getAttribute('data-id');
       
@@ -357,10 +814,17 @@ function filtrarProductos() {
       
       // Verificar disponibilidad
       if (producto && producto.disponible !== false) {
-        // En lugar de abrir modal, agregar directamente a la orden
-        agregarProductoDirecto(producto);
+        // Verificar si el producto tiene opciones de ingredientes o instrucciones especiales
+        if (tieneInstrucciones(producto.id)) {
+          abrirModalProductoInstrucciones(producto);
+        } else {
+          // Añadir directamente a la orden
+          agregarProductoDirecto(producto);
+        }
       }
     });
+    
+    container.appendChild(productoCard);
   });
 }
 
@@ -392,15 +856,6 @@ function agregarProductoDirecto(producto) {
   
   // Notificación
   mostrarNotificacion(`${producto.nombre} agregado a la orden`, 'success');
-  
-  // --- no lo necesitamos
-  // Si estamos en modo móvil, cambiar a la tab de orden al darle click a un producto
-  /*if (window.innerWidth <= 768) {
-    const ordenTab = document.querySelector('.tab-btn[data-tab="orden-tab"]');
-    if (ordenTab) {
-      ordenTab.click();
-    }
-  }*/
 }
 
 function actualizarOrdenUI() {
@@ -428,7 +883,24 @@ function actualizarOrdenUI() {
   let html = '';
   
   ordenActual.items.forEach((item, index) => {
-    const tieneInstrucciones = item.instrucciones && item.instrucciones.trim() !== '';
+    const tieneInstruccionesTexto = item.instrucciones && item.instrucciones.trim() !== '';
+    
+    // Texto de ingredientes personalizados
+    let ingredientesHTML = '';
+    if (item.ingredientes && item.ingredientes.length > 0) {
+      // Filtrar solo ingredientes con precio adicional para mostrar
+      const ingredientesAdicionales = item.ingredientes.filter(ing => ing.precio > 0);
+      
+      if (ingredientesAdicionales.length > 0) {
+        ingredientesHTML = `
+          <div class="orden-item-ingredientes">
+            ${ingredientesAdicionales.map(ing => `
+              <span class="orden-item-ingrediente">+${ing.nombre}</span>
+            `).join('')}
+          </div>
+        `;
+      }
+    }
     
     html += `
       <div class="orden-item">
@@ -436,7 +908,8 @@ function actualizarOrdenUI() {
         <div class="orden-item-info">
           <div class="orden-item-nombre">${item.nombre}</div>
           <div class="orden-item-precio">${formatearMoneda(item.precio)} c/u</div>
-          ${tieneInstrucciones ? 
+          ${ingredientesHTML}
+          ${tieneInstruccionesTexto ? 
             `<div class="orden-item-instrucciones">${item.instrucciones}</div>` : ''}
         </div>
         <div class="orden-item-total">${formatearMoneda(item.subtotal)}</div>
@@ -542,22 +1015,54 @@ function abrirModalInstrucciones(item, index) {
   document.getElementById('modal-instrucciones').style.display = 'flex';
 }
 
+// Función modificada para guardar instrucciones
 function guardarInstrucciones() {
-  if (indexItemEditarInstr >= 0 && indexItemEditarInstr < ordenActual.items.length) {
-    // Obtener instrucciones
-    const instrucciones = document.getElementById('producto-instrucciones').value.trim();
-    
-    // Actualizar item
-    ordenActual.items[indexItemEditarInstr].instrucciones = instrucciones;
-    
-    // Actualizar UI
-    actualizarOrdenUI();
-    
-    // Cerrar modal
-    document.getElementById('modal-instrucciones').style.display = 'none';
-    
-    // Notificación
-    mostrarNotificacion('Instrucciones guardadas', 'success');
+  if (indexItemEditarInstr >= 0) {
+    // Estamos editando un item existente
+    if (indexItemEditarInstr < ordenActual.items.length) {
+      // Obtener instrucciones
+      const instrucciones = document.getElementById('producto-instrucciones').value.trim();
+      
+      // Actualizar item
+      ordenActual.items[indexItemEditarInstr].instrucciones = instrucciones;
+      
+      // Actualizar UI
+      actualizarOrdenUI();
+      
+      // Cerrar modal
+      document.getElementById('modal-instrucciones').style.display = 'none';
+      
+      // Notificación
+      mostrarNotificacion('Instrucciones guardadas', 'success');
+    }
+  } else {
+    // Estamos agregando un nuevo producto
+    if (productoSeleccionadoInstr) {
+      // Obtener instrucciones
+      const instrucciones = document.getElementById('producto-instrucciones').value.trim();
+      
+      // Crear item para la orden
+      const item = {
+        id: productoSeleccionadoInstr.id,
+        nombre: productoSeleccionadoInstr.nombre,
+        precio: productoSeleccionadoInstr.precio || 0,
+        cantidad: 1,
+        subtotal: productoSeleccionadoInstr.precio || 0,
+        instrucciones: instrucciones
+      };
+      
+      // Agregar a la orden
+      ordenActual.items.push(item);
+      
+      // Actualizar UI
+      actualizarOrdenUI();
+      
+      // Cerrar modal
+      document.getElementById('modal-instrucciones').style.display = 'none';
+      
+      // Notificación
+      mostrarNotificacion(`${productoSeleccionadoInstr.nombre} agregado a la orden`, 'success');
+    }
   }
 }
 

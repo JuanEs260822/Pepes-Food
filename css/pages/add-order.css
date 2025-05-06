@@ -630,3 +630,219 @@
     height: 110px;
   }
 }
+
+/* nuevos css para nuva navegacion para añadir productos*/
+/* Ajustes para la vista de subcategorías como grid */
+.subcategoria-card {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  height: 160px !important;
+}
+
+.subcategoria-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  background-color: var(--color-primario-claro);
+}
+
+.subcategoria-card .producto-nombre {
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--color-primario);
+}
+
+/* Estilo para el botón de volver */
+.btn-volver {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f8f8f8;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 15px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--color-secundario);
+  transition: all 0.3s ease;
+}
+
+.btn-volver:hover {
+  background-color: var(--color-primario-claro);
+  color: var(--color-primario);
+}
+
+.btn-volver i {
+  font-size: 14px;
+}
+
+/* Ajustes para el modal de instrucciones especiales */
+.modal-instrucciones {
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.instrucciones-title {
+  margin-bottom: 15px;
+  color: var(--color-primario);
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Estilos para ingredientes en el modal */
+.ingredientes-container {
+  margin-bottom: 20px;
+}
+
+.ingrediente-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.ingrediente-item:last-child {
+  border-bottom: none;
+}
+
+.ingrediente-checkbox {
+  margin-right: 10px;
+  transform: scale(1.2);
+}
+
+.ingrediente-nombre {
+  flex: 1;
+  font-size: 16px;
+}
+
+.ingrediente-precio {
+  font-weight: bold;
+  color: var(--color-primario);
+  width: 60px;
+  text-align: right;
+}
+
+/* Separadores en el modal */
+.separador-modal {
+  height: 1px;
+  background-color: #eee;
+  margin: 15px 0;
+}
+
+/* Contador de subcategorías */
+.subcategorias-contador {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: var(--color-secundario);
+  color: white;
+  border-radius: 10px;
+  padding: 3px 8px;
+  font-size: 12px;
+  font-weight: bold;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Indicador de instrucciones especiales en producto */
+.tiene-instrucciones {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  background-color: var(--color-info);
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Animación para las tarjetas */
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.producto-card, .subcategoria-card {
+  animation: aparecer 0.3s ease forwards;
+}
+
+/* Estilos para títulos de sección */
+.seccion-titulo-actual {
+  margin-bottom: 15px;
+  font-size: 18px;
+  color: var(--color-texto);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.seccion-titulo-actual i {
+  color: var(--color-primario);
+}
+
+/* Ajustes para modo móvil */
+@media (max-width: 768px) {
+  .productos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+  
+  .subcategoria-card {
+    height: 140px !important;
+  }
+  
+  .btn-volver {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+}
+
+/* Estilos para el indicador de "volver a productos" */
+.boton-volver-productos {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: white;
+  border-radius: 8px;
+  padding: 10px 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.boton-volver-productos-texto {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  color: var(--color-primario);
+}
+
+.boton-volver-productos-acciones {
+  display: flex;
+  gap: 10px;
+}
+
+.boton-volver-productos-btn {
+  background-color: var(--color-primario-claro);
+  color: var(--color-primario);
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.boton-volver-productos-btn:hover {
+  background-color: var(--color-primario);
+  color: white;
+}

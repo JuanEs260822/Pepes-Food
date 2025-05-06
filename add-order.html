@@ -164,10 +164,20 @@
     <div id="modal-instrucciones" class="modal">
       <div class="modal-contenido modal-pequeno">
         <span class="cerrar-modal">&times;</span>
-        <h2>Instrucciones para <span id="modal-producto-nombre-instr">Producto</span></h2>
+        <h2>Personalizar <span id="modal-producto-nombre-instr">Producto</span></h2>
+        
+        <!-- Sección de ingredientes (se mostrará solo para productos con ingredientes) -->
+        <div id="ingredientes-seccion" class="ingredientes-container" style="display: none;">
+          <div class="instrucciones-title">Ingredientes:</div>
+          <div id="ingredientes-lista" class="ingredientes-lista">
+            <!-- Los ingredientes se cargarán dinámicamente -->
+          </div>
+          <div class="separador-modal"></div>
+        </div>
         
         <div class="instrucciones-container">
-          <textarea id="producto-instrucciones" placeholder="Instrucciones especiales para este producto..."></textarea>
+          <div class="instrucciones-title">Instrucciones especiales:</div>
+          <textarea id="producto-instrucciones" placeholder="Ej: Sin cebolla, extra queso, término medio, etc..."></textarea>
         </div>
         
         <div class="modal-acciones">
@@ -175,7 +185,29 @@
         </div>
       </div>
     </div>
+
+    <!-- Template para el botón de volver a subcategorías -->
+<template id="template-btn-volver">
+  <button id="btn-volver" class="btn-volver">
+    <i class="fas fa-arrow-left"></i> 
+    <span id="btn-volver-texto">Volver</span>
+  </button>
+</template>
+
+<!-- Template para el indicador de instrucciones especiales -->
+<template id="template-tiene-instrucciones">
+  <div class="tiene-instrucciones" title="Este producto tiene opciones para personalizar">
+    <i class="fas fa-utensils"></i>
   </div>
+</template>
+
+<!-- Template para título de sección actual -->
+<template id="template-seccion-titulo">
+  <div class="seccion-titulo-actual">
+    <i class="fas fa-chevron-right"></i>
+    <span id="seccion-titulo-texto">Subcategorías</span>
+  </div>
+</template>
   
   <!-- Scripts -->
   <script src="js/firebase-init.js"></script>
