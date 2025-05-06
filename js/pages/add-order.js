@@ -23,7 +23,7 @@ const subcategoriasPorCategoria = {
     { id: 'tortas', nombre: 'Tortas' },
     { id: 'hamburguesas', nombre: 'Hamburguesas' },
     { id: 'pizzas', nombre: 'Pizzas' },
-    { id: 'alitas', nombre: 'Alitas (boneless y tradicionales)' },
+    { id: 'alitas', nombre: 'Alitas' },
     { id: 'hotdogs', nombre: 'Hot Dogs' },
     { id: 'sincronizadas', nombre: 'Sincronizadas' },
     { id: 'papasfritas', nombre: 'Papas Fritas' },
@@ -34,24 +34,26 @@ const subcategoriasPorCategoria = {
     { id: 'dorilocos', nombre: 'Dorilocos' },
     { id: 'doriesquites', nombre: 'Doriesquites' },
     { id: 'esquites', nombre: 'Esquites' },
-    { id: 'frituras', nombre: 'Sabritas y Cheetos' },
-    { id: 'pringles', nombre: 'Pringles (chicas y grandes)' },
-    { id: 'barras', nombre: 'Barras de arroz inflado (varios sabores)' },
-    { id: 'galletas', nombre: 'Galletas grandes y chicas (gran variedad)' },
-    { id: 'gomitas', nombre: 'Gomitas (variedad de sabores)' }
+    { id: 'frituras', nombre: 'Sabritas' },
+    { id: 'pringles', nombre: 'Pringles' },
+    { id: 'barras', nombre: 'Barras' },
+    { id: 'galletas', nombre: 'Galletas' },
+    { id: 'gomitas', nombre: 'Gomitas' }
   ],
   'bebidas': [
-    { id: 'refresco_botella', nombre: 'Refrescos embotellados (varios tamaños)' },
-    { id: 'refresco_lata', nombre: 'Refrescos en lata' },
-    { id: 'agua', nombre: 'Agua embotellada' },
-    { id: 'agua_sabor', nombre: 'Aguas saborizadas' },
-    { id: 'cerveza', nombre: 'Cervezas (lata, botella de vidrio y caguamas)' },
-    { id: 'micheladas', nombre: 'New Mix, micheladas grandes y chicas con sabor "azulito"' },
-    { id: 'jugos', nombre: 'Jugos en lata y botella de vidrio' },
+    { id: 'refresco_botella', nombre: 'Sodas-Botella' },
+    { id: 'refresco_lata', nombre: 'Sodas-Lata' },
+    { id: 'agua', nombre: 'Agua-Botella' },
+    { id: 'agua_sabor', nombre: 'Aguas-Frescas' },
+    { id: 'cerveza', nombre: 'Cerveza' },
+    { id: 'michelada', nombre: 'Michelada' },
+    { id: 'new_mix', nombre: 'New Mix' },
+    { id: 'jugo_botella', nombre: 'Jugo-Botella' },
+    { id: 'jugo_lata', nombre: 'Jugo-Lata' },
     { id: 'energeticas', nombre: 'Bebidas energéticas' },
-    { id: 'malteadas', nombre: 'Malteadas (grandes y chicas)' },
-    { id: 'frappe', nombre: 'Bebidas frías' },
-    { id: 'raspados', nombre: 'Raspados (grandes y chicos)' }
+    { id: 'malteadas', nombre: 'Malteadas' },
+    { id: 'frappe', nombre: 'Frappe' },
+    { id: 'raspados', nombre: 'Raspados' }
   ]
 };
 
@@ -392,7 +394,7 @@ function agregarProductoDirecto(producto) {
   mostrarNotificacion(`${producto.nombre} agregado a la orden`, 'success');
   
   // --- no lo necesitamos
-  // Si estamos en modo móvil, cambiar a la tab de orden
+  // Si estamos en modo móvil, cambiar a la tab de orden al darle click a un producto
   /*if (window.innerWidth <= 768) {
     const ordenTab = document.querySelector('.tab-btn[data-tab="orden-tab"]');
     if (ordenTab) {
@@ -781,5 +783,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // En modo escritorio, mostrar ambos paneles
     document.getElementById('productos-tab').style.display = 'block';
     document.getElementById('orden-tab').style.display = 'block';
+    document.querySelector('.panel-categorias').style.display = 'flex';
   }
 });
