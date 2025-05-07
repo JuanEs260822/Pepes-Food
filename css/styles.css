@@ -235,6 +235,15 @@ body {
   background-color: #e67a00;
 }
 
+.btn-terciario {
+  background: #17a2b8;
+  color: white;
+}
+
+.btn-terciario:hover {
+  background: #0092e0;
+}
+
 .btn-peligro {
   background-color: var(--color-error);
   color: white;

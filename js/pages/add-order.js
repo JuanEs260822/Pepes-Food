@@ -61,7 +61,7 @@ const subcategoriasPorCategoria = {
 const productosConInstrucciones = [
   'hamburguesa_sencilla', 'hamburguesa_doble', 'hamburguesa_hawaiana', 
   'torta_jamon', 'torta_milanesa', 'pizza_pepperoni', 'pizza_hawaiana',
-  'hotdog_sencillo', 'sincronizada_jamon'
+  'hotdog_sencillo', 'sincronizada_jamon', 'Qvypwj48HTUEBn1hbcxI'
 ];
 
 // Catálogo de ingredientes por tipo de producto
@@ -148,7 +148,20 @@ const ingredientesPorProducto = {
     { id: 'queso_extra', nombre: 'Queso extra', precio: 10, default: false },
     { id: 'champiñones', nombre: 'Champiñones', precio: 10, default: false },
     { id: 'jalapeño', nombre: 'Jalapeño', precio: 5, default: false }
-  ]
+  ],
+
+  //ejemplo con dorilocos
+  'Qvypwj48HTUEBn1hbcxI': [
+    { id: 'lechuga', nombre: 'Lechuga', precio: 0, default: true },
+    { id: 'tomate', nombre: 'Tomate', precio: 0, default: true },
+    { id: 'cebolla', nombre: 'Cebolla', precio: 0, default: true },
+    { id: 'pepinillos', nombre: 'Pepinillos', precio: 0, default: true },
+    { id: 'queso', nombre: 'Queso extra', precio: 10, default: false },
+    { id: 'tocino', nombre: 'Tocino', precio: 15, default: false },
+    { id: 'champinones', nombre: 'Champiñones', precio: 12, default: false },
+    { id: 'jalapeño', nombre: 'Jalapeño', precio: 8, default: false },
+    { id: 'guacamole', nombre: 'Guacamole', precio: 15, default: false }
+  ],
 };
 
 // Variables para la navegación entre categorías y subcategorías
@@ -809,6 +822,7 @@ function filtrarProductos() {
       // Obtener ID del producto
       const productoId = this.getAttribute('data-id');
       
+      console.log("id producto: ", productoId);
       // Buscar producto completo
       const producto = productosData.find(p => p.id === productoId);
       
