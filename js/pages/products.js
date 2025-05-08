@@ -21,6 +21,7 @@ const subcategoriasPorCategoria = {
     { id: 'hamburguesas', nombre: 'Hamburguesas' },
     { id: 'pizzas', nombre: 'Pizzas' },
     { id: 'alitas', nombre: 'Alitas' },
+    { id: 'boneless', nombre: 'Boneless' },
     { id: 'hotdogs', nombre: 'Hot Dogs' },
     { id: 'sincronizadas', nombre: 'Sincronizadas' },
     { id: 'papasfritas', nombre: 'Papas Fritas' },
@@ -558,11 +559,11 @@ function renderizarProductos() {
       }
       
       .columna-ordenable:hover {
-        background-color: #f5f5f5;
+        background-color: #DA7400;
       }
       
       .ordenado-asc, .ordenado-desc {
-        background-color: #e7f3ff;
+        background-color: #DA7400;
       }
     `;
     document.head.appendChild(style);
