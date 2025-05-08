@@ -148,6 +148,29 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal para editar ingredientes -->
+<div id="modal-ingredientes" class="modal">
+  <div class="modal-contenido">
+    <span class="cerrar-modal">&times;</span>
+    <h2>Editar Ingredientes</h2>
+    
+    <div id="ingredientes-container" class="ingredientes-container">
+      <!-- Se generará dinámicamente -->
+    </div>
+    
+    <div class="form-grupo">
+      <button type="button" id="btn-agregar-ingrediente" class="btn btn-secundario">
+        <i class="fas fa-plus"></i> Añadir Ingrediente
+      </button>
+    </div>
+    
+    <div class="btn-grupo">
+      <button type="button" id="btn-cancelar-ingredientes" class="btn btn-secundario">Cancelar</button>
+      <button type="button" id="btn-guardar-ingredientes" class="btn btn-primario">Guardar</button>
+    </div>
+  </div>
+</div>
   
   <!-- Scripts -->
   <script src="js/firebase-init.js"></script>

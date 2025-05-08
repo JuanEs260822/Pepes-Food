@@ -20,40 +20,40 @@ let filtroBusqueda = '';
 // Mapeo de subcategorías por categoría
 const subcategoriasPorCategoria = {
   'comida': [
-    { id: 'tortas', nombre: 'Tortas', imagen: 'images/subcategorias/torta.jpg' },
-    { id: 'hamburguesas', nombre: 'Hamburguesas', imagen: 'images/subcategorias/hamburguesa.jpg' },
-    { id: 'pizzas', nombre: 'Pizzas', imagen: 'images/subcategorias/pizza.jpg' },
-    { id: 'alitas', nombre: 'Alitas', imagen: 'images/subcategorias/alitas.jpg' },
-    { id: 'hotdogs', nombre: 'Hot Dogs', imagen: 'images/subcategorias/hotdog.jpg' },
-    { id: 'sincronizadas', nombre: 'Sincronizadas', imagen: 'images/subcategorias/sincronizada.jpg' },
-    { id: 'papasfritas', nombre: 'Papas Fritas', imagen: 'images/subcategorias/papas.jpg' },
-    { id: 'salchipapas', nombre: 'Salchipapas', imagen: 'images/subcategorias/salchipapas.jpg' },
-    { id: 'papotas', nombre: 'Papotas', imagen: 'images/subcategorias/papotas.jpg' }
+    { id: 'tortas', nombre: 'Tortas', imagen: 'assets/images/subcategorias/torta.webp' },
+    { id: 'hamburguesas', nombre: 'Hamburguesas', imagen: 'assets/images/subcategorias/hamburguesa.webp' },
+    { id: 'pizzas', nombre: 'Pizzas', imagen: 'assets/images/subcategorias/pizza.webp' },
+    { id: 'alitas', nombre: 'Alitas', imagen: 'assets/images/subcategorias/alitas.webp' },
+    { id: 'hotdogs', nombre: 'Hot Dogs', imagen: 'assets/images/subcategorias/hotdog.jpg' },
+    { id: 'sincronizadas', nombre: 'Sincronizadas', imagen: 'assets/images/subcategorias/sincronizada.jpg' },
+    { id: 'papasfritas', nombre: 'Papas Fritas', imagen: 'assets/images/subcategorias/papas.jpg' },
+    { id: 'salchipapas', nombre: 'Salchipapas', imagen: 'assets/images/subcategorias/salchipapas.jpg' },
+    { id: 'papotas', nombre: 'Papotas', imagen: 'assets/images/subcategorias/papotas.jpg' }
   ],
   'snacks': [
-    { id: 'dorilocos', nombre: 'Dorilocos', imagen: 'images/subcategorias/dorilocos.jpg' },
-    { id: 'doriesquites', nombre: 'Doriesquites', imagen: 'images/subcategorias/doriesquites.jpg' },
-    { id: 'esquites', nombre: 'Esquites', imagen: 'images/subcategorias/esquites.jpg' },
-    { id: 'frituras', nombre: 'Sabritas', imagen: 'images/subcategorias/sabritas.jpg' },
-    { id: 'pringles', nombre: 'Pringles', imagen: 'images/subcategorias/pringles.jpg' },
-    { id: 'barras', nombre: 'Barras', imagen: 'images/subcategorias/barras.jpg' },
-    { id: 'galletas', nombre: 'Galletas', imagen: 'images/subcategorias/galletas.jpg' },
-    { id: 'gomitas', nombre: 'Gomitas', imagen: 'images/subcategorias/gomitas.jpg' }
+    { id: 'dorilocos', nombre: 'Dorilocos', imagen: 'assets/images/subcategorias/dorilocos.webp' },
+    { id: 'doriesquites', nombre: 'Doriesquites', imagen: 'assets/images/subcategorias/doriesquites.jpg' },
+    { id: 'esquites', nombre: 'Esquites', imagen: 'assets/images/subcategorias/esquites.jpg' },
+    { id: 'frituras', nombre: 'Sabritas', imagen: 'assets/images/subcategorias/sabritas.jpg' },
+    { id: 'pringles', nombre: 'Pringles', imagen: 'assets/images/subcategorias/pringles.jpg' },
+    { id: 'barras', nombre: 'Barras', imagen: 'assets/images/subcategorias/barras.jpg' },
+    { id: 'galletas', nombre: 'Galletas', imagen: 'assets/images/subcategorias/galletas.jpg' },
+    { id: 'gomitas', nombre: 'Gomitas', imagen: 'assets/images/subcategorias/gomitas.jpg' }
   ],
   'bebidas': [
-    { id: 'refresco_botella', nombre: 'Sodas-Botella', imagen: 'images/subcategorias/refresco_botella.jpg' },
-    { id: 'refresco_lata', nombre: 'Sodas-Lata', imagen: 'images/subcategorias/refresco_lata.jpg' },
-    { id: 'agua', nombre: 'Agua-Botella', imagen: 'images/subcategorias/agua.jpg' },
-    { id: 'agua_sabor', nombre: 'Aguas-Frescas', imagen: 'images/subcategorias/agua_fresca.jpg' },
-    { id: 'cerveza', nombre: 'Cerveza', imagen: 'images/subcategorias/cerveza.jpg' },
-    { id: 'michelada', nombre: 'Michelada', imagen: 'images/subcategorias/michelada.jpg' },
-    { id: 'new_mix', nombre: 'New Mix', imagen: 'images/subcategorias/new_mix.jpg' },
-    { id: 'jugo_botella', nombre: 'Jugo-Botella', imagen: 'images/subcategorias/jugo_botella.jpg' },
-    { id: 'jugo_lata', nombre: 'Jugo-Lata', imagen: 'images/subcategorias/jugo_lata.jpg' },
-    { id: 'energeticas', nombre: 'Bebidas energéticas', imagen: 'images/subcategorias/energeticas.jpg' },
-    { id: 'malteadas', nombre: 'Malteadas', imagen: 'images/subcategorias/malteada.jpg' },
-    { id: 'frappe', nombre: 'Frappe', imagen: 'images/subcategorias/frappe.jpg' },
-    { id: 'raspados', nombre: 'Raspados', imagen: 'images/subcategorias/raspado.jpg' }
+    { id: 'refresco_botella', nombre: 'Sodas-Botella', imagen: 'assets/images/subcategorias/refresco_botella.webp' },
+    { id: 'refresco_lata', nombre: 'Sodas-Lata', imagen: 'assets/images/subcategorias/refresco_lata.jpg' },
+    { id: 'agua', nombre: 'Agua-Botella', imagen: 'assets/images/subcategorias/agua.jpg' },
+    { id: 'agua_sabor', nombre: 'Aguas-Frescas', imagen: 'assets/images/subcategorias/agua_fresca.jpg' },
+    { id: 'cerveza', nombre: 'Cerveza', imagen: 'assets/images/subcategorias/cerveza.jpg' },
+    { id: 'michelada', nombre: 'Michelada', imagen: 'assets/images/subcategorias/michelada.jpg' },
+    { id: 'new_mix', nombre: 'New Mix', imagen: 'assets/images/subcategorias/new_mix.jpg' },
+    { id: 'jugo_botella', nombre: 'Jugo-Botella', imagen: 'assets/images/subcategorias/jugo_botella.jpg' },
+    { id: 'jugo_lata', nombre: 'Jugo-Lata', imagen: 'assets/images/subcategorias/jugo_lata.jpg' },
+    { id: 'energeticas', nombre: 'Bebidas energéticas', imagen: 'assets/images/subcategorias/energeticas.jpg' },
+    { id: 'malteadas', nombre: 'Malteadas', imagen: 'assets/images/subcategorias/malteada.jpg' },
+    { id: 'frappe', nombre: 'Frappe', imagen: 'assets/images/subcategorias/frappe.jpg' },
+    { id: 'raspados', nombre: 'Raspados', imagen: 'assets/images/subcategorias/raspado.jpg' }
   ]
 };
 
@@ -161,7 +161,7 @@ const ingredientesPorProducto = {
     { id: 'champinones', nombre: 'Champiñones', precio: 12, default: false },
     { id: 'jalapeño', nombre: 'Jalapeño', precio: 8, default: false },
     { id: 'guacamole', nombre: 'Guacamole', precio: 15, default: false }
-  ],
+  ]
 };
 
 // Variables para la navegación entre categorías y subcategorías
@@ -170,9 +170,198 @@ let categoriaActual = '';
 let subcategoriaActual = '';
 let ingredientesSeleccionados = [];
 
+// Helper function to check if a product exists in static list or has ingredients in Firestore
+async function checkProductoConIngredientes(productoId) {
+  // Check static list first
+  if (productosConInstrucciones.includes(productoId)) {
+    return true;
+  }
+  
+  // Then check in Firestore
+  try {
+    const productoDoc = await db.collection('productos').doc(productoId).get();
+    if (productoDoc.exists) {
+      const productoData = productoDoc.data();
+      return productoData.tieneIngredientes === true;
+    }
+    return false;
+  } catch (error) {
+    console.error("Error checking if product has ingredients:", error);
+    return false;
+  }
+}
+
+// Función para verificar múltiples productos con ingredientes en una sola operación
+async function verificarProductosConIngredientes(productosIds) {
+  try {
+    // Consulta por lotes para optimizar
+    const productos = await db.collection('productos')
+      .where(firebase.firestore.FieldPath.documentId(), 'in', productosIds)
+      .where('tieneIngredientes', '==', true)
+      .get();
+    
+    // Crear mapa de resultados
+    const productosConIngs = {};
+    productos.forEach(doc => {
+      productosConIngs[doc.id] = true;
+    });
+    
+    return productosConIngs;
+  } catch (error) {
+    console.error("Error verificando productos con ingredientes:", error);
+    return {};
+  }
+}
+
 // Función para verificar si un producto tiene ingredientes personalizables
-function tieneIngredientes(productoId) {
-  return ingredientesPorProducto.hasOwnProperty(productoId);
+async function tieneIngredientes(productoId) {
+  // Verificar primero en la lista estática (para compatibilidad)
+  if (ingredientesPorProducto.hasOwnProperty(productoId)) {
+    return true;
+  }
+  
+  // Verificar en Firebase si tiene ingredientes
+  try {
+    const productoRef = await db.collection('productos').doc(productoId).get();
+    const producto = productoRef.data();
+    return producto && producto.tieneIngredientes === true;
+  } catch (error) {
+    console.error("Error al verificar ingredientes del producto:", error);
+    return false;
+  }
+}
+
+// Función para obtener ingredientes de un producto
+async function obtenerIngredientesProducto(productoId) {
+  // Si existe en la lista estática, usar esos (para compatibilidad)
+  if (ingredientesPorProducto.hasOwnProperty(productoId)) {
+    return ingredientesPorProducto[productoId];
+  }
+  
+  // Si no, buscar en Firebase
+  try {
+    const ingredientesRef = await db.collection('productos')
+      .doc(productoId)
+      .collection('ingredientes')
+      .orderBy('nombre')
+      .get();
+    
+    const ingredientes = [];
+    ingredientesRef.forEach(doc => {
+      ingredientes.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+    
+    return ingredientes;
+  } catch (error) {
+    console.error("Error al obtener ingredientes del producto:", error);
+    return [];
+  }
+}
+
+// Función modificada para abrir modal de edición de item
+async function abrirModalEdicionItem(item, index) {
+  productoSeleccionadoInstr = item;
+  indexItemEditarInstr = index;
+  
+  // Actualizar título del modal
+  document.getElementById('modal-producto-nombre-instr').textContent = item.nombre;
+  
+  // Verificar si el producto tiene ingredientes
+  const tieneIngs = await tieneIngredientes(item.id);
+  const seccionIngredientes = document.getElementById('ingredientes-seccion');
+  const listaIngredientes = document.getElementById('ingredientes-lista');
+  
+  if (tieneIngs) {
+    // Limpiar lista de ingredientes
+    listaIngredientes.innerHTML = '';
+    
+    // Mostrar sección de ingredientes
+    seccionIngredientes.style.display = 'block';
+    
+    // Reiniciar ingredientes seleccionados
+    ingredientesSeleccionados = item.ingredientes || [];
+    
+    // Cargar ingredientes específicos del producto
+    const ingredientesDisponibles = await obtenerIngredientesProducto(item.id);
+    
+    ingredientesDisponibles.forEach(ingrediente => {
+      // Verificar si está seleccionado
+      const estaSeleccionado = ingredientesSeleccionados.some(i => i.id === ingrediente.id);
+      
+      // Crear elemento para cada ingrediente
+      const ingredienteItem = document.createElement('div');
+      ingredienteItem.className = 'ingrediente-item';
+      
+      // Crear checkbox
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.className = 'ingrediente-checkbox';
+      checkbox.id = 'ingrediente-' + ingrediente.id;
+      checkbox.checked = estaSeleccionado;
+      
+      checkbox.addEventListener('change', function() {
+        if (this.checked) {
+          // Agregar a seleccionados si no existe
+          const yaExiste = ingredientesSeleccionados.some(i => i.id === ingrediente.id);
+          if (!yaExiste) {
+            ingredientesSeleccionados.push({
+              id: ingrediente.id,
+              nombre: ingrediente.nombre,
+              precio: ingrediente.precio || 0
+            });
+          }
+        } else {
+          // Quitar de seleccionados
+          const index = ingredientesSeleccionados.findIndex(i => i.id === ingrediente.id);
+          if (index >= 0) {
+            ingredientesSeleccionados.splice(index, 1);
+          }
+        }
+        
+        // Actualizar precio si hay ingredientes con costo adicional
+        actualizarPrecioModal();
+      });
+      
+      // Crear label para el nombre
+      const nombre = document.createElement('label');
+      nombre.htmlFor = 'ingrediente-' + ingrediente.id;
+      nombre.className = 'ingrediente-nombre';
+      nombre.textContent = ingrediente.nombre;
+      
+      // Elemento para el precio si tiene
+      let precioElement = null;
+      if (ingrediente.precio > 0) {
+        precioElement = document.createElement('span');
+        precioElement.className = 'ingrediente-precio';
+        precioElement.textContent = '+ ' + formatearMoneda(ingrediente.precio || 0);
+      }
+      
+      // Agregar elementos al item
+      ingredienteItem.appendChild(checkbox);
+      ingredienteItem.appendChild(nombre);
+      if (precioElement) {
+        ingredienteItem.appendChild(precioElement);
+      }
+      
+      // Agregar a la lista
+      listaIngredientes.appendChild(ingredienteItem);
+    });
+  } else {
+    // Ocultar sección de ingredientes
+    seccionIngredientes.style.display = 'none';
+  }
+  
+  // Establecer instrucciones actuales
+  document.getElementById('producto-instrucciones').value = item.instrucciones || '';
+  
+  // Cambiar texto del botón
+  document.getElementById('btn-guardar-instrucciones').textContent = 'Actualizar';
+  
+  // Mostrar modal
+  document.getElementById('modal-instrucciones').style.display = 'flex';
 }
 
 // Updated function to show subcategories as a grid
@@ -269,8 +458,8 @@ function getCategoriaName(categoria) {
   return categorias[categoria] || 'Categorías';
 }
 
-// Modificación del modal de instrucciones para usar el mismo estilo de los otros modales
-function abrirModalProductoInstrucciones(producto) {
+// Función modificada para abrir modal de instrucciones
+async function abrirModalProductoInstrucciones(producto) {
   productoSeleccionadoInstr = producto;
   indexItemEditarInstr = -1; // -1 indica que es un nuevo producto, no una edición
   
@@ -281,10 +470,11 @@ function abrirModalProductoInstrucciones(producto) {
   ingredientesSeleccionados = [];
   
   // Verificar si el producto tiene ingredientes
+  const tieneIngs = await tieneIngredientes(producto.id);
   const seccionIngredientes = document.getElementById('ingredientes-seccion');
   const listaIngredientes = document.getElementById('ingredientes-lista');
   
-  if (tieneIngredientes(producto.id)) {
+  if (tieneIngs) {
     // Limpiar lista de ingredientes
     listaIngredientes.innerHTML = '';
     
@@ -292,7 +482,7 @@ function abrirModalProductoInstrucciones(producto) {
     seccionIngredientes.style.display = 'block';
     
     // Cargar ingredientes específicos del producto
-    const ingredientes = ingredientesPorProducto[producto.id] || [];
+    const ingredientes = await obtenerIngredientesProducto(producto.id);
     
     ingredientes.forEach(ingrediente => {
       // Crear elemento para cada ingrediente
@@ -311,7 +501,7 @@ function abrirModalProductoInstrucciones(producto) {
         ingredientesSeleccionados.push({
           id: ingrediente.id,
           nombre: ingrediente.nombre,
-          precio: ingrediente.precio
+          precio: ingrediente.precio || 0
         });
       }
       
@@ -321,7 +511,7 @@ function abrirModalProductoInstrucciones(producto) {
           ingredientesSeleccionados.push({
             id: ingrediente.id,
             nombre: ingrediente.nombre,
-            precio: ingrediente.precio
+            precio: ingrediente.precio || 0
           });
         } else {
           // Quitar de seleccionados
@@ -346,7 +536,7 @@ function abrirModalProductoInstrucciones(producto) {
       if (ingrediente.precio > 0) {
         precioElement = document.createElement('span');
         precioElement.className = 'ingrediente-precio';
-        precioElement.textContent = '+ ' + formatearMoneda(ingrediente.precio);
+        precioElement.textContent = '+ ' + formatearMoneda(ingrediente.precio || 0);
       }
       
       // Agregar elementos al item
@@ -388,9 +578,13 @@ function actualizarPrecioModal() {
   
   if (precioAdicional > 0) {
     const precioTotal = (productoSeleccionadoInstr.precio || 0) + precioAdicional;
-    botonGuardar.textContent = `Agregar (${formatearMoneda(precioTotal)})`;
+    botonGuardar.textContent = indexItemEditarInstr >= 0 ? 
+      `Actualizar (${formatearMoneda(precioTotal)})` : 
+      `Agregar (${formatearMoneda(precioTotal)})`;
   } else {
-    botonGuardar.textContent = 'Agregar a la orden';
+    botonGuardar.textContent = indexItemEditarInstr >= 0 ? 
+      'Actualizar' : 
+      'Agregar a la orden';
   }
 }
 
@@ -508,8 +702,21 @@ function mostrarProductos() {
 }
 
 // Función para determinar si un producto tiene instrucciones o ingredientes
-function tieneInstrucciones(productoId) {
-  return productosConInstrucciones.includes(productoId) || tieneIngredientes(productoId);
+async function tieneInstrucciones(productoId) {
+  // Verificar primero en la lista estática (para compatibilidad)
+  if (productosConInstrucciones.includes(productoId)) {
+    return true;
+  }
+  
+  // Verificar si tiene ingredientes en Firebase
+  try {
+    const productoRef = await db.collection('productos').doc(productoId).get();
+    const producto = productoRef.data();
+    return producto && producto.tieneIngredientes === true;
+  } catch (error) {
+    console.error("Error al verificar si el producto tiene instrucciones:", error);
+    return false;
+  }
 }
 
 // Variables para modales e instrucciones especiales
@@ -746,7 +953,8 @@ function actualizarBotonesSubcategoria() {
   });
 }
 
-function filtrarProductos() {
+// Función optimizada para filtrar productos
+async function filtrarProductos() {
   const container = document.getElementById('productos-grid');
   
   // Aplicar filtros
@@ -784,6 +992,29 @@ function filtrarProductos() {
     return;
   }
   
+  // Obtener IDs para verificar
+  const productosIds = productosFiltrados.map(p => p.id).filter(id => {
+    // Filtrar IDs que ya sabemos que están en la lista estática
+    return !productosConInstrucciones.includes(id);
+  });
+  
+  // Verificar productos con ingredientes en lote (si hay IDs para verificar)
+  let productosConIngs = {};
+  if (productosIds.length > 0) {
+    // Dividir en lotes de 10 para evitar limitaciones de Firestore
+    const lotes = [];
+    for (let i = 0; i < productosIds.length; i += 10) {
+      lotes.push(productosIds.slice(i, i + 10));
+    }
+    
+    // Procesar cada lote
+    for (const lote of lotes) {
+      const resultado = await verificarProductosConIngredientes(lote);
+      // Combinar resultados
+      productosConIngs = { ...productosConIngs, ...resultado };
+    }
+  }
+  
   // Limpiar el contenedor
   container.innerHTML = '';
   
@@ -798,7 +1029,7 @@ function filtrarProductos() {
     }
     
     // Verificar si tiene instrucciones o ingredientes
-    const conInstrucciones = tieneInstrucciones(producto.id);
+    const conInstrucciones = productosConInstrucciones.includes(producto.id) || productosConIngs[producto.id] === true || producto.tieneIngredientes === true;
     
     // Crear tarjeta con indicador
     const productoCard = document.createElement('div');
@@ -822,14 +1053,15 @@ function filtrarProductos() {
       // Obtener ID del producto
       const productoId = this.getAttribute('data-id');
       
-      console.log("id producto: ", productoId);
       // Buscar producto completo
       const producto = productosData.find(p => p.id === productoId);
       
       // Verificar disponibilidad
       if (producto && producto.disponible !== false) {
-        // Verificar si el producto tiene opciones de ingredientes o instrucciones especiales
-        if (tieneInstrucciones(producto.id)) {
+        // Verificar si tiene ingredientes o está en la lista estática
+        if (productosConInstrucciones.includes(producto.id) || 
+            productosConIngs[producto.id] === true || 
+            producto.tieneIngredientes === true) {
           abrirModalProductoInstrucciones(producto);
         } else {
           // Añadir directamente a la orden
@@ -1040,6 +1272,25 @@ function guardarInstrucciones() {
       // Actualizar item
       ordenActual.items[indexItemEditarInstr].instrucciones = instrucciones;
       
+      // Actualizar ingredientes si hay
+      if (ingredientesSeleccionados.length > 0) {
+        ordenActual.items[indexItemEditarInstr].ingredientes = ingredientesSeleccionados;
+        
+        // Calcular precio adicional por ingredientes
+        const precioAdicional = ingredientesSeleccionados.reduce((total, ing) => {
+          return total + (ing.precio || 0);
+        }, 0);
+        
+        // Actualizar precio si hay adicionales
+        if (precioAdicional > 0) {
+          const precioBase = productoSeleccionadoInstr.precio || 0;
+          ordenActual.items[indexItemEditarInstr].precio = precioBase + precioAdicional;
+          ordenActual.items[indexItemEditarInstr].subtotal = 
+            ordenActual.items[indexItemEditarInstr].precio * 
+            ordenActual.items[indexItemEditarInstr].cantidad;
+        }
+      }
+      
       // Actualizar UI
       actualizarOrdenUI();
       
@@ -1055,14 +1306,23 @@ function guardarInstrucciones() {
       // Obtener instrucciones
       const instrucciones = document.getElementById('producto-instrucciones').value.trim();
       
+      // Calcular precio adicional por ingredientes
+      const precioAdicional = ingredientesSeleccionados.reduce((total, ing) => {
+        return total + (ing.precio || 0);
+      }, 0);
+      
+      // Precio final del producto
+      const precioFinal = (productoSeleccionadoInstr.precio || 0) + precioAdicional;
+      
       // Crear item para la orden
       const item = {
         id: productoSeleccionadoInstr.id,
         nombre: productoSeleccionadoInstr.nombre,
-        precio: productoSeleccionadoInstr.precio || 0,
+        precio: precioFinal,
         cantidad: 1,
-        subtotal: productoSeleccionadoInstr.precio || 0,
-        instrucciones: instrucciones
+        subtotal: precioFinal,
+        instrucciones: instrucciones,
+        ingredientes: ingredientesSeleccionados.length > 0 ? ingredientesSeleccionados : undefined
       };
       
       // Agregar a la orden

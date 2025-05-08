@@ -10,6 +10,9 @@ let filtroCategoria = '';
 let busquedaTexto = '';
 let ordenActual = 'nombre';
 let ordenDireccion = 'asc';
+// Variables para el manejo de ingredientes
+let productosConIngredientes = [];
+let ingredientesActuales = [];
 
 // Mapeo de subcategorías por categoría
 const subcategoriasPorCategoria = {
@@ -87,6 +90,13 @@ function inicializarPagina() {
     paginaActual = 1;
     cargarProductos();
   });
+
+  document.getElementById('btn-instrucciones').addEventListener('click', abrirModalIngredientes);
+  document.getElementById('btn-agregar-ingrediente').addEventListener('click', agregarIngrediente);
+  document.getElementById('btn-cancelar-ingredientes').addEventListener('click', function() {
+    document.getElementById('modal-ingredientes').style.display = 'none';
+  });
+  document.getElementById('btn-guardar-ingredientes').addEventListener('click', guardarIngredientes);
 
   // --- sorting controls to the page
   //agregarControlesDeSorting();
@@ -917,6 +927,7 @@ function mostrarVistaPrevia(event) {
   reader.readAsDataURL(file);
 }
 
+// Modificar la función guardarProducto en productos.js para incluir el campo tieneIngredientes
 async function guardarProducto(event) {
   event.preventDefault();
   
@@ -951,6 +962,7 @@ async function guardarProducto(event) {
       cantidad,
       descripcion,
       disponible,
+      tieneIngredientes: false, // Por defecto, false hasta que se agreguen ingredientes
       fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
     };
     
@@ -959,25 +971,11 @@ async function guardarProducto(event) {
       productoData.imagenURL = imagenURL;
     }
     
-    // Si hay imagen nueva, subirla
-    /*if (tieneImagenNueva) {
-      const file = imagenInput.files[0];
-      const storageRef = firebase.storage().ref();
-      
-      // Crear referencia única para la imagen
-      const nombreArchivo = `productos/${Date.now()}_${file.name}`;
-      const fileRef = storageRef.child(nombreArchivo);
-      
-      // Subir archivo
-      await fileRef.put(file);
-      
-      // Obtener URL
-      imagenURL = await fileRef.getDownloadURL();
-      productoData.imagenURL = imagenURL;
-    } */
-    
     // Guardar en Firestore
     if (productoActual) {
+      // Al actualizar, no sobreescribir tieneIngredientes
+      delete productoData.tieneIngredientes;
+      
       // Actualizar producto existente
       await db.collection('productos').doc(productoActual.id).update(productoData);
       mostrarNotificacion('Producto actualizado correctamente');
@@ -1067,3 +1065,244 @@ function obtenerNombreSubcategoria(categoria, subcategoriaId) {
   const subcategoria = subcategorias.find(s => s.id === subcategoriaId);
   return subcategoria ? subcategoria.nombre : subcategoriaId;
 }
+
+// Función para abrir el modal de ingredientes
+function abrirModalIngredientes() {
+  // Si no hay producto actual, no hacer nada
+  if (!productoActual) {
+    mostrarNotificacion('Por favor, primero crea o edita un producto', 'info');
+    return;
+  }
+  
+  // Cargar ingredientes actuales
+  cargarIngredientesProducto();
+  
+  // Mostrar modal
+  document.getElementById('modal-ingredientes').style.display = 'block';
+}
+
+// Función para cargar ingredientes del producto actual
+async function cargarIngredientesProducto() {
+  const container = document.getElementById('ingredientes-container');
+  container.innerHTML = '<p class="cargando-mensaje">Cargando ingredientes...</p>';
+  
+  try {
+    // Si es un producto nuevo, iniciar con lista vacía
+    if (!productoActual.id) {
+      ingredientesActuales = [];
+      renderizarIngredientes();
+      return;
+    }
+    
+    // Buscar ingredientes en Firestore
+    const ingredientesRef = await db.collection('productos')
+      .doc(productoActual.id)
+      .collection('ingredientes')
+      .orderBy('nombre')
+      .get();
+    
+    ingredientesActuales = [];
+    ingredientesRef.forEach(doc => {
+      ingredientesActuales.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+    
+    // Si no hay ingredientes, crear lista vacía
+    if (ingredientesActuales.length === 0) {
+      ingredientesActuales = [];
+    }
+    
+    renderizarIngredientes();
+    
+  } catch (error) {
+    console.error('Error al cargar ingredientes:', error);
+    container.innerHTML = '<p class="error-mensaje">Error al cargar ingredientes</p>';
+  }
+}
+
+// Función para renderizar ingredientes en el modal
+function renderizarIngredientes() {
+  const container = document.getElementById('ingredientes-container');
+  
+  if (ingredientesActuales.length === 0) {
+    container.innerHTML = `
+      <p class="info-mensaje">Este producto no tiene ingredientes configurados</p>
+      <p class="info-detalle">Haz clic en "Añadir Ingrediente" para agregar uno nuevo</p>
+    `;
+    return;
+  }
+  
+  let html = `
+    <div class="ingredientes-lista">
+  `;
+  
+  ingredientesActuales.forEach((ingrediente, index) => {
+    html += `
+      <div class="ingrediente-item" data-index="${index}">
+        <div class="ingrediente-info">
+          <div class="form-grupo ingrediente-nombre-grupo">
+            <label>Nombre:</label>
+            <input type="text" class="form-input ingrediente-nombre" value="${ingrediente.nombre || ''}" placeholder="Nombre del ingrediente">
+          </div>
+          <div class="form-grupo ingrediente-precio-grupo">
+            <label>Precio adicional:</label>
+            <input type="number" class="form-input ingrediente-precio" value="${ingrediente.precio || 0}" min="0" step="0.5">
+          </div>
+          <div class="form-grupo ingrediente-default-grupo">
+            <label class="checkbox-label">
+              <input type="checkbox" class="ingrediente-default" ${ingrediente.default ? 'checked' : ''}>
+              Incluido por defecto
+            </label>
+          </div>
+        </div>
+        <button type="button" class="btn-eliminar-ingrediente" data-index="${index}">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    `;
+  });
+  
+  html += `
+    </div>
+  `;
+  
+  container.innerHTML = html;
+  
+  // Añadir eventos a los botones de eliminar
+  document.querySelectorAll('.btn-eliminar-ingrediente').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const index = parseInt(this.getAttribute('data-index'));
+      eliminarIngrediente(index);
+    });
+  });
+  
+  // Añadir eventos para actualizar los datos en tiempo real
+  document.querySelectorAll('.ingrediente-nombre').forEach((input, index) => {
+    input.addEventListener('input', function() {
+      ingredientesActuales[index].nombre = this.value.trim();
+    });
+  });
+  
+  document.querySelectorAll('.ingrediente-precio').forEach((input, index) => {
+    input.addEventListener('input', function() {
+      ingredientesActuales[index].precio = parseFloat(this.value) || 0;
+    });
+  });
+  
+  document.querySelectorAll('.ingrediente-default').forEach((input, index) => {
+    input.addEventListener('change', function() {
+      ingredientesActuales[index].default = this.checked;
+    });
+  });
+}
+
+// Función para agregar un nuevo ingrediente
+function agregarIngrediente() {
+  const nuevoIngrediente = {
+    id: 'nuevo_' + Date.now(), // ID temporal
+    nombre: '',
+    precio: 0,
+    default: true
+  };
+  
+  ingredientesActuales.push(nuevoIngrediente);
+  renderizarIngredientes();
+  
+  // Hacer scroll al nuevo ingrediente
+  setTimeout(() => {
+    const container = document.getElementById('ingredientes-container');
+    container.scrollTop = container.scrollHeight;
+    
+    // Enfocar el campo de nombre
+    const inputs = document.querySelectorAll('.ingrediente-nombre');
+    inputs[inputs.length - 1].focus();
+  }, 100);
+}
+
+// Función para eliminar un ingrediente
+function eliminarIngrediente(index) {
+  if (index >= 0 && index < ingredientesActuales.length) {
+    ingredientesActuales.splice(index, 1);
+    renderizarIngredientes();
+  }
+}
+
+// Función para guardar ingredientes
+async function guardarIngredientes() {
+  // Validar que haya un producto actual
+  if (!productoActual || !productoActual.id) {
+    mostrarNotificacion('Por favor, primero guarda el producto', 'info');
+    document.getElementById('modal-ingredientes').style.display = 'none';
+    return;
+  }
+  
+  // Validar ingredientes
+  const ingredientesInvalidos = ingredientesActuales.filter(ing => !ing.nombre || ing.nombre.trim() === '');
+  if (ingredientesInvalidos.length > 0) {
+    mostrarNotificacion('Todos los ingredientes deben tener un nombre', 'error');
+    return;
+  }
+  
+  // Mostrar cargando
+  mostrarCargando(true);
+  
+  try {
+    // Referencia a la colección de ingredientes
+    const ingredientesRef = db.collection('productos').doc(productoActual.id).collection('ingredientes');
+    
+    // Obtener ingredientes actuales para comparar
+    const ingredientesActualesRef = await ingredientesRef.get();
+    
+    // Crear un lote para operaciones en batch
+    const batch = db.batch();
+    
+    // Eliminar los ingredientes que ya no están
+    ingredientesActualesRef.forEach(doc => {
+      const existeEnNuevos = ingredientesActuales.some(ing => ing.id === doc.id);
+      if (!existeEnNuevos) {
+        batch.delete(ingredientesRef.doc(doc.id));
+      }
+    });
+    
+    // Agregar o actualizar los ingredientes nuevos
+    for (const ingrediente of ingredientesActuales) {
+      const datos = {
+        nombre: ingrediente.nombre.trim(),
+        precio: parseFloat(ingrediente.precio) || 0,
+        default: ingrediente.default === true
+      };
+      
+      if (ingrediente.id.startsWith('nuevo_')) {
+        // Es un ingrediente nuevo, crear doc
+        const nuevoDoc = ingredientesRef.doc();
+        batch.set(nuevoDoc, datos);
+      } else {
+        // Actualizar existente
+        batch.update(ingredientesRef.doc(ingrediente.id), datos);
+      }
+    }
+    
+    // Ejecutar el batch
+    await batch.commit();
+    
+    // Actualizar la lista de productos con ingredientes
+    await db.collection('productos').doc(productoActual.id).update({
+      tieneIngredientes: ingredientesActuales.length > 0
+    });
+    
+    // Notificación de éxito
+    mostrarNotificacion('Ingredientes guardados correctamente');
+    
+    // Cerrar modal
+    document.getElementById('modal-ingredientes').style.display = 'none';
+    
+  } catch (error) {
+    console.error('Error al guardar ingredientes:', error);
+    mostrarNotificacion('Error al guardar ingredientes', 'error');
+  } finally {
+    mostrarCargando(false);
+  }
+}
+
