@@ -1348,18 +1348,18 @@ function calcularTotal() {
   const descuentoInput = document.getElementById('orden-descuento');
   ordenActual.descuento = parseFloat(descuentoInput.value) || 0;
   
-  // Validar descuento (0-100%)
+  //Validar descuento (0-100%)
   if (ordenActual.descuento < 0) {
     ordenActual.descuento = 0;
     descuentoInput.value = 0;
-  } else if (ordenActual.descuento > 100) {
-    ordenActual.descuento = 100;
-    descuentoInput.value = 100;
+  } else if (ordenActual.descuento > ordenActual.subtotal) {
+    ordenActual.descuento = ordenActual.subtotal;
+    descuentoInput.value = ordenActual.subtotal;
   }
   
   // Calcular total con descuento
-  const descuentoMonto = ordenActual.subtotal * (ordenActual.descuento / 100);
-  ordenActual.total = ordenActual.subtotal - descuentoMonto;
+  //const descuentoMonto = ordenActual.subtotal * (ordenActual.descuento / 100);
+  ordenActual.total = ordenActual.subtotal - ordenActual.descuento;
   
   // Actualizar UI
   document.getElementById('orden-subtotal').textContent = formatearMoneda(ordenActual.subtotal);
