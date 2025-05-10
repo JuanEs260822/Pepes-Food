@@ -42,16 +42,16 @@ const subcategoriasPorCategoria = {
     { id: 'refresco_botella', nombre: 'Sodas-Botella' },
     { id: 'refresco_lata', nombre: 'Sodas-Lata' },
     { id: 'agua', nombre: 'Agua-Botella' },
-    { id: 'agua_sabor', nombre: 'Aguas-Frescas' },
     { id: 'cerveza', nombre: 'Cerveza' },
     { id: 'michelada', nombre: 'Michelada' },
     { id: 'new_mix', nombre: 'New Mix' },
-    { id: 'jugo_botella', nombre: 'Jugo-Botella' },
+    { id: 'jugo_botella', nombre: 'Jugo-Vidrio' },
     { id: 'jugo_lata', nombre: 'Jugo-Lata' },
-    { id: 'energeticas', nombre: 'Bebidas energéticas' },
+    { id: 'energeticas', nombre: 'Bebidas Energéticas' },
     { id: 'malteadas', nombre: 'Malteadas' },
-    { id: 'frappe', nombre: 'Frappe' },
-    { id: 'raspados', nombre: 'Raspados' }
+    { id: 'frappe', nombre: 'Esquimos' },
+    { id: 'raspados', nombre: 'Raspados' },
+    { id: 'cafe', nombre: 'Café' }
   ],
   'suministros': [
     { id: 'harina', nombre: 'Harina' },
