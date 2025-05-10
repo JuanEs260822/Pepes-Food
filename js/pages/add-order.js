@@ -603,6 +603,8 @@ function getCategoriaName(categoria) {
   return categorias[categoria] || 'Categorías';
 }
 
+const modalContent = document.querySelector('.modal-content');
+
 // Función modificada para abrir modal de instrucciones
 async function abrirModalProductoInstrucciones(producto) {
   productoSeleccionadoInstr = producto;
@@ -617,9 +619,77 @@ async function abrirModalProductoInstrucciones(producto) {
   const medidaContainer = document.querySelector('.medida');
   if (isProductInSubcategory(producto, 'pizzas')) {
     medidaContainer.style.display = 'block';
+
+    // circle selection for pizza only
+    const svg = document.getElementById('circle');
+    const output = document.getElementById('output');
+    const partSelect = document.getElementById('partSelect');
+    let modalContent = document.querySelector('.circle-container');
+
+    function polarToCartesian(cx, cy, r, angle) {
+      const radians = (angle - 90) * (Math.PI / 180);
+      return {
+        x: cx + r * Math.cos(radians),
+        y: cy + r * Math.sin(radians)
+      };
+    }
+
+    function describeArc(cx, cy, r, startAngle, endAngle) {
+      const start = polarToCartesian(cx, cy, r, endAngle);
+      const end = polarToCartesian(cx, cy, r, startAngle);
+      const largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
+
+      return [
+        `M ${cx} ${cy}`,
+        `L ${start.x} ${start.y}`,
+        `A ${r} ${r} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`,
+        'Z'
+      ].join(' ');
+    }
+
+    function drawSegments(parts) {
+      svg.innerHTML = '';
+
+      if (parts === 1) {
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', '100');
+        circle.setAttribute('cy', '100');
+        circle.setAttribute('r', '100');
+        circle.classList.add('segment');
+        circle.addEventListener('click', () => {
+          output.textContent = 'Whole Circle Clicked';
+        });
+        svg.appendChild(circle);
+        return;
+      }
+
+      const angleStep = 360 / parts;
+      for (let i = 0; i < parts; i++) {
+        const startAngle = i * angleStep;
+        const endAngle = startAngle + angleStep;
+
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', describeArc(100, 100, 100, startAngle, endAngle));
+        path.classList.add('segment');
+        path.addEventListener('click', (e) => {
+          e.stopPropagation();
+          output.textContent = `Segment ${i + 1} Clicked`;
+        });
+
+        svg.appendChild(path);
+      }
+    }
+
+    partSelect.addEventListener('change', () => {
+      const parts = parseInt(partSelect.value);
+      drawSegments(parts);
+      output.textContent = '';
+    });
+
+    drawSegments(1); // initial load
     
     // Add UI for multiple flavors if it's a pizza
-    const flavorContainer = document.createElement('div');
+    /*const flavorContainer = document.createElement('div');
     flavorContainer.className = 'multi-flavor-container';
     flavorContainer.innerHTML = `
       <div class="instrucciones-title">Sabores de pizza:</div>
@@ -684,7 +754,7 @@ async function abrirModalProductoInstrucciones(producto) {
       } else {
         mostrarNotificacion('Máximo 4 sabores por pizza', 'info');
       }
-    });
+    });*/
   } else if (isProductInSubcategory(producto, 'alitas') || isProductInSubcategory(producto, 'boneless')) {
     // Similar implementation for wings and boneless
     medidaContainer.style.display = 'none';

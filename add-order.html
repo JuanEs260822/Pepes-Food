@@ -165,34 +165,51 @@
       <div class="modal-contenido modal-pequeno">
         <span class="cerrar-modal">&times;</span>
         <h2>Personalizar <span id="modal-producto-nombre-instr">Producto</span></h2>
-        
-        <!-- Sección de ingredientes (se mostrará solo para productos con ingredientes) -->
-        <div id="ingredientes-seccion" class="ingredientes-container" style="display: none;">
-          <div class="instrucciones-title">Ingredientes:</div>
-          <div id="ingredientes-lista" class="ingredientes-lista">
-            <!-- Los ingredientes se cargarán dinámicamente -->
+        <div class="modal-body">
+
+          <div class="medida modal-section">
+            <div class="partes-title">Numero de Partes:</div>
+
+            <select id="partSelect">
+              <option value="1">1 (Pizza Entera)</option>
+              <option value="2">2 Partes</option>
+              <option value="3">3 Partes</option>
+              <option value="4">4 Partes</option>
+              <option value="5">5 Partes</option>
+            </select>
+          
+            <div class="circle-container">
+              <svg viewBox="0 0 200 200" id="circle"></svg>
+            </div>
+          
+            <div id="output"></div>
+
+            <select id="pizzaTipo">
+              <option>Pepperoni</option>
+              <option>Queso</option>
+              <option>Hawaiiana</option>
+              <option>Mexicana</option>
+              <option>Hamon</option>
+            </select>
           </div>
-          <div class="separador-modal"></div>
-        </div>
-
-
-        <div class="medida">
-          <select name="" id="">
-            <option value="grande">Grande (12 rebanadas)</option>
-            <option value="mediana">Mediana (8 rebanadas)</option>
-            <option value="personal">Personal (4 rebanadas)</option>
-            <option value="gigante">Gigante (24 rebanadas)</option>
-            <option value="rebanada">Rebanada (pues ahi dice)</option>
-          </select>
-        </div>
-        
-        <div class="instrucciones-container">
-          <div class="instrucciones-title">Instrucciones especiales:</div>
-          <textarea id="producto-instrucciones" placeholder="Ej: Sin cebolla, extra queso, término medio, etc..."></textarea>
-        </div>
-        
-        <div class="modal-acciones">
-          <button id="btn-guardar-instrucciones" class="btn btn-primario">Guardar</button>
+          
+          <!-- Sección de ingredientes (se mostrará solo para productos con ingredientes) -->
+          <div id="ingredientes-seccion" class="ingredientes-container modal-section" style="display: none;">
+            <div class="instrucciones-title">Ingredientes:</div>
+            <div id="ingredientes-lista" class="ingredientes-lista">
+              <!-- Los ingredientes se cargarán dinámicamente -->
+            </div>
+            <div class="separador-modal"></div>
+            <div class="instrucciones-container">
+              <div class="instrucciones-title">Instrucciones especiales:</div>
+              <textarea id="producto-instrucciones" placeholder="Ej: Sin cebolla, extra queso, término medio, etc..."></textarea>
+            </div>
+            <div class="modal-acciones">
+              <button id="btn-guardar-instrucciones" class="btn btn-primario">Guardar</button>
+            </div>
+          </div>
+          
+          
         </div>
       </div>
     </div>

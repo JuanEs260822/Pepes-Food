@@ -472,6 +472,8 @@
 /* Modal para instrucciones por producto */
 .modal {
   display: none;
+  justify-content: center;
+  align-items: center;
   position: fixed;
   top: 0;
   left: 0;
@@ -494,7 +496,19 @@
 }
 
 .modal-pequeno {
-  max-width: 400px;
+  max-width: 800px;
+  height: 85vh;
+  overflow: auto;
+}
+
+.modal-body {
+  display: flex;
+  gap: 1rem;
+}
+
+.modal-section {
+  flex: 1;
+  padding: 1rem;
 }
 
 .cerrar-modal {
@@ -527,7 +541,7 @@
 
 .modal-acciones {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 /* Contador de artículos en la orden (para tab) */
@@ -684,7 +698,7 @@
   z-index: 1003;
 }
 
-.instrucciones-title {
+.instrucciones-title, .partes-title {
   margin-bottom: 15px;
   color: var(--color-primario);
   font-size: 18px;
@@ -921,5 +935,39 @@
   border-radius: 4px;
   padding: 2px 6px;
   font-size: 0.8em;
+  color: #333;
+}
+
+/* circle for pizza styles */
+/*label, select {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}*/
+
+.circle-container {
+  margin-top: 1rem;
+  /*display: inline-block;*/
+}
+
+svg {
+  width: 200px;
+  height: 200px;
+}
+
+.segment {
+  fill: #4da6ff;
+  stroke: white;
+  stroke-width: 1;
+  transition: fill 0.3s ease;
+}
+
+.segment:hover {
+  fill: #1e90ff;
+  cursor: pointer;
+}
+
+#output {
+  margin-top: 1.5rem;
+  font-size: 1.2rem;
   color: #333;
 }
