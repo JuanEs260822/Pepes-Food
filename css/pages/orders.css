@@ -58,6 +58,10 @@
   font-weight: bold;
 }
 
+.modal{
+  display: none;
+}
+
 .orden-hora {
   font-size: 0.9rem;
 }
