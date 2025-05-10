@@ -64,84 +64,84 @@
     <a href="add-order.html" class="btn-flotante">
       <i class="fas fa-plus"></i>
     </a>
-  </div>
-  
-  <!-- Modal de detalles de orden -->
-  <div id="modal-detalles" class="modal">
-    <div class="modal-contenido modal-grande">
-      <span class="cerrar-modal">&times;</span>
-      <h2>Detalles de Orden <span id="detalle-numero-orden">#1</span></h2>
-      
-      <div class="detalles-grid">
-        <div class="detalles-info">
-          <div class="info-grupo">
-            <div class="info-etiqueta">Estado:</div>
-            <div class="info-valor">
-              <select id="detalle-estado" class="estado-select">
-                <option value="activo">Activo</option>
-                <option value="ordenado">Ordenado</option>
-                <option value="cocinado">Cocinado</option>
-                <option value="pagado">Pagado</option>
-                <option value="entregado">Entregado</option>
-              </select>
+    <!-- Modal de detalles de orden -->
+    <div id="modal-detalles" class="modal">
+      <div class="modal-contenido modal-grande">
+        <span class="cerrar-modal">&times;</span>
+        <h2>Detalles de Orden <span id="detalle-numero-orden">#1</span></h2>
+        
+        <div class="detalles-grid">
+          <div class="detalles-info">
+            <div class="info-grupo">
+              <div class="info-etiqueta">Estado:</div>
+              <div class="info-valor">
+                <select id="detalle-estado" class="estado-select">
+                  <option value="activo">Activo</option>
+                  <option value="ordenado">Ordenado</option>
+                  <option value="cocinado">Cocinado</option>
+                  <option value="pagado">Pagado</option>
+                  <option value="entregado">Entregado</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="info-grupo">
+              <div class="info-etiqueta">Cliente:</div>
+              <div class="info-valor" id="detalle-cliente">-</div>
+            </div>
+            
+            <div class="info-grupo">
+              <div class="info-etiqueta">Mesa/Llevar:</div>
+              <div class="info-valor" id="detalle-mesa">-</div>
+            </div>
+            
+            <div class="info-grupo">
+              <div class="info-etiqueta">Fecha:</div>
+              <div class="info-valor" id="detalle-fecha">-</div>
+            </div>
+            
+            <div class="info-grupo">
+              <div class="info-etiqueta">Nota:</div>
+              <div class="info-valor nota" id="detalle-nota">-</div>
             </div>
           </div>
           
-          <div class="info-grupo">
-            <div class="info-etiqueta">Cliente:</div>
-            <div class="info-valor" id="detalle-cliente">-</div>
-          </div>
-          
-          <div class="info-grupo">
-            <div class="info-etiqueta">Mesa/Llevar:</div>
-            <div class="info-valor" id="detalle-mesa">-</div>
-          </div>
-          
-          <div class="info-grupo">
-            <div class="info-etiqueta">Fecha:</div>
-            <div class="info-valor" id="detalle-fecha">-</div>
-          </div>
-          
-          <div class="info-grupo">
-            <div class="info-etiqueta">Nota:</div>
-            <div class="info-valor nota" id="detalle-nota">-</div>
+          <div class="detalles-productos">
+            <h3>Productos</h3>
+            <div id="detalle-productos" class="productos-lista">
+              <!-- Se generará dinámicamente -->
+            </div>
+            
+            <div class="resumen-orden">
+              <div class="resumen-fila">
+                <span class="resumen-etiqueta">Subtotal:</span>
+                <span class="resumen-valor" id="detalle-subtotal">-</span>
+              </div>
+              <div class="resumen-fila">
+                <span class="resumen-etiqueta">Descuento:</span>
+                <span class="resumen-valor" id="detalle-descuento">-</span>
+              </div>
+              <div class="resumen-fila total">
+                <span class="resumen-etiqueta">Total:</span>
+                <span class="resumen-valor" id="detalle-total">-</span>
+              </div>
+            </div>
           </div>
         </div>
         
-        <div class="detalles-productos">
-          <h3>Productos</h3>
-          <div id="detalle-productos" class="productos-lista">
-            <!-- Se generará dinámicamente -->
-          </div>
+        <div class="detalles-acciones">
+          <button id="btn-guardar-estado" class="btn btn-primario">
+            <i class="fas fa-save"></i> Guardar Cambios
+          </button>
           
-          <div class="resumen-orden">
-            <div class="resumen-fila">
-              <span class="resumen-etiqueta">Subtotal:</span>
-              <span class="resumen-valor" id="detalle-subtotal">-</span>
-            </div>
-            <div class="resumen-fila">
-              <span class="resumen-etiqueta">Descuento:</span>
-              <span class="resumen-valor" id="detalle-descuento">-</span>
-            </div>
-            <div class="resumen-fila total">
-              <span class="resumen-etiqueta">Total:</span>
-              <span class="resumen-valor" id="detalle-total">-</span>
-            </div>
-          </div>
+          <button id="btn-ir-cobrar" class="btn btn-secundario">
+            <i class="fas fa-cash-register"></i> Ir a Cobrar
+          </button>
         </div>
-      </div>
-      
-      <div class="detalles-acciones">
-        <button id="btn-guardar-estado" class="btn btn-primario">
-          <i class="fas fa-save"></i> Guardar Cambios
-        </button>
-        
-        <button id="btn-ir-cobrar" class="btn btn-secundario">
-          <i class="fas fa-cash-register"></i> Ir a Cobrar
-        </button>
       </div>
     </div>
   </div>
+  
   
   <!-- Scripts -->
   <script src="js/firebase-init.js"></script>

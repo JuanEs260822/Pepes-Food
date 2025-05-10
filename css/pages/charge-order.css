@@ -282,6 +282,10 @@
   margin-top: 20px;
 }
 
+.modal {
+  display: none;
+}
+
 /* Modal de pago */
 .pago-resumen {
   background-color: #f8f8f8;
