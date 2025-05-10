@@ -847,3 +847,79 @@
   background-color: var(--color-primario);
   color: white;
 }
+
+/* Add this to your CSS */
+.medida {
+  margin-bottom: 15px;
+  display: none; /* Hidden by default */
+}
+
+.multi-flavor-container {
+  margin-bottom: 15px;
+}
+
+.pizza-flavors-container,
+.wings-flavors-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pizza-flavor,
+.wings-flavor {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  background: #f9f9f9;
+}
+
+.flavor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.proportion {
+  background: #e0e0e0;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.remove-flavor {
+  background: none;
+  border: none;
+  color: #ff5252;
+  cursor: pointer;
+  font-size: 1.2em;
+}
+
+.flavor-ingredients {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.flavor-select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.orden-item-sabores {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.orden-item-sabor {
+  background: #f0f0f0;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.8em;
+  color: #333;
+}

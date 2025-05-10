@@ -171,6 +171,150 @@ let categoriaActual = '';
 let subcategoriaActual = '';
 let ingredientesSeleccionados = [];
 
+// Function to compare default and selected ingredients
+function getIngredientChanges(defaultIngredients, selectedIngredients) {
+  const added = [];
+  const removed = [];
+  
+  // Find added ingredients
+  selectedIngredients.forEach(ing => {
+    const isDefault = defaultIngredients.some(d => d.id === ing.id && d.default);
+    if (!isDefault) {
+      added.push(ing);
+    }
+  });
+  
+  // Find removed ingredients
+  defaultIngredients.forEach(ing => {
+    if (ing.default) {
+      const stillSelected = selectedIngredients.some(s => s.id === ing.id);
+      if (!stillSelected) {
+        removed.push(ing);
+      }
+    }
+  });
+  
+  return { added, removed };
+}
+
+// Add this function to check if a product is in a specific subcategory
+function isProductInSubcategory(producto, subcategoria) {
+  return producto.subcategoria === subcategoria;
+}
+
+// Function to load ingredients for a specific pizza flavor
+async function cargarIngredientesSabor(flavorIndex, productoId) {
+  const container = document.getElementById(`flavor-ingredients-${flavorIndex}`);
+  
+  // Get product ingredients
+  const ingredientes = await obtenerIngredientesProducto(productoId);
+  
+  // Create a unique namespace for this flavor's ingredients
+  const flavorIngredientes = [];
+  
+  // Create HTML for ingredients
+  let html = '';
+  
+  ingredientes.forEach(ingrediente => {
+    const ingredienteId = `ingrediente-${flavorIndex}-${ingrediente.id}`;
+    
+    html += `
+      <div class="ingrediente-item">
+        <input type="checkbox" class="ingrediente-checkbox" 
+               id="${ingredienteId}" ${ingrediente.default ? 'checked' : ''}>
+        <label for="${ingredienteId}" class="ingrediente-nombre">${ingrediente.nombre}</label>
+        ${ingrediente.precio > 0 ? 
+          `<span class="ingrediente-precio">+ ${formatearMoneda(ingrediente.precio)}</span>` : ''}
+      </div>
+    `;
+    
+    // Add to this flavor's ingredients if default
+    if (ingrediente.default) {
+      flavorIngredientes.push({
+        id: ingrediente.id,
+        nombre: ingrediente.nombre,
+        precio: ingrediente.precio || 0,
+        flavorIndex: flavorIndex
+      });
+    }
+  });
+  
+  container.innerHTML = html;
+  
+  // Add event listeners
+  container.querySelectorAll('.ingrediente-checkbox').forEach(checkbox => {
+    const parts = checkbox.id.split('-');
+    const ingId = parts[2];
+    const ingrediente = ingredientes.find(i => i.id === ingId);
+    
+    checkbox.addEventListener('change', function() {
+      if (this.checked) {
+        // Add to selected
+        flavorIngredientes.push({
+          id: ingrediente.id,
+          nombre: ingrediente.nombre,
+          precio: ingrediente.precio || 0,
+          flavorIndex: flavorIndex
+        });
+      } else {
+        // Remove from selected
+        const index = flavorIngredientes.findIndex(i => i.id === ingrediente.id && i.flavorIndex === flavorIndex);
+        if (index >= 0) {
+          flavorIngredientes.splice(index, 1);
+        }
+      }
+      
+      // Update price
+      actualizarPrecioMultisabor();
+    });
+  });
+  
+  // Add these ingredients to the global selected ingredients
+  ingredientesSeleccionados = [...ingredientesSeleccionados, ...flavorIngredientes];
+}
+
+// Function to update proportions when flavors are added/removed
+function actualizarProporciones() {
+  const flavors = document.querySelectorAll('.pizza-flavor');
+  const count = flavors.length;
+  const proportion = Math.floor(100 / count);
+  
+  flavors.forEach(flavor => {
+    flavor.querySelector('.proportion').textContent = `${proportion}%`;
+  });
+}
+
+// Function to add flavor selection to wings/boneless orders
+function agregarSeleccionSabores() {
+  // Get the current view and subcategory
+  if (isProductInSubcategory(productoSeleccionadoInstr, 'alitas') || 
+      isProductInSubcategory(productoSeleccionadoInstr, 'boneless')) {
+    
+    // Collect the selected flavors
+    const flavors = [];
+    document.querySelectorAll('.wings-flavor').forEach(flavorEl => {
+      const index = parseInt(flavorEl.getAttribute('data-index'));
+      const select = document.getElementById(`flavor-select-${index}`);
+      const proportion = flavorEl.querySelector('.proportion').textContent;
+      
+      flavors.push({
+        flavor: select.value,
+        name: select.options[select.selectedIndex].text,
+        proportion: proportion
+      });
+    });
+    
+    // Add to the order item
+    if (indexItemEditarInstr >= 0) {
+      // Update existing
+      ordenActual.items[indexItemEditarInstr].sabores = flavors;
+    } else {
+      // For new item, it will be added in guardarInstrucciones
+      productoSeleccionadoInstr.sabores = flavors;
+    }
+  }
+}
+
 // Helper function to check if a product exists in static list or has ingredients in Firestore
 async function checkProductoConIngredientes(productoId) {
   // Check static list first
@@ -469,6 +613,159 @@ async function abrirModalProductoInstrucciones(producto) {
   
   // Reiniciar ingredientes
   ingredientesSeleccionados = [];
+
+  const medidaContainer = document.querySelector('.medida');
+  if (isProductInSubcategory(producto, 'pizzas')) {
+    medidaContainer.style.display = 'block';
+    
+    // Add UI for multiple flavors if it's a pizza
+    const flavorContainer = document.createElement('div');
+    flavorContainer.className = 'multi-flavor-container';
+    flavorContainer.innerHTML = `
+      <div class="instrucciones-title">Sabores de pizza:</div>
+      <div class="pizza-flavors-container">
+        <div class="pizza-flavor" data-index="0">
+          <div class="flavor-header">
+            <span>Sabor 1</span>
+            <span class="proportion">100%</span>
+          </div>
+          <div class="flavor-ingredients" id="flavor-ingredients-0"></div>
+        </div>
+        <button id="add-flavor" class="btn btn-secundario">
+          <i class="fas fa-plus"></i> Agregar otro sabor
+        </button>
+      </div>
+    `;
+    
+    // Insert after the medida container
+    medidaContainer.after(flavorContainer);
+    
+    // Load ingredients for the first flavor
+    await cargarIngredientesSabor(0, producto.id);
+    
+    // Add event listener for adding more flavors
+    document.getElementById('add-flavor').addEventListener('click', async function() {
+      const flavorCount = document.querySelectorAll('.pizza-flavor').length;
+      if (flavorCount < 4) { // Maximum 4 flavors
+        const newIndex = flavorCount;
+        
+        const newFlavor = document.createElement('div');
+        newFlavor.className = 'pizza-flavor';
+        newFlavor.setAttribute('data-index', newIndex);
+        
+        // Update proportions
+        const proportion = Math.floor(100 / (flavorCount + 1));
+        
+        newFlavor.innerHTML = `
+          <div class="flavor-header">
+            <span>Sabor ${newIndex + 1}</span>
+            <span class="proportion">${proportion}%</span>
+            <button class="remove-flavor"><i class="fas fa-times"></i></button>
+          </div>
+          <div class="flavor-ingredients" id="flavor-ingredients-${newIndex}"></div>
+        `;
+        
+        // Update all proportions
+        document.querySelectorAll('.pizza-flavor').forEach(flavor => {
+          flavor.querySelector('.proportion').textContent = `${proportion}%`;
+        });
+        
+        // Add before the add button
+        this.before(newFlavor);
+        
+        // Load ingredients for this flavor
+        await cargarIngredientesSabor(newIndex, producto.id);
+        
+        // Add remove event
+        newFlavor.querySelector('.remove-flavor').addEventListener('click', function() {
+          newFlavor.remove();
+          actualizarProporciones();
+        });
+      } else {
+        mostrarNotificacion('Máximo 4 sabores por pizza', 'info');
+      }
+    });
+  } else if (isProductInSubcategory(producto, 'alitas') || isProductInSubcategory(producto, 'boneless')) {
+    // Similar implementation for wings and boneless
+    medidaContainer.style.display = 'none';
+    
+    const flavorContainer = document.createElement('div');
+    flavorContainer.className = 'multi-flavor-container';
+    flavorContainer.innerHTML = `
+      <div class="instrucciones-title">Sabores:</div>
+      <div class="wings-flavors-container">
+        <div class="wings-flavor" data-index="0">
+          <div class="flavor-header">
+            <span>Sabor 1</span>
+            <span class="proportion">100%</span>
+          </div>
+          <select class="flavor-select" id="flavor-select-0">
+            <option value="bbq">BBQ</option>
+            <option value="buffalo">Buffalo</option>
+            <option value="mango-habanero">Mango Habanero</option>
+            <option value="lemon-pepper">Limón Pimienta</option>
+          </select>
+        </div>
+        <button id="add-wings-flavor" class="btn btn-secundario">
+          <i class="fas fa-plus"></i> Agregar otro sabor
+        </button>
+      </div>
+    `;
+    
+    // Insert after the ingredients section
+    document.getElementById('ingredientes-seccion').after(flavorContainer);
+    
+    // Add event listener for adding more flavors
+    document.getElementById('add-wings-flavor').addEventListener('click', function() {
+      const flavorCount = document.querySelectorAll('.wings-flavor').length;
+      if (flavorCount < 2) { // Max 2 flavors for wings/boneless
+        const newIndex = flavorCount;
+        
+        const newFlavor = document.createElement('div');
+        newFlavor.className = 'wings-flavor';
+        newFlavor.setAttribute('data-index', newIndex);
+        
+        newFlavor.innerHTML = `
+          <div class="flavor-header">
+            <span>Sabor ${newIndex + 1}</span>
+            <span class="proportion">50%</span>
+            <button class="remove-flavor"><i class="fas fa-times"></i></button>
+          </div>
+          <select class="flavor-select" id="flavor-select-${newIndex}">
+            <option value="bbq">BBQ</option>
+            <option value="buffalo">Buffalo</option>
+            <option value="mango-habanero">Mango Habanero</option>
+            <option value="lemon-pepper">Limón Pimienta</option>
+          </select>
+        `;
+        
+        // Update proportions
+        document.querySelectorAll('.wings-flavor').forEach(flavor => {
+          flavor.querySelector('.proportion').textContent = `50%`;
+        });
+        
+        // Add before the add button
+        this.before(newFlavor);
+        
+        // Add remove event
+        newFlavor.querySelector('.remove-flavor').addEventListener('click', function() {
+          newFlavor.remove();
+          document.querySelectorAll('.wings-flavor').forEach(flavor => {
+            flavor.querySelector('.proportion').textContent = `100%`;
+          });
+        });
+      } else {
+        mostrarNotificacion('Máximo 2 sabores para alitas/boneless', 'info');
+      }
+    });
+  } else {
+    // Hide for other products
+    medidaContainer.style.display = 'none';
+    
+    // Remove multi-flavor container if it exists
+    const flavorContainer = document.querySelector('.multi-flavor-container');
+    if (flavorContainer) flavorContainer.remove();
+  }
   
   // Verificar si el producto tiene ingredientes
   const tieneIngs = await tieneIngredientes(producto.id);
@@ -566,19 +863,31 @@ async function abrirModalProductoInstrucciones(producto) {
 }
 
 // Función para actualizar el precio en el modal basado en los ingredientes seleccionados
-function actualizarPrecioModal() {
+async function actualizarPrecioModal() {
   if (!productoSeleccionadoInstr) return;
   
-  // Calcular precio adicional
-  const precioAdicional = ingredientesSeleccionados.reduce((total, ingrediente) => {
-    return total + (ingrediente.precio || 0);
-  }, 0);
+  // Get default ingredients to calculate difference
+  const defaultIngredientes = await obtenerIngredientesProducto(productoSeleccionadoInstr.id);
   
-  // Actualizar texto del botón si hay precio adicional
+  // Calculate base price with default paid ingredients
+  const defaultPrecioAdicional = defaultIngredientes
+    .filter(ing => ing.default && ing.precio > 0)
+    .reduce((total, ing) => total + (ing.precio || 0), 0);
+  
+  // Calculate current selected price
+  const currentPrecioAdicional = ingredientesSeleccionados
+    .reduce((total, ing) => total + (ing.precio || 0), 0);
+  
+  // Calculate the net price difference
+  const precioDiferencia = currentPrecioAdicional - defaultPrecioAdicional;
+  
+  // Update the total price
+  const precioTotal = (productoSeleccionadoInstr.precio || 0) + precioDiferencia;
+  
+  // Update button text
   const botonGuardar = document.getElementById('btn-guardar-instrucciones');
   
-  if (precioAdicional > 0) {
-    const precioTotal = (productoSeleccionadoInstr.precio || 0) + precioAdicional;
+  if (precioDiferencia !== 0) {
     botonGuardar.textContent = indexItemEditarInstr >= 0 ? 
       `Actualizar (${formatearMoneda(precioTotal)})` : 
       `Agregar (${formatearMoneda(precioTotal)})`;
@@ -1075,33 +1384,51 @@ async function filtrarProductos() {
   });
 }
 
+// Modify the agregarProductoDirecto function to handle unique ingredients
 function agregarProductoDirecto(producto) {
-  // Verificar si el producto ya está en la orden
-  const itemExistente = ordenActual.items.findIndex(i => i.id === producto.id);
-  
-  if (itemExistente >= 0) {
-    // Aumentar cantidad y subtotal
-    ordenActual.items[itemExistente].cantidad += 1;
-    ordenActual.items[itemExistente].subtotal = 
-      ordenActual.items[itemExistente].precio * ordenActual.items[itemExistente].cantidad;
-  } else {
-    // Agregar nuevo item
+  // If the product has ingredients, always add as new item
+  if (producto.tieneIngredientes) {
+    // Add new item
     const item = {
       id: producto.id,
       nombre: producto.nombre,
       precio: producto.precio || 0,
       cantidad: 1,
       subtotal: producto.precio || 0,
-      instrucciones: ''
+      instrucciones: '',
+      uniqueId: Date.now() // Add a unique identifier
     };
     
     ordenActual.items.push(item);
+  } else {
+    // Check if the product already exists in the order (for products without ingredients)
+    const itemExistente = ordenActual.items.findIndex(i => i.id === producto.id);
+    
+    if (itemExistente >= 0) {
+      // Increase quantity and subtotal
+      ordenActual.items[itemExistente].cantidad += 1;
+      ordenActual.items[itemExistente].subtotal = 
+        ordenActual.items[itemExistente].precio * ordenActual.items[itemExistente].cantidad;
+    } else {
+      // Add new item
+      const item = {
+        id: producto.id,
+        nombre: producto.nombre,
+        precio: producto.precio || 0,
+        cantidad: 1,
+        subtotal: producto.precio || 0,
+        instrucciones: '',
+        uniqueId: Date.now() // Add a unique identifier
+      };
+      
+      ordenActual.items.push(item);
+    }
   }
   
-  // Actualizar UI
+  // Update UI
   actualizarOrdenUI();
   
-  // Notificación
+  // Notification
   mostrarNotificacion(`${producto.nombre} agregado a la orden`, 'success');
 }
 
@@ -1263,7 +1590,7 @@ function abrirModalInstrucciones(item, index) {
 }
 
 // Función modificada para guardar instrucciones
-function guardarInstrucciones() {
+async function guardarInstrucciones() {
   if (indexItemEditarInstr >= 0) {
     // Estamos editando un item existente
     if (indexItemEditarInstr < ordenActual.items.length) {
@@ -1314,6 +1641,13 @@ function guardarInstrucciones() {
       
       // Precio final del producto
       const precioFinal = (productoSeleccionadoInstr.precio || 0) + precioAdicional;
+
+      // Calculate ingredient changes
+      let ingredientChanges = { added: [], removed: [] };
+      if (productoSeleccionadoInstr && await tieneIngredientes(productoSeleccionadoInstr.id)) {
+        const defaultIngredientes = await obtenerIngredientesProducto(productoSeleccionadoInstr.id);
+        ingredientChanges = getIngredientChanges(defaultIngredientes, ingredientesSeleccionados);
+      }
       
       // Crear item para la orden
       const item = {
@@ -1323,8 +1657,9 @@ function guardarInstrucciones() {
         cantidad: 1,
         subtotal: precioFinal,
         instrucciones: instrucciones,
-        ingredientes: ingredientesSeleccionados.length > 0 ? ingredientesSeleccionados : undefined
-      };
+        ingredientes: ingredientesSeleccionados.length > 0 ? ingredientesSeleccionados : undefined,
+        ingredientChanges: ingredientChanges 
+        };
       
       // Agregar a la orden
       ordenActual.items.push(item);
@@ -1453,7 +1788,9 @@ async function crearOrden() {
         precio: item.precio,
         cantidad: item.cantidad,
         subtotal: item.subtotal,
-        instrucciones: item.instrucciones || ''
+        instrucciones: item.instrucciones || '',
+        ingredientes: item.ingredientes || [], // Save ingredients
+        ingredientChanges: item.ingredientChanges || { added: [], removed: [] } // Save changes
       })),
       subtotal: ordenActual.subtotal,
       descuento: ordenActual.descuento,
