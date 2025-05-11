@@ -63,6 +63,24 @@ const subcategoriasPorCategoria = {
   ]
 };
 
+// ingredientes predefinidos para pizzas, hamburguesas y tortas
+const ingredientesPorSubcategoria = {
+  'pizzas': [
+    { nombre: 'Queso', precio: 0, default: true },
+    { nombre: 'Salsa', precio: 0, default: true }
+  ],
+  'hamburguesas': [
+    { nombre: 'Chile', precio: 0, default: true },
+    { nombre: 'Jitomate', precio: 0, default: true },
+    { nombre: 'Cebolla', precio: 0, default: true }
+  ],
+  'tortas': [
+    { nombre: 'Chile', precio: 0, default: true },
+    { nombre: 'Jitomate', precio: 0, default: true },
+    { nombre: 'Cebolla', precio: 0, default: true }
+  ]
+};
+
 document.addEventListener('DOMContentLoaded', function() {
   // Verificar autenticación
   verificarAutenticacion()
@@ -74,8 +92,6 @@ document.addEventListener('DOMContentLoaded', function() {
       console.error('Error de autenticación:', error);
       // La redirección al login se maneja en verificarAutenticacion()
     });
-    // ---
-    agregarEstilosSelector();
 });
 
 function inicializarPagina() {
@@ -145,65 +161,6 @@ function inicializarPagina() {
   
   // Cargar productos iniciales
   cargarProductos();
-}
-
-// --- AÑADIR ESTILOS AL SELECCIONADOR DE IMAGENES. CAMBIAR A CSS Y QUITAR DEL DOM ESTA FUNCION
-function agregarEstilosSelector() {
-  const style = document.createElement('style');
-  style.textContent = `
-    .imagenes-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 15px;
-      margin-top: 15px;
-    }
-    
-    .imagen-item {
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      padding: 5px;
-      cursor: pointer;
-      text-align: center;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    
-    .imagen-item:hover {
-      transform: scale(1.03);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    
-    .imagen-item img {
-      width: 100%;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 3px;
-    }
-    
-    .imagen-nombre {
-      margin-top: 5px;
-      font-size: 12px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    
-    .upload-new {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 120px;
-      background-color: #f7f7f7;
-    }
-    
-    .upload-icon {
-      font-size: 24px;
-      color: #555;
-      margin-bottom: 10px;
-    }
-  `;
-  
-  document.head.appendChild(style);
 }
 
 // --- Function to add sorting controls
@@ -825,8 +782,18 @@ function abrirModalAgregarProducto() {
   // Mostrar modal
   document.getElementById('modal-producto').style.display = 'block';
   
-  // Reiniciar productoActual
-  productoActual = null;
+  // Crear un producto temporal para permitir edición de ingredientes
+  productoActual = {
+    isTemp: true, // Flag to indicate this is a temporary product
+    nombre: '',
+    categoria: '',
+    subcategoria: '',
+    precio: 0,
+    cantidad: 0,
+    descripcion: '',
+    disponible: true,
+    tieneIngredientes: false
+  };
 }
 
 async function abrirModalEditarProducto(id) {
@@ -899,8 +866,84 @@ function actualizarSubcategorias() {
     const option = document.createElement('option');
     option.value = subcategoria.id;
     option.textContent = subcategoria.nombre;
+    
+    // Añadir un atributo data para indicar si tiene ingredientes predeterminados
+    if (ingredientesPorSubcategoria[subcategoria.id]) {
+      option.setAttribute('data-has-default-ingredients', 'true');
+    }
+    
     subcategoriaSelect.appendChild(option);
   });
+  
+  // Añadir evento para detectar cambios en la subcategoría
+  subcategoriaSelect.addEventListener('change', verificarIngredientesPredeterminados);
+
+  // Actualizar ingredientes cuando cambia la subcategoría
+  verificarIngredientesPredeterminados();
+}
+
+function verificarIngredientesPredeterminados() {
+  const subcategoriaSelect = document.getElementById('producto-subcategoria');
+  const subcategoriaSeleccionada = subcategoriaSelect.value;
+  
+  // Actualizar el producto actual con la nueva subcategoría
+  if (productoActual && productoActual.isTemp) {
+    productoActual.subcategoria = subcategoriaSeleccionada;
+    
+    // Si cambia la subcategoría y no hay ingredientes personalizados, 
+    // actualizar los ingredientes según la subcategoría seleccionada
+    if (ingredientesPorSubcategoria[subcategoriaSeleccionada] && 
+        (!ingredientesActuales || ingredientesActuales.length === 0 || 
+         confirm('¿Deseas reemplazar los ingredientes actuales con los predeterminados para esta subcategoría?'))) {
+      
+      ingredientesActuales = ingredientesPorSubcategoria[subcategoriaSeleccionada].map(ing => ({
+        id: 'temp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+        nombre: ing.nombre,
+        precio: ing.precio,
+        default: ing.default
+      }));
+      
+      // Actualizar bandera en producto temporal
+      productoActual.tieneIngredientes = true;
+      
+      // Si el modal de ingredientes está abierto, actualizar la vista
+      if (document.getElementById('modal-ingredientes').style.display === 'block') {
+        renderizarIngredientes();
+      }
+    }
+  }
+  
+  // Mostrar info de ingredientes predeterminados
+  const btnIngredientsContainer = document.querySelector('.btn-ingredientes-container') || 
+                                 document.createElement('div');
+  btnIngredientsContainer.className = 'btn-ingredientes-container';
+  
+  if (ingredientesPorSubcategoria[subcategoriaSeleccionada]) {
+    // Contar ingredientes predeterminados
+    const numIngredientes = ingredientesPorSubcategoria[subcategoriaSeleccionada].length;
+    
+    btnIngredientsContainer.innerHTML = `
+      <button type="button" id="btn-ingredientes-info" class="btn btn-secundario">
+        <i class="fas fa-list"></i> 
+        Ver ${numIngredientes} ingredientes predeterminados
+      </button>
+    `;
+    
+    // Añadir o reemplazar el botón
+    const submitBtn = document.querySelector('#btn-guardar');
+    if (!document.querySelector('.btn-ingredientes-container')) {
+      submitBtn.parentNode.insertBefore(btnIngredientsContainer, submitBtn);
+    }
+    
+    // Agregar evento para abrir modal de ingredientes
+    document.getElementById('btn-ingredientes-info').addEventListener('click', abrirModalIngredientes);
+    
+  } else {
+    // Eliminar el contenedor si existe
+    if (document.querySelector('.btn-ingredientes-container')) {
+      btnIngredientsContainer.parentNode.removeChild(btnIngredientsContainer);
+    }
+  }
 }
 
 function mostrarVistaPrevia(event) {
@@ -928,7 +971,6 @@ function mostrarVistaPrevia(event) {
   reader.readAsDataURL(file);
 }
 
-// Modificar la función guardarProducto en productos.js para incluir el campo tieneIngredientes
 async function guardarProducto(event) {
   event.preventDefault();
   
@@ -954,6 +996,15 @@ async function guardarProducto(event) {
     const hiddenInput = document.getElementById('producto-imagen-ruta');
     const imagenURL = hiddenInput ? hiddenInput.value : null;
     
+    // Determinar si el producto tiene ingredientes
+    let hayIngredientesTmp = false;
+    if (productoActual && productoActual.isTemp && ingredientesActuales && ingredientesActuales.length > 0) {
+      hayIngredientesTmp = true;
+    }
+    
+    // Verificar si la subcategoría tiene ingredientes predeterminados
+    const tieneIngredientesPredeterminados = !hayIngredientesTmp && !!ingredientesPorSubcategoria[subcategoria];
+    
     // Datos para guardar
     const productoData = {
       nombre,
@@ -963,7 +1014,7 @@ async function guardarProducto(event) {
       cantidad,
       descripcion,
       disponible,
-      tieneIngredientes: false, // Por defecto, false hasta que se agreguen ingredientes
+      tieneIngredientes: hayIngredientesTmp || tieneIngredientesPredeterminados,
       fechaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
     };
     
@@ -972,23 +1023,40 @@ async function guardarProducto(event) {
       productoData.imagenURL = imagenURL;
     }
     
-    // Guardar en Firestore
-    if (productoActual) {
-      // Al actualizar, no sobreescribir tieneIngredientes
-      delete productoData.tieneIngredientes;
-      
+    // Variable para almacenar el ID del producto
+    let productoId;
+    
+    // Guardar el producto en Firestore
+    if (productoActual && !productoActual.isTemp) {
       // Actualizar producto existente
       await db.collection('productos').doc(productoActual.id).update(productoData);
+      productoId = productoActual.id;
       mostrarNotificacion('Producto actualizado correctamente');
     } else {
       // Agregar nuevo producto
       productoData.fechaCreacion = firebase.firestore.FieldValue.serverTimestamp();
-      await db.collection('productos').add(productoData);
+      const docRef = await db.collection('productos').add(productoData);
+      productoId = docRef.id;
+      
+      // Ahora guardar los ingredientes si existen
+      if (hayIngredientesTmp && ingredientesActuales.length > 0) {
+        await guardarIngredientesNuevoProducto(productoId, ingredientesActuales);
+      } else if (tieneIngredientesPredeterminados) {
+        // Si no hay ingredientes personalizados pero la subcategoría tiene predeterminados
+        await agregarIngredientesPredeterminados(productoId, subcategoria);
+      }
+      
       mostrarNotificacion('Producto agregado correctamente');
     }
     
     // Cerrar modal y recargar productos
     cerrarModales();
+    
+    // Reiniciar variables globales
+    productoActual = null;
+    ingredientesActuales = [];
+    
+    // Recargar la lista de productos
     cargarProductos();
     
   } catch (error) {
@@ -996,6 +1064,39 @@ async function guardarProducto(event) {
     mostrarNotificacion('Error al guardar el producto. Inténtalo de nuevo.', 'error');
   } finally {
     mostrarCargando(false);
+  }
+}
+
+async function agregarIngredientesPredeterminados(productoId, subcategoria) {
+  // Verificar si hay ingredientes predeterminados para esta subcategoría
+  const ingredientesPredeterminados = ingredientesPorSubcategoria[subcategoria];
+  if (!ingredientesPredeterminados || !productoId) return;
+  
+  try {
+    // Referencia a la colección de ingredientes
+    const ingredientesRef = db.collection('productos').doc(productoId).collection('ingredientes');
+    
+    // Crear un lote para operaciones en batch
+    const batch = db.batch();
+    
+    // Agregar cada ingrediente predeterminado
+    for (const ingrediente of ingredientesPredeterminados) {
+      const nuevoDoc = ingredientesRef.doc();
+      batch.set(nuevoDoc, {
+        nombre: ingrediente.nombre,
+        precio: ingrediente.precio,
+        default: ingrediente.default
+      });
+    }
+    
+    // Ejecutar el batch
+    await batch.commit();
+    
+    console.log(`Ingredientes predeterminados agregados para el producto ${productoId}`);
+    
+  } catch (error) {
+    console.error('Error al agregar ingredientes predeterminados:', error);
+    // No mostrar notificación al usuario ya que sería confuso
   }
 }
 
@@ -1069,10 +1170,19 @@ function obtenerNombreSubcategoria(categoria, subcategoriaId) {
 
 // Función para abrir el modal de ingredientes
 function abrirModalIngredientes() {
-  // Si no hay producto actual, no hacer nada
+  // Si no hay producto actual, crear uno temporal
   if (!productoActual) {
-    mostrarNotificacion('Por favor, primero crea o edita un producto', 'info');
-    return;
+    productoActual = {
+      isTemp: true,
+      nombre: document.getElementById('producto-nombre').value.trim() || 'Nuevo Producto',
+      categoria: document.getElementById('producto-categoria').value,
+      subcategoria: document.getElementById('producto-subcategoria').value,
+      precio: parseFloat(document.getElementById('producto-precio').value) || 0,
+      cantidad: document.getElementById('producto-cantidad').value || 0,
+      descripcion: document.getElementById('producto-descripcion').value.trim(),
+      disponible: document.getElementById('producto-disponible').value === 'true',
+      tieneIngredientes: false
+    };
   }
   
   // Cargar ingredientes actuales
@@ -1082,20 +1192,41 @@ function abrirModalIngredientes() {
   document.getElementById('modal-ingredientes').style.display = 'block';
 }
 
-// Función para cargar ingredientes del producto actual
 async function cargarIngredientesProducto() {
   const container = document.getElementById('ingredientes-container');
   container.innerHTML = '<p class="cargando-mensaje">Cargando ingredientes...</p>';
   
   try {
-    // Si es un producto nuevo, iniciar con lista vacía
-    if (!productoActual.id) {
-      ingredientesActuales = [];
+    // Si es un producto temporal o nuevo
+    if (productoActual.isTemp || !productoActual.id) {
+      // Verificar si ya hay ingredientes cargados
+      if (ingredientesActuales && ingredientesActuales.length > 0) {
+        renderizarIngredientes();
+        return;
+      }
+      
+      // Obtener subcategoría seleccionada
+      const subcategoriaSeleccionada = productoActual.subcategoria || 
+                                      document.getElementById('producto-subcategoria').value;
+      
+      // Si la subcategoría tiene ingredientes predefinidos, usarlos
+      if (ingredientesPorSubcategoria[subcategoriaSeleccionada]) {
+        ingredientesActuales = ingredientesPorSubcategoria[subcategoriaSeleccionada].map(ing => ({
+          id: 'temp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+          nombre: ing.nombre,
+          precio: ing.precio,
+          default: ing.default
+        }));
+      } else {
+        // Si no hay ingredientes predefinidos, iniciar con lista vacía
+        ingredientesActuales = [];
+      }
+      
       renderizarIngredientes();
       return;
     }
     
-    // Buscar ingredientes en Firestore
+    // Si es un producto existente, buscar ingredientes en Firestore
     const ingredientesRef = await db.collection('productos')
       .doc(productoActual.id)
       .collection('ingredientes')
@@ -1109,11 +1240,6 @@ async function cargarIngredientesProducto() {
         ...doc.data()
       });
     });
-    
-    // Si no hay ingredientes, crear lista vacía
-    if (ingredientesActuales.length === 0) {
-      ingredientesActuales = [];
-    }
     
     renderizarIngredientes();
     
@@ -1232,13 +1358,6 @@ function eliminarIngrediente(index) {
 
 // Función para guardar ingredientes
 async function guardarIngredientes() {
-  // Validar que haya un producto actual
-  if (!productoActual || !productoActual.id) {
-    mostrarNotificacion('Por favor, primero guarda el producto', 'info');
-    document.getElementById('modal-ingredientes').style.display = 'none';
-    return;
-  }
-  
   // Validar ingredientes
   const ingredientesInvalidos = ingredientesActuales.filter(ing => !ing.nombre || ing.nombre.trim() === '');
   if (ingredientesInvalidos.length > 0) {
@@ -1246,7 +1365,19 @@ async function guardarIngredientes() {
     return;
   }
   
-  // Mostrar cargando
+  // Si es un producto temporal, guardar los ingredientes en memoria
+  if (productoActual.isTemp || !productoActual.id) {
+    productoActual.tieneIngredientes = ingredientesActuales.length > 0;
+    
+    // Mostrar una notificación de éxito
+    mostrarNotificacion('Ingredientes guardados. Se añadirán cuando guardes el producto.');
+    
+    // Cerrar modal
+    document.getElementById('modal-ingredientes').style.display = 'none';
+    return;
+  }
+  
+  // Si llegamos aquí, es un producto existente, así que guardamos en Firestore
   mostrarCargando(true);
   
   try {
@@ -1275,7 +1406,7 @@ async function guardarIngredientes() {
         default: ingrediente.default === true
       };
       
-      if (ingrediente.id.startsWith('nuevo_')) {
+      if (ingrediente.id.startsWith('nuevo_') || ingrediente.id.startsWith('temp_')) {
         // Es un ingrediente nuevo, crear doc
         const nuevoDoc = ingredientesRef.doc();
         batch.set(nuevoDoc, datos);
@@ -1307,3 +1438,34 @@ async function guardarIngredientes() {
   }
 }
 
+// helper function to save temporary ingredientes to be able to save ingredientes when adding producto nuevo
+async function guardarIngredientesNuevoProducto(productoId, ingredientes) {
+  if (!productoId || !ingredientes || ingredientes.length === 0) return;
+  
+  try {
+    // Referencia a la colección de ingredientes
+    const ingredientesRef = db.collection('productos').doc(productoId).collection('ingredientes');
+    
+    // Crear un lote para operaciones en batch
+    const batch = db.batch();
+    
+    // Añadir cada ingrediente
+    for (const ingrediente of ingredientes) {
+      const nuevoDoc = ingredientesRef.doc();
+      batch.set(nuevoDoc, {
+        nombre: ingrediente.nombre.trim(),
+        precio: parseFloat(ingrediente.precio) || 0,
+        default: ingrediente.default === true
+      });
+    }
+    
+    // Ejecutar el batch
+    await batch.commit();
+    
+    console.log(`${ingredientes.length} ingredientes guardados para el producto ${productoId}`);
+    
+  } catch (error) {
+    console.error('Error al guardar ingredientes para nuevo producto:', error);
+    throw error; // Re-lanzar para manejar en la función principal
+  }
+}
