@@ -260,7 +260,7 @@ function renderizarOrdenes(ordenes) {
   container.innerHTML = html;
   
   // Agregar eventos a los botones
-  document.querySelectorAll('.btn-detalles').forEach(btn => {
+  document.querySelectorAll('.orden-card').forEach(btn => {
     btn.addEventListener('click', function() {
       const id = this.getAttribute('data-id');
       mostrarDetallesOrden(id);
