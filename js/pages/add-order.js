@@ -1,5 +1,19 @@
 // add-order.js - Lógica para la página de crear orden (versión mejorada)
 
+// la funcion verificar autenticacion esta funcionando???
+document.addEventListener('DOMContentLoaded', function() {
+  // Verificar autenticación
+  verificarAutenticacion()
+    .then(usuario => {
+      // Inicializar página
+      inicializarPagina();
+    })
+    .catch(error => {
+      console.error('Error de autenticación:', error);
+      // La redirección al login se maneja en verificarAutenticacion()
+    });
+});
+
 // Variables globales
 let productosData = [];
 let ordenActual = {
@@ -16,6 +30,16 @@ let ordenActual = {
 let filtroCategoria = 'todos';
 let filtroSubcategoria = '';
 let filtroBusqueda = '';
+
+// Variables para modales e instrucciones especiales
+let productoSeleccionadoInstr = null;
+let indexItemEditarInstr = -1;
+
+// Variables para la navegación entre categorías y subcategorías
+let vistaActual = 'categorias'; 
+let categoriaActual = '';
+let subcategoriaActual = '';
+let ingredientesSeleccionados = [];
 
 // Mapeo de subcategorías por categoría
 const subcategoriasPorCategoria = {
@@ -58,119 +82,6 @@ const subcategoriasPorCategoria = {
   ]
 };
 
-// List of products with special instructions (ingredientes)
-const productosConInstrucciones = [
-  'hamburguesa_sencilla', 'hamburguesa_doble', 'hamburguesa_hawaiana', 
-  'torta_jamon', 'torta_milanesa', 'pizza_pepperoni', 'pizza_hawaiana',
-  'hotdog_sencillo', 'sincronizada_jamon', 'Qvypwj48HTUEBn1hbcxI'
-];
-
-// Catálogo de ingredientes por tipo de producto
-const ingredientesPorProducto = {
-  // Hamburguesas
-  'hamburguesa_sencilla': [
-    { id: 'lechuga', nombre: 'Lechuga', precio: 0, default: true },
-    { id: 'tomate', nombre: 'Tomate', precio: 0, default: true },
-    { id: 'cebolla', nombre: 'Cebolla', precio: 0, default: true },
-    { id: 'pepinillos', nombre: 'Pepinillos', precio: 0, default: true },
-    { id: 'queso', nombre: 'Queso extra', precio: 10, default: false },
-    { id: 'tocino', nombre: 'Tocino', precio: 15, default: false },
-    { id: 'champinones', nombre: 'Champiñones', precio: 12, default: false },
-    { id: 'jalapeño', nombre: 'Jalapeño', precio: 8, default: false },
-    { id: 'guacamole', nombre: 'Guacamole', precio: 15, default: false }
-  ],
-  'hamburguesa_doble': [
-    { id: 'lechuga', nombre: 'Lechuga', precio: 0, default: true },
-    { id: 'tomate', nombre: 'Tomate', precio: 0, default: true },
-    { id: 'cebolla', nombre: 'Cebolla', precio: 0, default: true },
-    { id: 'pepinillos', nombre: 'Pepinillos', precio: 0, default: true },
-    { id: 'queso', nombre: 'Queso extra', precio: 10, default: false },
-    { id: 'tocino', nombre: 'Tocino', precio: 15, default: true },
-    { id: 'champinones', nombre: 'Champiñones', precio: 12, default: false },
-    { id: 'jalapeño', nombre: 'Jalapeño', precio: 8, default: false },
-    { id: 'guacamole', nombre: 'Guacamole', precio: 15, default: false }
-  ],
-  'hamburguesa_hawaiana': [
-    { id: 'lechuga', nombre: 'Lechuga', precio: 0, default: true },
-    { id: 'tomate', nombre: 'Tomate', precio: 0, default: true },
-    { id: 'cebolla', nombre: 'Cebolla', precio: 0, default: true },
-    { id: 'piña', nombre: 'Piña', precio: 0, default: true },
-    { id: 'queso', nombre: 'Queso extra', precio: 10, default: false },
-    { id: 'tocino', nombre: 'Tocino', precio: 15, default: false },
-    { id: 'jalapeño', nombre: 'Jalapeño', precio: 8, default: false }
-  ],
-  
-  // Tortas
-  'torta_jamon': [
-    { id: 'lechuga', nombre: 'Lechuga', precio: 0, default: true },
-    { id: 'tomate', nombre: 'Tomate', precio: 0, default: true },
-    { id: 'cebolla', nombre: 'Cebolla', precio: 0, default: true },
-    { id: 'aguacate', nombre: 'Aguacate', precio: 10, default: true },
-    { id: 'queso', nombre: 'Queso', precio: 10, default: true },
-    { id: 'jalapeño', nombre: 'Jalapeño', precio: 5, default: false }
-  ],
-  'torta_milanesa': [
-    { id: 'lechuga', nombre: 'Lechuga', precio: 0, default: true },
-    { id: 'tomate', nombre: 'Tomate', precio: 0, default: true },
-    { id: 'cebolla', nombre: 'Cebolla', precio: 0, default: true },
-    { id: 'aguacate', nombre: 'Aguacate', precio: 10, default: true },
-    { id: 'queso', nombre: 'Queso', precio: 10, default: true },
-    { id: 'jalapeño', nombre: 'Jalapeño', precio: 5, default: false }
-  ],
-  
-  // Pizzas
-  'pizza_pepperoni': [
-    { id: 'queso_extra', nombre: 'Queso extra', precio: 15, default: false },
-    { id: 'champiñones', nombre: 'Champiñones', precio: 10, default: false },
-    { id: 'pimiento', nombre: 'Pimiento', precio: 10, default: false },
-    { id: 'cebolla', nombre: 'Cebolla', precio: 10, default: false },
-    { id: 'aceitunas', nombre: 'Aceitunas', precio: 10, default: false },
-    { id: 'jalapeño', nombre: 'Jalapeño', precio: 8, default: false }
-  ],
-  'pizza_hawaiana': [
-    { id: 'queso_extra', nombre: 'Queso extra', precio: 15, default: false },
-    { id: 'piña_extra', nombre: 'Piña extra', precio: 10, default: false },
-    { id: 'jamón_extra', nombre: 'Jamón extra', precio: 15, default: false },
-    { id: 'champiñones', nombre: 'Champiñones', precio: 10, default: false },
-    { id: 'jalapeño', nombre: 'Jalapeño', precio: 8, default: false }
-  ],
-  
-  // Hot Dogs
-  'hotdog_sencillo': [
-    { id: 'cebolla', nombre: 'Cebolla', precio: 0, default: true },
-    { id: 'tomate', nombre: 'Tomate', precio: 0, default: true },
-    { id: 'jalapeño', nombre: 'Jalapeño', precio: 5, default: false },
-    { id: 'tocino', nombre: 'Tocino', precio: 15, default: false },
-    { id: 'queso', nombre: 'Queso cheddar', precio: 10, default: false }
-  ],
-  
-  // Sincronizadas
-  'sincronizada_jamon': [
-    { id: 'queso_extra', nombre: 'Queso extra', precio: 10, default: false },
-    { id: 'champiñones', nombre: 'Champiñones', precio: 10, default: false },
-    { id: 'jalapeño', nombre: 'Jalapeño', precio: 5, default: false }
-  ],
-
-  //ejemplo con dorilocos
-  'Qvypwj48HTUEBn1hbcxI': [
-    { id: 'lechuga', nombre: 'Lechuga', precio: 0, default: true },
-    { id: 'tomate', nombre: 'Tomate', precio: 0, default: true },
-    { id: 'cebolla', nombre: 'Cebolla', precio: 0, default: true },
-    { id: 'pepinillos', nombre: 'Pepinillos', precio: 0, default: true },
-    { id: 'queso', nombre: 'Queso extra', precio: 10, default: false },
-    { id: 'tocino', nombre: 'Tocino', precio: 15, default: false },
-    { id: 'champinones', nombre: 'Champiñones', precio: 12, default: false },
-    { id: 'jalapeño', nombre: 'Jalapeño', precio: 8, default: false },
-    { id: 'guacamole', nombre: 'Guacamole', precio: 15, default: false }
-  ]
-};
-
-// Variables para la navegación entre categorías y subcategorías
-let vistaActual = 'categorias'; // puede ser 'categorias', 'subcategorias', 'productos'
-let categoriaActual = '';
-let subcategoriaActual = '';
-let ingredientesSeleccionados = [];
-
 // Function to compare default and selected ingredients
 function getIngredientChanges(defaultIngredients, selectedIngredients) {
   const added = [];
@@ -202,142 +113,10 @@ function isProductInSubcategory(producto, subcategoria) {
   return producto.subcategoria === subcategoria;
 }
 
-// Function to load ingredients for a specific pizza flavor
-async function cargarIngredientesSabor(flavorIndex, productoId) {
-  const container = document.getElementById(`flavor-ingredients-${flavorIndex}`);
-  
-  // Get product ingredients
-  const ingredientes = await obtenerIngredientesProducto(productoId);
-  
-  // Create a unique namespace for this flavor's ingredients
-  const flavorIngredientes = [];
-  
-  // Create HTML for ingredients
-  let html = '';
-  
-  ingredientes.forEach(ingrediente => {
-    const ingredienteId = `ingrediente-${flavorIndex}-${ingrediente.id}`;
-    
-    html += `
-      <div class="ingrediente-item">
-        <input type="checkbox" class="ingrediente-checkbox" 
-               id="${ingredienteId}" ${ingrediente.default ? 'checked' : ''}>
-        <label for="${ingredienteId}" class="ingrediente-nombre">${ingrediente.nombre}</label>
-        ${ingrediente.precio > 0 ? 
-          `<span class="ingrediente-precio">+ ${formatearMoneda(ingrediente.precio)}</span>` : ''}
-      </div>
-    `;
-    
-    // Add to this flavor's ingredients if default
-    if (ingrediente.default) {
-      flavorIngredientes.push({
-        id: ingrediente.id,
-        nombre: ingrediente.nombre,
-        precio: ingrediente.precio || 0,
-        flavorIndex: flavorIndex
-      });
-    }
-  });
-  
-  container.innerHTML = html;
-  
-  // Add event listeners
-  container.querySelectorAll('.ingrediente-checkbox').forEach(checkbox => {
-    const parts = checkbox.id.split('-');
-    const ingId = parts[2];
-    const ingrediente = ingredientes.find(i => i.id === ingId);
-    
-    checkbox.addEventListener('change', function() {
-      if (this.checked) {
-        // Add to selected
-        flavorIngredientes.push({
-          id: ingrediente.id,
-          nombre: ingrediente.nombre,
-          precio: ingrediente.precio || 0,
-          flavorIndex: flavorIndex
-        });
-      } else {
-        // Remove from selected
-        const index = flavorIngredientes.findIndex(i => i.id === ingrediente.id && i.flavorIndex === flavorIndex);
-        if (index >= 0) {
-          flavorIngredientes.splice(index, 1);
-        }
-      }
-      
-      // Update price
-      actualizarPrecioMultisabor();
-    });
-  });
-  
-  // Add these ingredients to the global selected ingredients
-  ingredientesSeleccionados = [...ingredientesSeleccionados, ...flavorIngredientes];
-}
-
-// Function to update proportions when flavors are added/removed
-function actualizarProporciones() {
-  const flavors = document.querySelectorAll('.pizza-flavor');
-  const count = flavors.length;
-  const proportion = Math.floor(100 / count);
-  
-  flavors.forEach(flavor => {
-    flavor.querySelector('.proportion').textContent = `${proportion}%`;
-  });
-}
-
-// Function to add flavor selection to wings/boneless orders
-function agregarSeleccionSabores() {
-  // Get the current view and subcategory
-  if (isProductInSubcategory(productoSeleccionadoInstr, 'alitas') || 
-      isProductInSubcategory(productoSeleccionadoInstr, 'boneless')) {
-    
-    // Collect the selected flavors
-    const flavors = [];
-    document.querySelectorAll('.wings-flavor').forEach(flavorEl => {
-      const index = parseInt(flavorEl.getAttribute('data-index'));
-      const select = document.getElementById(`flavor-select-${index}`);
-      const proportion = flavorEl.querySelector('.proportion').textContent;
-      
-      flavors.push({
-        flavor: select.value,
-        name: select.options[select.selectedIndex].text,
-        proportion: proportion
-      });
-    });
-    
-    // Add to the order item
-    if (indexItemEditarInstr >= 0) {
-      // Update existing
-      ordenActual.items[indexItemEditarInstr].sabores = flavors;
-    } else {
-      // For new item, it will be added in guardarInstrucciones
-      productoSeleccionadoInstr.sabores = flavors;
-    }
-  }
-}
-
-// Helper function to check if a product exists in static list or has ingredients in Firestore
-async function checkProductoConIngredientes(productoId) {
-  // Check static list first
-  if (productosConInstrucciones.includes(productoId)) {
-    return true;
-  }
-  
-  // Then check in Firestore
-  try {
-    const productoDoc = await db.collection('productos').doc(productoId).get();
-    if (productoDoc.exists) {
-      const productoData = productoDoc.data();
-      return productoData.tieneIngredientes === true;
-    }
-    return false;
-  } catch (error) {
-    console.error("Error checking if product has ingredients:", error);
-    return false;
-  }
-}
-
 // Función para verificar múltiples productos con ingredientes en una sola operación
 async function verificarProductosConIngredientes(productosIds) {
+
+  mostrarCargando(true);
   try {
     // Consulta por lotes para optimizar
     const productos = await db.collection('productos')
@@ -355,16 +134,14 @@ async function verificarProductosConIngredientes(productosIds) {
   } catch (error) {
     console.error("Error verificando productos con ingredientes:", error);
     return {};
+  } finally {
+    mostrarCargando(false);
   }
 }
 
 // Función para verificar si un producto tiene ingredientes personalizables
 async function tieneIngredientes(productoId) {
-  // Verificar primero en la lista estática (para compatibilidad)
-  if (ingredientesPorProducto.hasOwnProperty(productoId)) {
-    return true;
-  }
-  
+  mostrarCargando(true);
   // Verificar en Firebase si tiene ingredientes
   try {
     const productoRef = await db.collection('productos').doc(productoId).get();
@@ -373,15 +150,14 @@ async function tieneIngredientes(productoId) {
   } catch (error) {
     console.error("Error al verificar ingredientes del producto:", error);
     return false;
+  } finally {
+    mostrarCargando(false);
   }
 }
 
 // Función para obtener ingredientes de un producto
 async function obtenerIngredientesProducto(productoId) {
-  // Si existe en la lista estática, usar esos (para compatibilidad)
-  if (ingredientesPorProducto.hasOwnProperty(productoId)) {
-    return ingredientesPorProducto[productoId];
-  }
+  mostrarCargando(true);
   
   // Si no, buscar en Firebase
   try {
@@ -403,6 +179,8 @@ async function obtenerIngredientesProducto(productoId) {
   } catch (error) {
     console.error("Error al obtener ingredientes del producto:", error);
     return [];
+  } finally {
+    mostrarCargando(false);
   }
 }
 
@@ -688,73 +466,6 @@ async function abrirModalProductoInstrucciones(producto) {
 
     drawSegments(1); // initial load
     
-    // Add UI for multiple flavors if it's a pizza
-    /*const flavorContainer = document.createElement('div');
-    flavorContainer.className = 'multi-flavor-container';
-    flavorContainer.innerHTML = `
-      <div class="instrucciones-title">Sabores de pizza:</div>
-      <div class="pizza-flavors-container">
-        <div class="pizza-flavor" data-index="0">
-          <div class="flavor-header">
-            <span>Sabor 1</span>
-            <span class="proportion">100%</span>
-          </div>
-          <div class="flavor-ingredients" id="flavor-ingredients-0"></div>
-        </div>
-        <button id="add-flavor" class="btn btn-secundario">
-          <i class="fas fa-plus"></i> Agregar otro sabor
-        </button>
-      </div>
-    `;
-    
-    // Insert after the medida container
-    medidaContainer.after(flavorContainer);
-    
-    // Load ingredients for the first flavor
-    await cargarIngredientesSabor(0, producto.id);
-    
-    // Add event listener for adding more flavors
-    document.getElementById('add-flavor').addEventListener('click', async function() {
-      const flavorCount = document.querySelectorAll('.pizza-flavor').length;
-      if (flavorCount < 4) { // Maximum 4 flavors
-        const newIndex = flavorCount;
-        
-        const newFlavor = document.createElement('div');
-        newFlavor.className = 'pizza-flavor';
-        newFlavor.setAttribute('data-index', newIndex);
-        
-        // Update proportions
-        const proportion = Math.floor(100 / (flavorCount + 1));
-        
-        newFlavor.innerHTML = `
-          <div class="flavor-header">
-            <span>Sabor ${newIndex + 1}</span>
-            <span class="proportion">${proportion}%</span>
-            <button class="remove-flavor"><i class="fas fa-times"></i></button>
-          </div>
-          <div class="flavor-ingredients" id="flavor-ingredients-${newIndex}"></div>
-        `;
-        
-        // Update all proportions
-        document.querySelectorAll('.pizza-flavor').forEach(flavor => {
-          flavor.querySelector('.proportion').textContent = `${proportion}%`;
-        });
-        
-        // Add before the add button
-        this.before(newFlavor);
-        
-        // Load ingredients for this flavor
-        await cargarIngredientesSabor(newIndex, producto.id);
-        
-        // Add remove event
-        newFlavor.querySelector('.remove-flavor').addEventListener('click', function() {
-          newFlavor.remove();
-          actualizarProporciones();
-        });
-      } else {
-        mostrarNotificacion('Máximo 4 sabores por pizza', 'info');
-      }
-    });*/
   } else if (isProductInSubcategory(producto, 'alitas') || isProductInSubcategory(producto, 'boneless')) {
     // Similar implementation for wings and boneless
     medidaContainer.style.display = 'none';
@@ -968,108 +679,6 @@ async function actualizarPrecioModal() {
   }
 }
 
-// Modal mejorado para editar instrucciones de productos ya en la orden
-function abrirModalEdicionItem(item, index) {
-  productoSeleccionadoInstr = item;
-  indexItemEditarInstr = index;
-  
-  // Actualizar título del modal
-  document.getElementById('modal-producto-nombre-instr').textContent = item.nombre;
-  
-  // Verificar si el producto tiene ingredientes
-  const seccionIngredientes = document.getElementById('ingredientes-seccion');
-  const listaIngredientes = document.getElementById('ingredientes-lista');
-  
-  if (tieneIngredientes(item.id)) {
-    // Limpiar lista de ingredientes
-    listaIngredientes.innerHTML = '';
-    
-    // Mostrar sección de ingredientes
-    seccionIngredientes.style.display = 'block';
-    
-    // Reiniciar ingredientes seleccionados
-    ingredientesSeleccionados = item.ingredientes || [];
-    
-    // Cargar ingredientes específicos del producto
-    const ingredientesDisponibles = ingredientesPorProducto[item.id] || [];
-    
-    ingredientesDisponibles.forEach(ingrediente => {
-      // Verificar si está seleccionado
-      const estaSeleccionado = ingredientesSeleccionados.some(i => i.id === ingrediente.id);
-      
-      // Crear elemento para cada ingrediente
-      const ingredienteItem = document.createElement('div');
-      ingredienteItem.className = 'ingrediente-item';
-      
-      // Crear checkbox
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.className = 'ingrediente-checkbox';
-      checkbox.id = 'ingrediente-' + ingrediente.id;
-      checkbox.checked = estaSeleccionado;
-      
-      checkbox.addEventListener('change', function() {
-        if (this.checked) {
-          // Agregar a seleccionados si no existe
-          const yaExiste = ingredientesSeleccionados.some(i => i.id === ingrediente.id);
-          if (!yaExiste) {
-            ingredientesSeleccionados.push({
-              id: ingrediente.id,
-              nombre: ingrediente.nombre,
-              precio: ingrediente.precio
-            });
-          }
-        } else {
-          // Quitar de seleccionados
-          const index = ingredientesSeleccionados.findIndex(i => i.id === ingrediente.id);
-          if (index >= 0) {
-            ingredientesSeleccionados.splice(index, 1);
-          }
-        }
-        
-        // Actualizar precio si hay ingredientes con costo adicional
-        actualizarPrecioModal();
-      });
-      
-      // Crear label para el nombre
-      const nombre = document.createElement('label');
-      nombre.htmlFor = 'ingrediente-' + ingrediente.id;
-      nombre.className = 'ingrediente-nombre';
-      nombre.textContent = ingrediente.nombre;
-      
-      // Elemento para el precio si tiene
-      let precioElement = null;
-      if (ingrediente.precio > 0) {
-        precioElement = document.createElement('span');
-        precioElement.className = 'ingrediente-precio';
-        precioElement.textContent = '+ ' + formatearMoneda(ingrediente.precio);
-      }
-      
-      // Agregar elementos al item
-      ingredienteItem.appendChild(checkbox);
-      ingredienteItem.appendChild(nombre);
-      if (precioElement) {
-        ingredienteItem.appendChild(precioElement);
-      }
-      
-      // Agregar a la lista
-      listaIngredientes.appendChild(ingredienteItem);
-    });
-  } else {
-    // Ocultar sección de ingredientes
-    seccionIngredientes.style.display = 'none';
-  }
-  
-  // Establecer instrucciones actuales
-  document.getElementById('producto-instrucciones').value = item.instrucciones || '';
-  
-  // Cambiar texto del botón
-  document.getElementById('btn-guardar-instrucciones').textContent = 'Actualizar';
-  
-  // Mostrar modal
-  document.getElementById('modal-instrucciones').style.display = 'flex';
-}
-
 // Función modificada para mostrar todos los productos
 function mostrarProductos() {
   document.getElementById('subcategorias-container').style.display = 'none';
@@ -1080,41 +689,6 @@ function mostrarProductos() {
   
   filtrarProductos();
 }
-
-// Función para determinar si un producto tiene instrucciones o ingredientes
-async function tieneInstrucciones(productoId) {
-  // Verificar primero en la lista estática (para compatibilidad)
-  if (productosConInstrucciones.includes(productoId)) {
-    return true;
-  }
-  
-  // Verificar si tiene ingredientes en Firebase
-  try {
-    const productoRef = await db.collection('productos').doc(productoId).get();
-    const producto = productoRef.data();
-    return producto && producto.tieneIngredientes === true;
-  } catch (error) {
-    console.error("Error al verificar si el producto tiene instrucciones:", error);
-    return false;
-  }
-}
-
-// Variables para modales e instrucciones especiales
-let productoSeleccionadoInstr = null;
-let indexItemEditarInstr = -1;
-
-document.addEventListener('DOMContentLoaded', function() {
-  // Verificar autenticación
-  verificarAutenticacion()
-    .then(usuario => {
-      // Inicializar página
-      inicializarPagina();
-    })
-    .catch(error => {
-      console.error('Error de autenticación:', error);
-      // La redirección al login se maneja en verificarAutenticacion()
-    });
-});
 
 function inicializarPagina() {
   // Cargar productos
@@ -1372,20 +946,15 @@ async function filtrarProductos() {
     return;
   }
   
-  // Obtener IDs para verificar
-  const productosIds = productosFiltrados.map(p => p.id).filter(id => {
-    // Filtrar IDs que ya sabemos que están en la lista estática
-    return !productosConInstrucciones.includes(id);
-  });
-  
   // Verificar productos con ingredientes en lote (si hay IDs para verificar)
   let productosConIngs = {};
-  if (productosIds.length > 0) {
+
+  if (productosConIngs.length > 0) {
     // Dividir en lotes de 10 para evitar limitaciones de Firestore
     const lotes = [];
-    for (let i = 0; i < productosIds.length; i += 10) {
+    /*for (let i = 0; i < productosIds.length; i += 10) {
       lotes.push(productosIds.slice(i, i + 10));
-    }
+    }*/
     
     // Procesar cada lote
     for (const lote of lotes) {
@@ -1409,13 +978,13 @@ async function filtrarProductos() {
     }
     
     // Verificar si tiene instrucciones o ingredientes
-    const conInstrucciones = productosConInstrucciones.includes(producto.id) || productosConIngs[producto.id] === true || producto.tieneIngredientes === true;
+    const conInstrucciones = productosConIngs[producto.id] === true || producto.tieneIngredientes === true;
     
     // Crear tarjeta con indicador
     const productoCard = document.createElement('div');
     productoCard.className = 'producto-card';
     productoCard.setAttribute('data-id', producto.id);
-    
+
     productoCard.innerHTML = `
       <div class="producto-imagen">
         ${imagenHTML}
@@ -1439,8 +1008,8 @@ async function filtrarProductos() {
       // Verificar disponibilidad
       if (producto && producto.disponible !== false) {
         // Verificar si tiene ingredientes o está en la lista estática
-        if (productosConInstrucciones.includes(producto.id) || 
-            productosConIngs[producto.id] === true || 
+        if // ---(productosConInstrucciones.includes(producto.id) || 
+            (productosConIngs[producto.id] === true || 
             producto.tieneIngredientes === true) {
           abrirModalProductoInstrucciones(producto);
         } else {
@@ -1584,7 +1153,7 @@ function actualizarOrdenUI() {
       
       if (index >= 0 && index < ordenActual.items.length) {
         const item = ordenActual.items[index];
-        abrirModalInstrucciones(item, index);
+        abrirModalEdicionItem(item, index);
       }
     });
   });
@@ -1642,21 +1211,6 @@ function actualizarOrdenUI() {
   
   // Calcular total
   calcularTotal();
-}
-
-function abrirModalInstrucciones(item, index) {
-  // Guardar referencia al ítem
-  productoSeleccionadoInstr = item;
-  indexItemEditarInstr = index;
-  
-  // Actualizar título del modal
-  document.getElementById('modal-producto-nombre-instr').textContent = item.nombre;
-  
-  // Establecer instrucciones actuales
-  document.getElementById('producto-instrucciones').value = item.instrucciones || '';
-  
-  // Mostrar modal
-  document.getElementById('modal-instrucciones').style.display = 'flex';
 }
 
 // Función modificada para guardar instrucciones
@@ -1803,8 +1357,6 @@ function limpiarOrden() {
   mostrarNotificacion('Orden limpiada', 'info');
 }
 
-// Continuación del archivo add-order.js
-
 async function crearOrden() {
   // Validar que haya productos
   if (ordenActual.items.length === 0) {
@@ -1895,7 +1447,6 @@ async function crearOrden() {
   }
 }
 
-// Funciones auxiliares (mantener compatibilidad con el código original)
 function obtenerFechaInicioDia() {
   const ahora = new Date();
   ahora.setHours(0, 0, 0, 0);
