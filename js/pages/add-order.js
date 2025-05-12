@@ -1,7 +1,7 @@
 // add-order.js - Lógica para la página de crear orden (versión mejorada)
 
 // la funcion verificar autenticacion esta funcionando???
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   // Verificar autenticación
   verificarAutenticacion()
     .then(usuario => {
@@ -36,7 +36,7 @@ let productoSeleccionadoInstr = null;
 let indexItemEditarInstr = -1;
 
 // Variables para la navegación entre categorías y subcategorías
-let vistaActual = 'categorias'; 
+let vistaActual = 'categorias';
 let categoriaActual = '';
 let subcategoriaActual = '';
 let ingredientesSeleccionados = [];
@@ -88,7 +88,7 @@ const subcategoriasPorCategoria = {
 function getIngredientChanges(defaultIngredients, selectedIngredients) {
   const added = [];
   const removed = [];
-  
+
   // Find added ingredients
   selectedIngredients.forEach(ing => {
     const isDefault = defaultIngredients.some(d => d.id === ing.id && d.default);
@@ -96,7 +96,7 @@ function getIngredientChanges(defaultIngredients, selectedIngredients) {
       added.push(ing);
     }
   });
-  
+
   // Find removed ingredients
   defaultIngredients.forEach(ing => {
     if (ing.default) {
@@ -106,7 +106,7 @@ function getIngredientChanges(defaultIngredients, selectedIngredients) {
       }
     }
   });
-  
+
   return { added, removed };
 }
 
@@ -125,13 +125,13 @@ async function verificarProductosConIngredientes(productosIds) {
       .where(firebase.firestore.FieldPath.documentId(), 'in', productosIds)
       .where('tieneIngredientes', '==', true)
       .get();
-    
+
     // Crear mapa de resultados
     const productosConIngs = {};
     productos.forEach(doc => {
       productosConIngs[doc.id] = true;
     });
-    
+
     return productosConIngs;
   } catch (error) {
     console.error("Error verificando productos con ingredientes:", error);
@@ -160,7 +160,7 @@ async function tieneIngredientes(productoId) {
 // Función para obtener ingredientes de un producto
 async function obtenerIngredientesProducto(productoId) {
   mostrarCargando(true);
-  
+
   // Si no, buscar en Firebase
   try {
     const ingredientesRef = await db.collection('productos')
@@ -168,7 +168,7 @@ async function obtenerIngredientesProducto(productoId) {
       .collection('ingredientes')
       .orderBy('nombre')
       .get();
-    
+
     const ingredientes = [];
     ingredientesRef.forEach(doc => {
       ingredientes.push({
@@ -176,7 +176,7 @@ async function obtenerIngredientesProducto(productoId) {
         ...doc.data()
       });
     });
-    
+
     return ingredientes;
   } catch (error) {
     console.error("Error al obtener ingredientes del producto:", error);
@@ -190,44 +190,44 @@ async function obtenerIngredientesProducto(productoId) {
 async function abrirModalEdicionItem(item, index) {
   productoSeleccionadoInstr = item;
   indexItemEditarInstr = index;
-  
+
   // Actualizar título del modal
   document.getElementById('modal-producto-nombre-instr').textContent = item.nombre;
-  
+
   // Verificar si el producto tiene ingredientes
   const tieneIngs = await tieneIngredientes(item.id);
   const seccionIngredientes = document.getElementById('ingredientes-seccion');
   const listaIngredientes = document.getElementById('ingredientes-lista');
-  
+
   if (tieneIngs) {
     // Limpiar lista de ingredientes
     listaIngredientes.innerHTML = '';
-    
+
     // Mostrar sección de ingredientes
     seccionIngredientes.style.display = 'block';
-    
+
     // Reiniciar ingredientes seleccionados
     ingredientesSeleccionados = item.ingredientes || [];
-    
+
     // Cargar ingredientes específicos del producto
     const ingredientesDisponibles = await obtenerIngredientesProducto(item.id);
-    
+
     ingredientesDisponibles.forEach(ingrediente => {
       // Verificar si está seleccionado
       const estaSeleccionado = ingredientesSeleccionados.some(i => i.id === ingrediente.id);
-      
+
       // Crear elemento para cada ingrediente
       const ingredienteItem = document.createElement('div');
       ingredienteItem.className = 'ingrediente-item';
-      
+
       // Crear checkbox
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
       checkbox.className = 'ingrediente-checkbox';
       checkbox.id = 'ingrediente-' + ingrediente.id;
       checkbox.checked = estaSeleccionado;
-      
-      checkbox.addEventListener('change', function() {
+
+      checkbox.addEventListener('change', function () {
         if (this.checked) {
           // Agregar a seleccionados si no existe
           const yaExiste = ingredientesSeleccionados.some(i => i.id === ingrediente.id);
@@ -245,17 +245,17 @@ async function abrirModalEdicionItem(item, index) {
             ingredientesSeleccionados.splice(index, 1);
           }
         }
-        
+
         // Actualizar precio si hay ingredientes con costo adicional
         actualizarPrecioModal();
       });
-      
+
       // Crear label para el nombre
       const nombre = document.createElement('label');
       nombre.htmlFor = 'ingrediente-' + ingrediente.id;
       nombre.className = 'ingrediente-nombre';
       nombre.textContent = ingrediente.nombre;
-      
+
       // Elemento para el precio si tiene
       let precioElement = null;
       if (ingrediente.precio > 0) {
@@ -263,14 +263,14 @@ async function abrirModalEdicionItem(item, index) {
         precioElement.className = 'ingrediente-precio';
         precioElement.textContent = '+ ' + formatearMoneda(ingrediente.precio || 0);
       }
-      
+
       // Agregar elementos al item
       ingredienteItem.appendChild(checkbox);
       ingredienteItem.appendChild(nombre);
       if (precioElement) {
         ingredienteItem.appendChild(precioElement);
       }
-      
+
       // Agregar a la lista
       listaIngredientes.appendChild(ingredienteItem);
     });
@@ -278,13 +278,13 @@ async function abrirModalEdicionItem(item, index) {
     // Ocultar sección de ingredientes
     seccionIngredientes.style.display = 'none';
   }
-  
+
   // Establecer instrucciones actuales
   document.getElementById('producto-instrucciones').value = item.instrucciones || '';
-  
+
   // Cambiar texto del botón
   document.getElementById('btn-guardar-instrucciones').textContent = 'Actualizar';
-  
+
   // Mostrar modal
   document.getElementById('modal-instrucciones').style.display = 'flex';
 }
@@ -293,13 +293,13 @@ async function abrirModalEdicionItem(item, index) {
 function mostrarSubcategoriasGrid() {
   const container = document.getElementById('productos-grid');
   const subcategorias = subcategoriasPorCategoria[categoriaActual] || [];
-  
+
   // Ocultar el contenedor de subcategorías horizontal
   document.getElementById('subcategorias-container').style.display = 'none';
-  
+
   // Limpiar el contenedor de productos
   container.innerHTML = '';
-  
+
   // Crear tarjetas para cada subcategoría
   subcategorias.forEach(subcategoria => {
     // Verificar si hay una imagen, si no, usar placeholder
@@ -309,7 +309,7 @@ function mostrarSubcategoriasGrid() {
     } else {
       imagenHTML = `<i class="fas fa-folder" style="font-size: 2rem; color: #ddd;"></i>`;
     }
-    
+
     // Crear tarjeta de subcategoría
     const subcategoriaCard = document.createElement('div');
     subcategoriaCard.className = 'producto-card subcategoria-card';
@@ -322,17 +322,17 @@ function mostrarSubcategoriasGrid() {
         <div class="producto-nombre">${subcategoria.nombre}</div>
       </div>
     `;
-    
+
     // Evento al hacer clic en la subcategoría
-    subcategoriaCard.addEventListener('click', function() {
+    subcategoriaCard.addEventListener('click', function () {
       filtroSubcategoria = subcategoria.id;
       subcategoriaActual = subcategoria.id;
       vistaActual = 'productos';
-      
+
       // Mostrar productos de esta subcategoría
       mostrarProductosDeSubcategoria();
     });
-    
+
     container.appendChild(subcategoriaCard);
   });
 }
@@ -341,7 +341,7 @@ function mostrarSubcategoriasGrid() {
 function mostrarProductosDeSubcategoria() {
   // Habilitar botón para volver a subcategorías
   mostrarBotonVolver();
-  
+
   // Filtrar y mostrar productos
   filtrarProductos();
 }
@@ -353,10 +353,10 @@ function mostrarBotonVolver() {
     const volverBtn = document.createElement('button');
     volverBtn.id = 'btn-volver';
     volverBtn.className = 'btn-volver';
-    volverBtn.innerHTML = '<i class="fas fa-arrow-left"></i> Volver a ' + 
+    volverBtn.innerHTML = '<i class="fas fa-arrow-left"></i> Volver a ' +
       (categoriaActual === 'todos' ? 'categorías' : getCategoriaName(categoriaActual));
-    
-    volverBtn.addEventListener('click', function() {
+
+    volverBtn.addEventListener('click', function () {
       if (vistaActual === 'productos' && subcategoriaActual) {
         // Volver a la vista de subcategorías
         vistaActual = 'subcategorias';
@@ -366,7 +366,7 @@ function mostrarBotonVolver() {
         this.remove();
       }
     });
-    
+
     // Insertar antes del grid de productos
     const productoContainer = document.querySelector('.productos-container');
     productoContainer.insertBefore(volverBtn, productoContainer.firstChild);
@@ -385,14 +385,112 @@ function getCategoriaName(categoria) {
 
 const modalContent = document.querySelector('.modal-content');
 
+//Intento 1 de funcion para obtenery mostrar especialidades de las pizzas
+
+async function obtenerEspecialidadesPizza() {
+
+  try {
+    const especialidadesRef = await db.collection('productos')
+    especialidadesRef
+      .where("categoria", "==", "ingredientes-generales")
+      .where("subcategoria", "==", "pizzas")
+      .get()
+      .then((querySnapshot) => {
+        const especialidadesPizza = [];
+        querySnapshot.forEach((doc) => {
+          especialidadesPizza.push(doc.data().nombre);
+        });
+
+        const divTipo = document.getElementById('pizzaTipo');
+
+        const selectTipo = document.createElement('select');
+        selectTipo.id = 'saborPizzas';
+
+        especialidadesPizza.forEach(nombre => {
+          const optionSabor = document.createElement('option');
+          optionSabor.value = nombre;
+          optionSabor.textContent = nombre;
+          selectTipo.appendChild(optionSabor);
+          console.log('sabor: ', nombre);
+        });
+        divTipo.innerHTML = '';
+        divTipo.appendChild(selectTipo);
+        const pizzaSabor = document.getElementById('saborPizzas');
+        pizzaSabor.addEventListener('change', async function (event) {
+          const saborSeleccionado = event.target.value;
+          try {
+          const productoRef = db.collection("ingredientes")//.doc(saborSeleccionado);
+          productoRef
+            .where("nombre", "==", saborSeleccionado)
+            const productoSnapshot = await productoRef.get()
+            //.then((ingredientesSnapshot) => {
+              const ingredientesPizza = [];
+              productoSnapshot.forEach((docingredientes) => {
+                ingredientesPizza.push({
+                  id: docingredientes.id,
+                  ...docingredientes.data()
+                });
+              });
+              console.log("ingredientes especificos, id: ", ingredientesPizza, ". ");
+            } catch (error) {
+    console.error("Error al obtener especialidades de las pizzas:", error);
+    return [];
+  }
+            //}).catch((error) => {
+             // console.error("Error obteniendo ingredientes:", error);
+            //});
+
+
+          /*productoRef.get().then((docProducto) => {
+            if (docProducto.exists) {
+              const datosPizza = docProducto.data();
+              console.log('datos del producto: ', datosPizza);
+
+              if (datosPizza.categoria === "ingredientes-generales" && datosPizza.subcategoria === "pizzas") {
+                productoRef.collection("ingredientes").get().then((ingredientesSnapshot) => {
+                  const ingredientesPizza = [];
+                  ingredientesSnapshot.forEach((docIngrediente) => {
+                    ingredientesPizza.push({
+                      id: docIngrediente.id,
+                      ...docIngrediente.data()
+                    });
+                  });
+
+                  console.log("ingredientes especificos: ", ingredientesPizza);
+                }).catch((error) => {
+                  console.error("Error obteniendo ingredientes:", error);
+                });
+              } else {
+                console.log("El producto no pertenece a la categoria y subcategoria");
+              }
+            } else {
+              console.log("No existe un producto con ese nombre");
+            }
+          }).catch((error) => {
+            console.error("Error obteniendo el producto:", error);
+          })*/
+         console.log('textoseleccionado: ', saborSeleccionado);
+        });
+      });
+  } catch (error) {
+    console.error("Error al obtener especialidades de las pizzas:", error);
+    return [];
+  }/* finally {
+    mostrarCargando(false);
+  }*/
+
+}
+
+
+
 // Función modificada para abrir modal de instrucciones
 async function abrirModalProductoInstrucciones(producto) {
   productoSeleccionadoInstr = producto;
   indexItemEditarInstr = -1; // -1 indica que es un nuevo producto, no una edición
-  
+
   // Actualizar título del modal
   document.getElementById('modal-producto-nombre-instr').textContent = producto.nombre;
-  
+
   // Reiniciar ingredientes
   ingredientesSeleccionados = [];
 
@@ -401,14 +499,15 @@ async function abrirModalProductoInstrucciones(producto) {
   let currentSelectedPart = null;
 
   const medidaContainer = document.querySelector('.medida');
-  
+
   // Check if this is a "dividida" pizza
   const isDividedPizza = isProductInSubcategory(producto, 'pizzas') && 
   producto.nombre.toLowerCase() === 'dividida';
-  
+
   // Only show pizza division UI for pizzas with name "dividida"
   if (isDividedPizza) {
     medidaContainer.style.display = 'block';
+    obtenerEspecialidadesPizza();
 
     // Get the circle container or create it if it doesn't exist
     let circleContainer = document.querySelector('.circle-container');
@@ -432,9 +531,10 @@ async function abrirModalProductoInstrucciones(producto) {
         </div>
         <div id="output" class="selected-part">Selecciona una parte</div>
       `;
-      
+
       // Insert the circle container after the ingredients section
       document.getElementById('ingredientes-seccion').after(circleContainer);
+
     }
 
     const svg = document.getElementById('circle');
@@ -476,12 +576,12 @@ async function abrirModalProductoInstrucciones(producto) {
         path.setAttribute('d', describeArc(100, 100, 100, startAngle, endAngle));
         path.classList.add('segment');
         path.setAttribute('data-part', partNumber);
-        
+
         // If this part has ingredients already, style it differently
         if (pizzaPartIngredients[partNumber] && pizzaPartIngredients[partNumber].length > 0) {
           path.classList.add('has-ingredients');
         }
-        
+
         // Add click event to select this part
         path.addEventListener('click', (e) => {
           selectPizzaPart(partNumber);
@@ -497,27 +597,27 @@ async function abrirModalProductoInstrucciones(producto) {
       document.querySelectorAll('.segment.selected').forEach(seg => {
         seg.classList.remove('selected');
       });
-      
+
       // Select the new part
       const selectedSegment = document.querySelector(`.segment[data-part="${partNumber}"]`);
       if (selectedSegment) {
         selectedSegment.classList.add('selected');
       }
-      
+
       // Update the output text
       output.textContent = `Parte ${partNumber} seleccionada`;
-      
+
       // Save current ingredients for previous part if any
       if (currentSelectedPart !== null) {
         pizzaPartIngredients[currentSelectedPart] = [...ingredientesSeleccionados];
       }
-      
+
       // Update current selected part
       currentSelectedPart = partNumber;
-      
+
       // Load ingredients for the selected part
       ingredientesSeleccionados = pizzaPartIngredients[partNumber] || [];
-      
+
       // Update ingredients UI
       await loadIngredientsForPart(producto.id, partNumber);
     }
@@ -526,32 +626,32 @@ async function abrirModalProductoInstrucciones(producto) {
     async function loadIngredientsForPart(productoId, partNumber) {
       const seccionIngredientes = document.getElementById('ingredientes-seccion');
       const listaIngredientes = document.getElementById('ingredientes-lista');
-      
+
       // Limpiar lista de ingredientes
       listaIngredientes.innerHTML = '';
-      
+
       // Mostrar sección de ingredientes
       seccionIngredientes.style.display = 'block';
-      
+
       // Cargar ingredientes específicos del producto
       const ingredientes = await obtenerIngredientesProducto(productoId);
-      
+
       ingredientes.forEach(ingrediente => {
         // Verificar si está seleccionado para esta parte
         const estaSeleccionado = ingredientesSeleccionados.some(i => i.id === ingrediente.id);
-        
+
         // Crear elemento para cada ingrediente
         const ingredienteItem = document.createElement('div');
         ingredienteItem.className = 'ingrediente-item';
-        
+
         // Crear checkbox
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.className = 'ingrediente-checkbox';
         checkbox.id = 'ingrediente-' + ingrediente.id;
         checkbox.checked = estaSeleccionado;
-        
-        checkbox.addEventListener('change', function() {
+
+        checkbox.addEventListener('change', function () {
           if (this.checked) {
             // Agregar a seleccionados
             ingredientesSeleccionados.push({
@@ -567,7 +667,7 @@ async function abrirModalProductoInstrucciones(producto) {
               ingredientesSeleccionados.splice(index, 1);
             }
           }
-          
+
           // Update the segment to show it has ingredients
           if (ingredientesSeleccionados.length > 0) {
             const selectedSegment = document.querySelector(`.segment[data-part="${partNumber}"]`);
@@ -580,20 +680,20 @@ async function abrirModalProductoInstrucciones(producto) {
               selectedSegment.classList.remove('has-ingredients');
             }
           }
-          
+
           // Save current ingredients for this part
           pizzaPartIngredients[partNumber] = [...ingredientesSeleccionados];
-          
+
           // Actualizar precio si hay ingredientes con costo adicional
           actualizarPrecioModal();
         });
-        
+
         // Crear label para el nombre
         const nombre = document.createElement('label');
         nombre.htmlFor = 'ingrediente-' + ingrediente.id;
         nombre.className = 'ingrediente-nombre';
         nombre.textContent = ingrediente.nombre;
-        
+
         // Elemento para el precio si tiene
         let precioElement = null;
         if (ingrediente.precio > 0) {
@@ -601,14 +701,14 @@ async function abrirModalProductoInstrucciones(producto) {
           precioElement.className = 'ingrediente-precio';
           precioElement.textContent = '+ ' + formatearMoneda(ingrediente.precio || 0);
         }
-        
+
         // Agregar elementos al item
         ingredienteItem.appendChild(checkbox);
         ingredienteItem.appendChild(nombre);
         if (precioElement) {
           ingredienteItem.appendChild(precioElement);
         }
-        
+
         // Agregar a la lista
         listaIngredientes.appendChild(ingredienteItem);
       });
@@ -618,25 +718,25 @@ async function abrirModalProductoInstrucciones(producto) {
       const parts = parseInt(partSelect.value);
       drawSegments(parts);
       output.textContent = 'Selecciona una parte';
-      
+
       // Reset ingredients for new division
       pizzaPartIngredients = {};
       currentSelectedPart = null;
       ingredientesSeleccionados = [];
-      
+
       // Hide ingredients section until a part is selected
       document.getElementById('ingredientes-seccion').style.display = 'none';
     });
 
     // Initial draw
     drawSegments(2);
-    
+
     // Select the whole pizza initially
     selectPizzaPart(1);
   } else if (isProductInSubcategory(producto, 'alitas') || isProductInSubcategory(producto, 'boneless')) {
     // Regular wings/boneless implementation (no change)
     medidaContainer.style.display = 'none';
-    
+
     // Create flavor container for wings/boneless
     const flavorContainer = document.createElement('div');
     flavorContainer.className = 'multi-flavor-container';
@@ -660,20 +760,20 @@ async function abrirModalProductoInstrucciones(producto) {
         </button>
       </div>
     `;
-    
+
     // Insert after the ingredients section
     document.getElementById('ingredientes-seccion').after(flavorContainer);
-    
+
     // Add event listener for adding more flavors
-    document.getElementById('add-wings-flavor').addEventListener('click', function() {
+    document.getElementById('add-wings-flavor').addEventListener('click', function () {
       const flavorCount = document.querySelectorAll('.wings-flavor').length;
       if (flavorCount < 2) { // Max 2 flavors for wings/boneless
         const newIndex = flavorCount;
-        
+
         const newFlavor = document.createElement('div');
         newFlavor.className = 'wings-flavor';
         newFlavor.setAttribute('data-index', newIndex);
-        
+
         newFlavor.innerHTML = `
           <div class="flavor-header">
             <span>Sabor ${newIndex + 1}</span>
@@ -687,17 +787,17 @@ async function abrirModalProductoInstrucciones(producto) {
             <option value="lemon-pepper">Limón Pimienta</option>
           </select>
         `;
-        
+
         // Update proportions
         document.querySelectorAll('.wings-flavor').forEach(flavor => {
           flavor.querySelector('.proportion').textContent = `50%`;
         });
-        
+
         // Add before the add button
         this.before(newFlavor);
-        
+
         // Add remove event
-        newFlavor.querySelector('.remove-flavor').addEventListener('click', function() {
+        newFlavor.querySelector('.remove-flavor').addEventListener('click', function () {
           newFlavor.remove();
           document.querySelectorAll('.wings-flavor').forEach(flavor => {
             flavor.querySelector('.proportion').textContent = `100%`;
@@ -710,46 +810,46 @@ async function abrirModalProductoInstrucciones(producto) {
   } else {
     // Hide for other products
     medidaContainer.style.display = 'none';
-    
+
     // Remove multi-flavor container if it exists
     const flavorContainer = document.querySelector('.multi-flavor-container');
     if (flavorContainer) flavorContainer.remove();
-    
+
     // Remove circle container if it exists
     const circleContainer = document.querySelector('.circle-container');
     if (circleContainer) circleContainer.remove();
   }
-  
+
   // IMPORTANT: Always check for ingredients for all products
   // This is the part that was missing in the previous version
   const tieneIngs = await tieneIngredientes(producto.id);
   const seccionIngredientes = document.getElementById('ingredientes-seccion');
   const listaIngredientes = document.getElementById('ingredientes-lista');
-  
+
   // For non-divided pizza products, handle ingredients normally
   if (!isDividedPizza) {
     if (tieneIngs) {
       // Limpiar lista de ingredientes
       listaIngredientes.innerHTML = '';
-      
+
       // Mostrar sección de ingredientes
       seccionIngredientes.style.display = 'block';
-      
+
       // Cargar ingredientes específicos del producto
       const ingredientes = await obtenerIngredientesProducto(producto.id);
-      
+
       ingredientes.forEach(ingrediente => {
         // Crear elemento para cada ingrediente
         const ingredienteItem = document.createElement('div');
         ingredienteItem.className = 'ingrediente-item';
-        
+
         // Crear checkbox
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.className = 'ingrediente-checkbox';
         checkbox.id = 'ingrediente-' + ingrediente.id;
         checkbox.checked = ingrediente.default;
-        
+
         // Si está marcado por defecto, agregarlo a la lista
         if (ingrediente.default) {
           ingredientesSeleccionados.push({
@@ -758,8 +858,8 @@ async function abrirModalProductoInstrucciones(producto) {
             precio: ingrediente.precio || 0
           });
         }
-        
-        checkbox.addEventListener('change', function() {
+
+        checkbox.addEventListener('change', function () {
           if (this.checked) {
             // Agregar a seleccionados
             ingredientesSeleccionados.push({
@@ -774,17 +874,17 @@ async function abrirModalProductoInstrucciones(producto) {
               ingredientesSeleccionados.splice(index, 1);
             }
           }
-          
+
           // Actualizar precio si hay ingredientes con costo adicional
           actualizarPrecioModal();
         });
-        
+
         // Crear label para el nombre
         const nombre = document.createElement('label');
         nombre.htmlFor = 'ingrediente-' + ingrediente.id;
         nombre.className = 'ingrediente-nombre';
         nombre.textContent = ingrediente.nombre;
-        
+
         // Elemento para el precio si tiene
         let precioElement = null;
         if (ingrediente.precio > 0) {
@@ -792,14 +892,14 @@ async function abrirModalProductoInstrucciones(producto) {
           precioElement.className = 'ingrediente-precio';
           precioElement.textContent = '+ ' + formatearMoneda(ingrediente.precio || 0);
         }
-        
+
         // Agregar elementos al item
         ingredienteItem.appendChild(checkbox);
         ingredienteItem.appendChild(nombre);
         if (precioElement) {
           ingredienteItem.appendChild(precioElement);
         }
-        
+
         // Agregar a la lista
         listaIngredientes.appendChild(ingredienteItem);
       });
@@ -808,13 +908,13 @@ async function abrirModalProductoInstrucciones(producto) {
       seccionIngredientes.style.display = 'none';
     }
   }
-  
+
   // Limpiar instrucciones anteriores
   document.getElementById('producto-instrucciones').value = '';
-  
+
   // Mostrar modal
   document.getElementById('modal-instrucciones').style.display = 'flex';
-  
+
   // Cambiar el texto del botón
   document.getElementById('btn-guardar-instrucciones').textContent = 'Agregar a la orden';
 }
@@ -822,35 +922,35 @@ async function abrirModalProductoInstrucciones(producto) {
 // Función para actualizar el precio en el modal basado en los ingredientes seleccionados
 async function actualizarPrecioModal() {
   if (!productoSeleccionadoInstr) return;
-  
+
   // Get default ingredients to calculate difference
   const defaultIngredientes = await obtenerIngredientesProducto(productoSeleccionadoInstr.id);
-  
+
   // Calculate base price with default paid ingredients
   const defaultPrecioAdicional = defaultIngredientes
     .filter(ing => ing.default && ing.precio > 0)
     .reduce((total, ing) => total + (ing.precio || 0), 0);
-  
+
   // Calculate current selected price
   const currentPrecioAdicional = ingredientesSeleccionados
     .reduce((total, ing) => total + (ing.precio || 0), 0);
-  
+
   // Calculate the net price difference
   const precioDiferencia = currentPrecioAdicional - defaultPrecioAdicional;
-  
+
   // Update the total price
   const precioTotal = (productoSeleccionadoInstr.precio || 0) + precioDiferencia;
-  
+
   // Update button text
   const botonGuardar = document.getElementById('btn-guardar-instrucciones');
-  
+
   if (precioDiferencia !== 0) {
-    botonGuardar.textContent = indexItemEditarInstr >= 0 ? 
-      `Actualizar (${formatearMoneda(precioTotal)})` : 
+    botonGuardar.textContent = indexItemEditarInstr >= 0 ?
+      `Actualizar (${formatearMoneda(precioTotal)})` :
       `Agregar (${formatearMoneda(precioTotal)})`;
   } else {
-    botonGuardar.textContent = indexItemEditarInstr >= 0 ? 
-      'Actualizar' : 
+    botonGuardar.textContent = indexItemEditarInstr >= 0 ?
+      'Actualizar' :
       'Agregar a la orden';
   }
 }
@@ -858,29 +958,29 @@ async function actualizarPrecioModal() {
 // Función modificada para mostrar todos los productos
 function mostrarProductos() {
   document.getElementById('subcategorias-container').style.display = 'none';
-  
+
   // Quitar botón volver si existe
   const btnVolver = document.getElementById('btn-volver');
   if (btnVolver) btnVolver.remove();
-  
+
   filtrarProductos();
 }
 
 function inicializarPagina() {
   // Cargar productos
   cargarProductos();
-  
+
   // Configurar eventos de filtros de categoría
   document.querySelectorAll('.categoria-principal').forEach(btn => {
-    btn.addEventListener('click', function() {
+    btn.addEventListener('click', function () {
       // Actualizar UI
       document.querySelectorAll('.categoria-principal').forEach(b => b.classList.remove('active'));
       this.classList.add('active');
-      
+
       // Actualizar filtro
       filtroCategoria = this.getAttribute('data-categoria');
       categoriaActual = filtroCategoria;
-      
+
       // Reiniciar subcategoría si cambiamos de categoría
       filtroSubcategoria = '';
       subcategoriaActual = '';
@@ -891,7 +991,7 @@ function inicializarPagina() {
         mostrarProductos();
         // Actualizar subcategorías
         actualizarSubcategorias();
-        
+
         // Filtrar productos
         filtrarProductos();
 
@@ -902,25 +1002,25 @@ function inicializarPagina() {
       }
     });
   });
-  
+
   // Configurar búsqueda
-  document.getElementById('buscar-producto').addEventListener('input', function() {
+  document.getElementById('buscar-producto').addEventListener('input', function () {
     filtroBusqueda = this.value.toLowerCase().trim();
     filtrarProductos();
   });
-  
+
   // Eventos para la orden
   document.getElementById('orden-descuento').addEventListener('input', calcularTotal);
-  document.getElementById('cliente-nombre').addEventListener('input', function() {
+  document.getElementById('cliente-nombre').addEventListener('input', function () {
     ordenActual.cliente = this.value.trim();
   });
-  
-  document.getElementById('cliente-mesa').addEventListener('change', function() {
+
+  document.getElementById('cliente-mesa').addEventListener('change', function () {
     ordenActual.mesa = this.value;
   });
-  
+
   // Botón para mostrar/ocultar notas
-  document.getElementById('toggle-nota').addEventListener('click', function() {
+  document.getElementById('toggle-nota').addEventListener('click', function () {
     const notaContainer = document.querySelector('.nota-input-container');
     if (notaContainer.style.display === 'none') {
       notaContainer.style.display = 'block';
@@ -930,37 +1030,37 @@ function inicializarPagina() {
       this.innerHTML = '<i class="fas fa-sticky-note"></i> Instrucciones especiales';
     }
   });
-  
-  document.getElementById('orden-nota').addEventListener('input', function() {
+
+  document.getElementById('orden-nota').addEventListener('input', function () {
     ordenActual.nota = this.value.trim();
   });
-  
+
   // Botón para limpiar orden
   document.getElementById('btn-limpiar-orden').addEventListener('click', confirmarLimpiarOrden);
-  
+
   // Botón para crear orden
   document.getElementById('btn-crear-orden').addEventListener('click', crearOrden);
-  
+
   // Configurar tabs para modo móvil
   document.querySelectorAll('.tab-btn').forEach(tab => {
-    tab.addEventListener('click', function() {
+    tab.addEventListener('click', function () {
       const tabId = this.getAttribute('data-tab');
 
       // Activar tab
       document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
       this.classList.add('active');
-      
+
       // Mostrar contenido
       document.querySelectorAll('.tab-content').forEach(content => {
         content.style.display = 'none';
         content.classList.remove('active');
       });
-      
+
       const tabContent = document.getElementById(tabId);
       tabContent.style.display = 'block';
       tabContent.classList.add('active');
 
-       // --- quitar panel de categorias en la tab orden
+      // --- quitar panel de categorias en la tab orden
       const panelCategorias = document.querySelector('.panel-categorias');
       if (tabId === 'orden-tab') {
         panelCategorias.style.display = 'none';
@@ -970,31 +1070,31 @@ function inicializarPagina() {
 
     });
   });
-  
+
   // Eventos para el modal de instrucciones
   document.querySelectorAll('.cerrar-modal').forEach(btn => {
-    btn.addEventListener('click', function() {
+    btn.addEventListener('click', function () {
       document.getElementById('modal-instrucciones').style.display = 'none';
     });
   });
-  
+
   document.getElementById('btn-guardar-instrucciones').addEventListener('click', guardarInstrucciones);
-  
+
   // Inicializar estado de la orden
   actualizarOrdenUI();
 }
 
 async function cargarProductos() {
   mostrarCargando(true);
-  
+
   try {
     // Obtener productos disponibles de Firestore
     const productosRef = db.collection('productos')
       .where('disponible', '==', true)
       .orderBy('nombre');
-    
+
     const snapshot = await productosRef.get();
-    
+
     productosData = [];
     snapshot.forEach(doc => {
       productosData.push({
@@ -1002,13 +1102,13 @@ async function cargarProductos() {
         ...doc.data()
       });
     });
-    
+
     // Inicializar subcategorías
     actualizarSubcategorias();
-    
+
     // Mostrar productos
     filtrarProductos();
-    
+
   } catch (error) {
     console.error('Error al cargar productos:', error);
     mostrarNotificacion('Error al cargar los productos', 'error');
@@ -1019,10 +1119,10 @@ async function cargarProductos() {
 
 function actualizarSubcategorias() {
   const container = document.getElementById('subcategorias-container');
-  
+
   // Limpiar container
   container.innerHTML = '';
-  
+
   // Si no es una categoría específica, ocultar container
   // --- habilitar barra de busqueda solo en "todos"
   const barraBusqueda = document.querySelector('.busqueda-container');
@@ -1038,7 +1138,7 @@ function actualizarSubcategorias() {
     //--- este else tambien es para habilitar la barra de busqueda solo en "todos"
     barraBusqueda.classList.add('busqueda-display')
   };
-  
+
   // Opción "Todas"
   const btnTodas = document.createElement('button');
   btnTodas.className = 'subcategoria-btn' + (filtroSubcategoria === '' ? ' active' : '');
@@ -1049,23 +1149,23 @@ function actualizarSubcategorias() {
     filtrarProductos();
   });
   container.appendChild(btnTodas);
-  
+
   // Obtener subcategorías de la categoría seleccionada
   const subcategorias = subcategoriasPorCategoria[filtroCategoria] || [];
-  
+
   // Crear botones para cada subcategoría
   subcategorias.forEach(subcategoria => {
     const btn = document.createElement('button');
     btn.className = 'subcategoria-btn' + (filtroSubcategoria === subcategoria.id ? ' active' : '');
     btn.textContent = subcategoria.nombre;
     btn.setAttribute('data-subcategoria', subcategoria.id);
-    
+
     btn.addEventListener('click', () => {
       filtroSubcategoria = subcategoria.id;
       actualizarBotonesSubcategoria();
       filtrarProductos();
     });
-    
+
     container.appendChild(btn);
   });
 }
@@ -1073,9 +1173,9 @@ function actualizarSubcategorias() {
 function actualizarBotonesSubcategoria() {
   document.querySelectorAll('.subcategoria-btn').forEach(btn => {
     const subcat = btn.getAttribute('data-subcategoria') || '';
-    
-    if ((subcat === '' && filtroSubcategoria === '') || 
-        (subcat === filtroSubcategoria)) {
+
+    if ((subcat === '' && filtroSubcategoria === '') ||
+      (subcat === filtroSubcategoria)) {
       btn.classList.add('active');
     } else {
       btn.classList.remove('active');
@@ -1086,30 +1186,30 @@ function actualizarBotonesSubcategoria() {
 // Función optimizada para filtrar productos
 async function filtrarProductos() {
   const container = document.getElementById('productos-grid');
-  
+
   // Aplicar filtros
   let productosFiltrados = productosData.filter(producto => {
     // Filtro por categoría
     if (filtroCategoria !== 'todos' && producto.categoria !== filtroCategoria) {
       return false;
     }
-    
+
     // Filtro por subcategoría
     if (filtroSubcategoria && producto.subcategoria !== filtroSubcategoria) {
       return false;
     }
-    
+
     // Filtro por búsqueda
     if (filtroBusqueda) {
       const nombre = producto.nombre ? producto.nombre.toLowerCase() : '';
       const descripcion = producto.descripcion ? producto.descripcion.toLowerCase() : '';
-      
+
       return nombre.includes(filtroBusqueda) || descripcion.includes(filtroBusqueda);
     }
-    
+
     return true;
   });
-  
+
   // Mostrar resultados
   if (productosFiltrados.length === 0) {
     container.innerHTML = `
@@ -1121,7 +1221,7 @@ async function filtrarProductos() {
     `;
     return;
   }
-  
+
   // Verificar productos con ingredientes en lote (si hay IDs para verificar)
   let productosConIngs = {};
 
@@ -1131,7 +1231,7 @@ async function filtrarProductos() {
     /*for (let i = 0; i < productosIds.length; i += 10) {
       lotes.push(productosIds.slice(i, i + 10));
     }*/
-    
+
     // Procesar cada lote
     for (const lote of lotes) {
       const resultado = await verificarProductosConIngredientes(lote);
@@ -1139,10 +1239,10 @@ async function filtrarProductos() {
       productosConIngs = { ...productosConIngs, ...resultado };
     }
   }
-  
+
   // Limpiar el contenedor
   container.innerHTML = '';
-  
+
   // Crear las tarjetas de producto
   productosFiltrados.forEach(producto => {
     // Imagen del producto
@@ -1152,10 +1252,10 @@ async function filtrarProductos() {
     } else {
       imagenHTML = `<i class="fas fa-image" style="font-size: 2rem; color: #ddd;"></i>`;
     }
-    
+
     // Verificar si tiene instrucciones o ingredientes
     const conInstrucciones = productosConIngs[producto.id] === true || producto.tieneIngredientes === true;
-    
+
     // Crear tarjeta con indicador
     const productoCard = document.createElement('div');
     productoCard.className = 'producto-card';
@@ -1172,21 +1272,21 @@ async function filtrarProductos() {
         <div class="producto-precio">${formatearMoneda(producto.precio || 0)}</div>
       </div>
     `;
-    
+
     // Evento al hacer clic
-    productoCard.addEventListener('click', function() {
+    productoCard.addEventListener('click', function () {
       // Obtener ID del producto
       const productoId = this.getAttribute('data-id');
-      
+
       // Buscar producto completo
       const producto = productosData.find(p => p.id === productoId);
-      
+
       // Verificar disponibilidad
       if (producto && producto.disponible !== false) {
         // Verificar si tiene ingredientes o está en la lista estática
         if // ---(productosConInstrucciones.includes(producto.id) || 
-            (productosConIngs[producto.id] === true || 
-            producto.tieneIngredientes === true) {
+          (productosConIngs[producto.id] === true ||
+          producto.tieneIngredientes === true) {
           abrirModalProductoInstrucciones(producto);
         } else {
           // Añadir directamente a la orden
@@ -1194,7 +1294,7 @@ async function filtrarProductos() {
         }
       }
     });
-    
+
     container.appendChild(productoCard);
   });
 }
@@ -1213,16 +1313,16 @@ function agregarProductoDirecto(producto) {
       instrucciones: '',
       uniqueId: Date.now() // Add a unique identifier
     };
-    
+
     ordenActual.items.push(item);
   } else {
     // Check if the product already exists in the order (for products without ingredients)
     const itemExistente = ordenActual.items.findIndex(i => i.id === producto.id);
-    
+
     if (itemExistente >= 0) {
       // Increase quantity and subtotal
       ordenActual.items[itemExistente].cantidad += 1;
-      ordenActual.items[itemExistente].subtotal = 
+      ordenActual.items[itemExistente].subtotal =
         ordenActual.items[itemExistente].precio * ordenActual.items[itemExistente].cantidad;
     } else {
       // Add new item
@@ -1235,24 +1335,24 @@ function agregarProductoDirecto(producto) {
         instrucciones: '',
         uniqueId: Date.now() // Add a unique identifier
       };
-      
+
       ordenActual.items.push(item);
     }
   }
-  
+
   // Update UI
   actualizarOrdenUI();
-  
+
   // Notification
   mostrarNotificacion(`${producto.nombre} agregado a la orden`, 'success');
 }
 
 function actualizarOrdenUI() {
   const container = document.getElementById('orden-items');
-  
+
   // Actualizar contador de items para la tab móvil
   document.querySelector('.orden-contador').textContent = ordenActual.items.length;
-  
+
   // Si no hay items, mostrar mensaje vacío
   if (ordenActual.items.length === 0) {
     container.innerHTML = `
@@ -1262,18 +1362,18 @@ function actualizarOrdenUI() {
         <p class="orden-vacia-texto">Agrega productos haciendo clic en ellos</p>
       </div>
     `;
-    
+
     // Calcular total
     calcularTotal();
     return;
   }
-  
+
   // Generar HTML para los items
   let html = '';
-  
+
   ordenActual.items.forEach((item, index) => {
     const tieneInstruccionesTexto = item.instrucciones && item.instrucciones.trim() !== '';
-    
+
     // Special handling for divided pizza
     let ingredientesHTML = '';
     if (item.esPizzaDividida && item.ingredientes && item.ingredientes.length > 0) {
@@ -1286,10 +1386,10 @@ function actualizarOrdenUI() {
         }
         ingredientesPorParte[parte].push(ing);
       });
-      
+
       // Create HTML for each part
       ingredientesHTML = `<div class="orden-item-ingredientes pizza-dividida">`;
-      
+
       for (const parte in ingredientesPorParte) {
         ingredientesHTML += `
           <div class="parte-pizza">
@@ -1302,12 +1402,12 @@ function actualizarOrdenUI() {
           </div>
         `;
       }
-      
+
       ingredientesHTML += `</div>`;
     } else if (item.ingredientes && item.ingredientes.length > 0) {
       // Regular ingredients display (unchanged)
       const ingredientesAdicionales = item.ingredientes.filter(ing => ing.precio > 0);
-      
+
       if (ingredientesAdicionales.length > 0) {
         ingredientesHTML = `
           <div class="orden-item-ingredientes">
@@ -1318,7 +1418,7 @@ function actualizarOrdenUI() {
         `;
       }
     }
-    
+
     html += `
       <div class="orden-item">
         <div class="orden-item-cantidad">${item.cantidad}x</div>
@@ -1326,8 +1426,8 @@ function actualizarOrdenUI() {
           <div class="orden-item-nombre">${item.nombre}</div>
           <div class="orden-item-precio">${formatearMoneda(item.precio)} c/u</div>
           ${ingredientesHTML}
-          ${tieneInstruccionesTexto ? 
-            `<div class="orden-item-instrucciones">${item.instrucciones}</div>` : ''}
+          ${tieneInstruccionesTexto ?
+        `<div class="orden-item-instrucciones">${item.instrucciones}</div>` : ''}
         </div>
         <div class="orden-item-total">${formatearMoneda(item.subtotal)}</div>
         <div class="orden-item-acciones">
@@ -1347,72 +1447,72 @@ function actualizarOrdenUI() {
       </div>
     `;
   });
-  
+
   container.innerHTML = html;
-  
+
   // Agregar eventos a los botones
   document.querySelectorAll('.btn-instrucciones').forEach(btn => {
-    btn.addEventListener('click', function() {
+    btn.addEventListener('click', function () {
       const index = parseInt(this.getAttribute('data-index'));
-      
+
       if (index >= 0 && index < ordenActual.items.length) {
         const item = ordenActual.items[index];
         abrirModalEdicionItem(item, index);
       }
     });
   });
-  
+
   document.querySelectorAll('.btn-reducir').forEach(btn => {
-    btn.addEventListener('click', function() {
+    btn.addEventListener('click', function () {
       const index = parseInt(this.getAttribute('data-index'));
-      
+
       if (index >= 0 && index < ordenActual.items.length) {
         if (ordenActual.items[index].cantidad > 1) {
           // Reducir cantidad
           ordenActual.items[index].cantidad -= 1;
-          ordenActual.items[index].subtotal = 
+          ordenActual.items[index].subtotal =
             ordenActual.items[index].precio * ordenActual.items[index].cantidad;
-          
+
           // Actualizar UI
           actualizarOrdenUI();
         }
       }
     });
   });
-  
+
   document.querySelectorAll('.btn-aumentar').forEach(btn => {
-    btn.addEventListener('click', function() {
+    btn.addEventListener('click', function () {
       const index = parseInt(this.getAttribute('data-index'));
-      
+
       if (index >= 0 && index < ordenActual.items.length) {
         // Aumentar cantidad
         ordenActual.items[index].cantidad += 1;
-        ordenActual.items[index].subtotal = 
+        ordenActual.items[index].subtotal =
           ordenActual.items[index].precio * ordenActual.items[index].cantidad;
-        
+
         // Actualizar UI
         actualizarOrdenUI();
       }
     });
   });
-  
+
   document.querySelectorAll('.btn-eliminar').forEach(btn => {
-    btn.addEventListener('click', function() {
+    btn.addEventListener('click', function () {
       const index = parseInt(this.getAttribute('data-index'));
-      
+
       if (index >= 0 && index < ordenActual.items.length) {
         // Eliminar item
         ordenActual.items.splice(index, 1);
-        
+
         // Actualizar UI
         actualizarOrdenUI();
-        
+
         // Notificación
         mostrarNotificacion('Producto eliminado de la orden', 'info');
       }
     });
   });
-  
+
   // Calcular total
   calcularTotal();
 }
@@ -1424,35 +1524,35 @@ async function guardarInstrucciones() {
     if (indexItemEditarInstr < ordenActual.items.length) {
       // Get instructions
       const instrucciones = document.getElementById('producto-instrucciones').value.trim();
-      
+
       // Update item
       ordenActual.items[indexItemEditarInstr].instrucciones = instrucciones;
-      
+
       // Update ingredients if present
       if (ingredientesSeleccionados.length > 0) {
         ordenActual.items[indexItemEditarInstr].ingredientes = ingredientesSeleccionados;
-        
+
         // Calculate additional price for ingredients
         const precioAdicional = ingredientesSeleccionados.reduce((total, ing) => {
           return total + (ing.precio || 0);
         }, 0);
-        
+
         // Update price if there are additional costs
         if (precioAdicional > 0) {
           const precioBase = productoSeleccionadoInstr.precio || 0;
           ordenActual.items[indexItemEditarInstr].precio = precioBase + precioAdicional;
-          ordenActual.items[indexItemEditarInstr].subtotal = 
-            ordenActual.items[indexItemEditarInstr].precio * 
+          ordenActual.items[indexItemEditarInstr].subtotal =
+            ordenActual.items[indexItemEditarInstr].precio *
             ordenActual.items[indexItemEditarInstr].cantidad;
         }
       }
-      
+
       // Update UI
       actualizarOrdenUI();
-      
+
       // Close modal
       document.getElementById('modal-instrucciones').style.display = 'none';
-      
+
       // Notification
       mostrarNotificacion('Instrucciones guardadas', 'success');
     }
@@ -1461,17 +1561,17 @@ async function guardarInstrucciones() {
     if (productoSeleccionadoInstr) {
       // Get instructions
       const instrucciones = document.getElementById('producto-instrucciones').value.trim();
-      
+
       // Check if it's a divided pizza
-      const isDividedPizza = isProductInSubcategory(productoSeleccionadoInstr, 'pizzas') && 
-                             productoSeleccionadoInstr.nombre.toLowerCase() === 'dividida';
-      
+      const isDividedPizza = isProductInSubcategory(productoSeleccionadoInstr, 'pizzas') &&
+        productoSeleccionadoInstr.nombre.toLowerCase() === 'dividida';
+
       if (isDividedPizza) {
         // For divided pizza, collect all part ingredients from pizzaPartIngredients
         const allIngredients = [];
         const partSelect = document.getElementById('partSelect');
         const totalParts = parseInt(partSelect.value);
-        
+
         // Get all ingredients from all parts
         for (let part = 1; part <= totalParts; part++) {
           if (pizzaPartIngredients[part] && pizzaPartIngredients[part].length > 0) {
@@ -1483,15 +1583,15 @@ async function guardarInstrucciones() {
             allIngredients.push(...ingredientsWithPart);
           }
         }
-        
+
         // Calculate additional price
         const precioAdicional = allIngredients.reduce((total, ing) => {
           return total + (ing.precio || 0);
         }, 0);
-        
+
         // Final product price
         const precioFinal = (productoSeleccionadoInstr.precio || 0) + precioAdicional;
-        
+
         // Create order item
         const item = {
           id: productoSeleccionadoInstr.id,
@@ -1504,7 +1604,7 @@ async function guardarInstrucciones() {
           pizzaParts: totalParts, // Save the number of parts
           esPizzaDividida: true // Flag to identify divided pizzas
         };
-        
+
         // Add to order
         ordenActual.items.push(item);
       } else {
@@ -1513,17 +1613,17 @@ async function guardarInstrucciones() {
         const precioAdicional = ingredientesSeleccionados.reduce((total, ing) => {
           return total + (ing.precio || 0);
         }, 0);
-        
+
         // Final product price
         const precioFinal = (productoSeleccionadoInstr.precio || 0) + precioAdicional;
-        
+
         // Calculate ingredient changes for regular products
         let ingredientChanges = { added: [], removed: [] };
         if (productoSeleccionadoInstr && await tieneIngredientes(productoSeleccionadoInstr.id)) {
           const defaultIngredientes = await obtenerIngredientesProducto(productoSeleccionadoInstr.id);
           ingredientChanges = getIngredientChanges(defaultIngredientes, ingredientesSeleccionados);
         }
-        
+
         // Create order item
         const item = {
           id: productoSeleccionadoInstr.id,
@@ -1535,17 +1635,17 @@ async function guardarInstrucciones() {
           ingredientes: ingredientesSeleccionados.length > 0 ? ingredientesSeleccionados : undefined,
           ingredientChanges: ingredientChanges
         };
-        
+
         // Add to order
         ordenActual.items.push(item);
       }
-      
+
       // Update UI
       actualizarOrdenUI();
-      
+
       // Close modal
       document.getElementById('modal-instrucciones').style.display = 'none';
-      
+
       // Notification
       mostrarNotificacion(`${productoSeleccionadoInstr.nombre} agregado a la orden`, 'success');
     }
@@ -1555,11 +1655,11 @@ async function guardarInstrucciones() {
 function calcularTotal() {
   // Calcular subtotal sumando todos los items
   ordenActual.subtotal = ordenActual.items.reduce((total, item) => total + item.subtotal, 0);
-  
+
   // Obtener porcentaje de descuento
   const descuentoInput = document.getElementById('orden-descuento');
   ordenActual.descuento = parseFloat(descuentoInput.value) || 0;
-  
+
   //Validar descuento (0-100%)
   if (ordenActual.descuento < 0) {
     ordenActual.descuento = 0;
@@ -1568,11 +1668,11 @@ function calcularTotal() {
     ordenActual.descuento = ordenActual.subtotal;
     descuentoInput.value = ordenActual.subtotal;
   }
-  
+
   // Calcular total con descuento
   //const descuentoMonto = ordenActual.subtotal * (ordenActual.descuento / 100);
   ordenActual.total = ordenActual.subtotal - ordenActual.descuento;
-  
+
   // Actualizar UI
   document.getElementById('orden-subtotal').textContent = formatearMoneda(ordenActual.subtotal);
   document.getElementById('orden-total').textContent = formatearMoneda(ordenActual.total);
@@ -1582,7 +1682,7 @@ function confirmarLimpiarOrden() {
   if (ordenActual.items.length === 0) {
     return;
   }
-  
+
   // Usar confirm nativo por simplicidad
   if (confirm('¿Estás seguro de que deseas limpiar la orden actual? Esta acción no se puede deshacer.')) {
     limpiarOrden();
@@ -1600,11 +1700,11 @@ function limpiarOrden() {
     mesa: document.getElementById('cliente-mesa').value,
     nota: document.getElementById('orden-nota').value.trim()
   };
-  
+
   // Actualizar UI
   document.getElementById('orden-descuento').value = 0;
   actualizarOrdenUI();
-  
+
   // Notificación
   mostrarNotificacion('Orden limpiada', 'info');
 }
@@ -1615,27 +1715,27 @@ async function crearOrden() {
     mostrarNotificacion('No puedes crear una orden vacía', 'error');
     return;
   }
-  
+
   // Mostrar cargando
   mostrarCargando(true);
-  
+
   try {
     // Preparar datos de la orden
     const fechaActual = new Date();
-    
+
     // Buscar el número de orden más alto del día
     const fechaInicio = obtenerFechaInicioDia();
     const fechaFin = obtenerFechaFinDia();
-    
+
     let numeroOrden = 1;
-    
+
     try {
       const ordenesHoyRef = await db.collection('ordenes')
         .where('fechaCreacion', '>=', fechaInicio)
         .where('fechaCreacion', '<=', fechaFin)
         .orderBy('fechaCreacion', 'desc')
         .get();
-      
+
       if (!ordenesHoyRef.empty) {
         // Buscar el número de orden más alto
         ordenesHoyRef.forEach(doc => {
@@ -1649,7 +1749,7 @@ async function crearOrden() {
       console.error('Error al obtener número de orden:', error);
       // Continuar con número 1
     }
-    
+
     // Datos de la orden
     const ordenData = {
       numeroOrden: numeroOrden,
@@ -1676,13 +1776,13 @@ async function crearOrden() {
       creadoPor: firebase.auth().currentUser ? firebase.auth().currentUser.uid : null,
       nombreUsuario: firebase.auth().currentUser ? firebase.auth().currentUser.email : 'Desconocido'
     };
-    
+
     // Guardar en Firestore
     const ordenRef = await db.collection('ordenes').add(ordenData);
-    
+
     // Mostrar mensaje de éxito
     mostrarNotificacion(`Orden #${numeroOrden} creada correctamente`, 'success');
-    
+
     // Ofrecer opciones
     if (confirm(`Orden #${numeroOrden} creada correctamente. ¿Deseas ir a la página de órdenes?`)) {
       window.location.href = 'orders.html';
@@ -1690,7 +1790,7 @@ async function crearOrden() {
       // Limpiar orden para empezar una nueva
       limpiarOrden();
     }
-    
+
   } catch (error) {
     console.error('Error al crear la orden:', error);
     mostrarNotificacion('Error al crear la orden. Por favor, intenta de nuevo.', 'error');
@@ -1717,9 +1817,9 @@ function esModoMovil() {
 }
 
 // Escuchar cambios en el tamaño de la ventana
-window.addEventListener('resize', function() {
+window.addEventListener('resize', function () {
   const esMovil = esModoMovil();
-  
+
   // Mostrar/ocultar tabs según corresponda
   const tabsContainer = document.querySelector('.tabs-container');
   tabsContainer.style.display = esMovil ? 'flex' : 'none';
@@ -1727,7 +1827,7 @@ window.addEventListener('resize', function() {
   // --- quitar panel de categorias en la tab orden
   const panelCategorias = document.querySelector('.panel-categorias');
   panelCategorias.style.display = esMovil ? 'flex' : 'none';
-  
+
   // Restablecer layout en modo escritorio
   if (!esMovil) {
     document.getElementById('productos-tab').style.display = 'block';
@@ -1741,7 +1841,7 @@ window.addEventListener('resize', function() {
 
     // --- mostrar panel de categorias en tab orden
     if (tabActiva === 'orden-tab') {
-    document.querySelector('.panel-categorias').style.display = 'none'
+      document.querySelector('.panel-categorias').style.display = 'none'
     } else {
       document.querySelector('.panel-categorias').style.display = 'flex'
     };
@@ -1753,10 +1853,10 @@ window.addEventListener('resize', function() {
 });
 
 // Comprobación inicial del modo
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   // Verificar modo móvil al cargar
   const esMovil = esModoMovil();
-  
+
   // Configurar UI según el modo
   const tabsContainer = document.querySelector('.tabs-container');
   tabsContainer.style.display = esMovil ? 'flex' : 'none';
@@ -1764,7 +1864,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // --- quitar panel de categorias en la tab orden
   const panelCategorias = document.querySelector('.panel-categorias');
   panelCategorias.style.display = esMovil ? 'flex' : 'none';
-  
+
   if (esMovil) {
     // En modo móvil, mostrar solo la primera tab
     document.getElementById('productos-tab').style.display = 'block';
