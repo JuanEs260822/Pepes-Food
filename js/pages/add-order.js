@@ -201,7 +201,7 @@ async function obtenerIngredientesProducto(productoId) {
   }
 }
 
-// Función modificada para abrir modal de edición de item
+// En la función abrirModalEdicionItem, asegúrate de restaurar correctamente la configuración de la pizza
 async function abrirModalEdicionItem(item, index) {
   productoSeleccionadoInstr = item;
   indexItemEditarInstr = index;
@@ -260,12 +260,12 @@ async function abrirModalEdicionItem(item, index) {
       
       // Restore ingredients for each part
       if (item.pizzaConfig.partIngredients) {
-        pizzaPartIngredients = item.pizzaConfig.partIngredients;
+        window.pizzaPartIngredients = JSON.parse(JSON.stringify(item.pizzaConfig.partIngredients));
       }
       
       // Restore specialties for each part
       if (item.pizzaConfig.partSpecialties) {
-        partSpecialties = item.pizzaConfig.partSpecialties;
+        window.partSpecialties = JSON.parse(JSON.stringify(item.pizzaConfig.partSpecialties));
       }
       
       // Select first part after a short delay
@@ -273,9 +273,9 @@ async function abrirModalEdicionItem(item, index) {
         pizzaManager.pizzaCircleManager.selectPart(1);
         
         // Mark parts with ingredients
-        for (const partNum in pizzaPartIngredients) {
-          const hasIngredients = pizzaPartIngredients[partNum] && 
-                                pizzaPartIngredients[partNum].length > 0;
+        for (const partNum in window.pizzaPartIngredients) {
+          const hasIngredients = window.pizzaPartIngredients[partNum] && 
+                                window.pizzaPartIngredients[partNum].length > 0;
           pizzaManager.pizzaCircleManager.markPartWithIngredients(parseInt(partNum), hasIngredients);
         }
       }, 100);
@@ -285,92 +285,94 @@ async function abrirModalEdicionItem(item, index) {
     medidaContainer.style.display = 'none';
   }
 
-  // Check if the product has ingredients
-  const tieneIngs = await tieneIngredientes(item.id);
-  const seccionIngredientes = document.getElementById('ingredientes-seccion');
-  const listaIngredientes = document.getElementById('ingredientes-lista');
-
   // For non-pizza products, handle ingredients normally
-  if (!esPizza && tieneIngs) {
-    // Clear ingredients list
-    listaIngredientes.innerHTML = '';
+  if (!esPizza) {
+    // Check if the product has ingredients
+    const tieneIngs = await tieneIngredientes(item.id);
+    const seccionIngredientes = document.getElementById('ingredientes-seccion');
+    const listaIngredientes = document.getElementById('ingredientes-lista');
+    
+    if (tieneIngs) {
+      // Clear ingredients list
+      listaIngredientes.innerHTML = '';
 
-    // Show ingredients section
-    seccionIngredientes.style.display = 'block';
+      // Show ingredients section
+      seccionIngredientes.style.display = 'block';
 
-    // Set selected ingredients
-    ingredientesSeleccionados = item.ingredientes || [];
+      // Set selected ingredients
+      ingredientesSeleccionados = item.ingredientes || [];
 
-    // Load product ingredients
-    const ingredientesDisponibles = await obtenerIngredientesProducto(item.id);
+      // Load product ingredients
+      const ingredientesDisponibles = await obtenerIngredientesProducto(item.id);
 
-    // Create UI for each ingredient
-    ingredientesDisponibles.forEach(ingrediente => {
-      // Check if selected
-      const estaSeleccionado = ingredientesSeleccionados.some(i => i.id === ingrediente.id);
+      // Create UI for each ingredient
+      ingredientesDisponibles.forEach(ingrediente => {
+        // Check if selected
+        const estaSeleccionado = ingredientesSeleccionados.some(i => i.id === ingrediente.id);
 
-      // Create ingredient item
-      const ingredienteItem = document.createElement('div');
-      ingredienteItem.className = 'ingrediente-item';
+        // Create ingredient item
+        const ingredienteItem = document.createElement('div');
+        ingredienteItem.className = 'ingrediente-item';
 
-      // Create checkbox
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.className = 'ingrediente-checkbox';
-      checkbox.id = 'ingrediente-' + ingrediente.id;
-      checkbox.checked = estaSeleccionado;
+        // Create checkbox
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'ingrediente-checkbox';
+        checkbox.id = 'ingrediente-' + ingrediente.id;
+        checkbox.checked = estaSeleccionado;
 
-      // Handle checkbox change
-      checkbox.addEventListener('change', function() {
-        if (this.checked) {
-          // Add to selected if not exists
-          const yaExiste = ingredientesSeleccionados.some(i => i.id === ingrediente.id);
-          if (!yaExiste) {
-            ingredientesSeleccionados.push({
-              id: ingrediente.id,
-              nombre: ingrediente.nombre,
-              precio: ingrediente.precio || 0
-            });
+        // Handle checkbox change
+        checkbox.addEventListener('change', function() {
+          if (this.checked) {
+            // Add to selected if not exists
+            const yaExiste = ingredientesSeleccionados.some(i => i.id === ingrediente.id);
+            if (!yaExiste) {
+              ingredientesSeleccionados.push({
+                id: ingrediente.id,
+                nombre: ingrediente.nombre,
+                precio: ingrediente.precio || 0
+              });
+            }
+          } else {
+            // Remove from selected
+            const index = ingredientesSeleccionados.findIndex(i => i.id === ingrediente.id);
+            if (index >= 0) {
+              ingredientesSeleccionados.splice(index, 1);
+            }
           }
-        } else {
-          // Remove from selected
-          const index = ingredientesSeleccionados.findIndex(i => i.id === ingrediente.id);
-          if (index >= 0) {
-            ingredientesSeleccionados.splice(index, 1);
-          }
+
+          // Update price
+          actualizarPrecioModal();
+        });
+
+        // Create label for name
+        const nombre = document.createElement('label');
+        nombre.htmlFor = 'ingrediente-' + ingrediente.id;
+        nombre.className = 'ingrediente-nombre';
+        nombre.textContent = ingrediente.nombre;
+
+        // Create price element if needed
+        let precioElement = null;
+        if (ingrediente.precio > 0) {
+          precioElement = document.createElement('span');
+          precioElement.className = 'ingrediente-precio';
+          precioElement.textContent = '+ ' + formatearMoneda(ingrediente.precio || 0);
         }
 
-        // Update price
-        actualizarPrecioModal();
+        // Add elements to item
+        ingredienteItem.appendChild(checkbox);
+        ingredienteItem.appendChild(nombre);
+        if (precioElement) {
+          ingredienteItem.appendChild(precioElement);
+        }
+
+        // Add to list
+        listaIngredientes.appendChild(ingredienteItem);
       });
-
-      // Create label for name
-      const nombre = document.createElement('label');
-      nombre.htmlFor = 'ingrediente-' + ingrediente.id;
-      nombre.className = 'ingrediente-nombre';
-      nombre.textContent = ingrediente.nombre;
-
-      // Create price element if needed
-      let precioElement = null;
-      if (ingrediente.precio > 0) {
-        precioElement = document.createElement('span');
-        precioElement.className = 'ingrediente-precio';
-        precioElement.textContent = '+ ' + formatearMoneda(ingrediente.precio || 0);
-      }
-
-      // Add elements to item
-      ingredienteItem.appendChild(checkbox);
-      ingredienteItem.appendChild(nombre);
-      if (precioElement) {
-        ingredienteItem.appendChild(precioElement);
-      }
-
-      // Add to list
-      listaIngredientes.appendChild(ingredienteItem);
-    });
-  } else if (!esPizza) {
-    // Hide ingredients section for non-pizza products without ingredients
-    seccionIngredientes.style.display = 'none';
+    } else {
+      // Hide ingredients section for non-pizza products without ingredients
+      seccionIngredientes.style.display = 'none';
+    }
   }
 
   // Set current instructions
@@ -558,7 +560,7 @@ async function obtenerIngredientesPorEspecialidad(especialidadId) {
   }
 }
 
-// Setup pizza division circle
+// Actualización de la función setupPizzaDivision para guardar cambios automáticamente
 function setupPizzaDivision(container, onPartSelect) {
   // Get or create the circle container
   let circleContainer = container.querySelector('.circle-container');
@@ -638,6 +640,12 @@ function setupPizzaDivision(container, onPartSelect) {
   
         // Add click event to select this part
         path.addEventListener('click', () => {
+          // Guardar cambios de la parte actual antes de cambiar
+          if (window.currentSelectedPart !== null && window.currentSelectedPart !== partNumber) {
+            saveCurrentPartChanges();
+          }
+          
+          // Seleccionar la nueva parte
           this.selectPart(partNumber);
         });
   
@@ -680,7 +688,24 @@ function setupPizzaDivision(container, onPartSelect) {
   };
 }
 
-// Function to create and setup pizza UI
+// Función para guardar los cambios de la parte actual antes de cambiar a otra
+function saveCurrentPartChanges() {
+  // Guardar los ingredientes seleccionados para la parte actual
+  if (window.currentSelectedPart !== null) {
+    window.pizzaPartIngredients[window.currentSelectedPart] = [...ingredientesSeleccionados];
+    
+    // Actualizar visualmente la parte para indicar que tiene ingredientes
+    if (window.currentPizzaManager && window.currentPizzaManager.pizzaCircleManager) {
+      const hasIngredients = ingredientesSeleccionados.length > 0;
+      window.currentPizzaManager.pizzaCircleManager.markPartWithIngredients(
+        window.currentSelectedPart, 
+        hasIngredients
+      );
+    }
+  }
+}
+
+// Actualiza la función setupPizzaCustomizationUI para manejar mejor el cambio entre partes
 async function setupPizzaCustomizationUI(container, productoId) {
   // Create size selection
   const sizeContainer = document.createElement('div');
@@ -724,26 +749,29 @@ async function setupPizzaCustomizationUI(container, productoId) {
   
   // Set up pizza division visualization
   const pizzaCircleManager = setupPizzaDivision(container, (partNumber) => {
-    // This function will be called when a part is selected
-    currentSelectedPart = partNumber;
+    // Esta función se llama cuando se selecciona una parte
     
-    // Save current ingredients for previous part if any
-    if (previousSelectedPart !== null) {
-      pizzaPartIngredients[previousSelectedPart] = [...ingredientesSeleccionados];
+    // Guardar ingredientes para la parte anterior si existe
+    if (window.previousSelectedPart !== null && window.previousSelectedPart !== partNumber) {
+      // Guardar ingredientes actuales para la parte anterior
+      window.pizzaPartIngredients[window.previousSelectedPart] = [...ingredientesSeleccionados];
     }
     
-    // Load ingredients for the selected part
-    ingredientesSeleccionados = pizzaPartIngredients[partNumber] || [];
-    previousSelectedPart = partNumber;
+    // Actualizar la parte seleccionada
+    window.currentSelectedPart = partNumber;
     
-    // Update specialty select for this part
+    // Cargar ingredientes para la parte seleccionada
+    ingredientesSeleccionados = window.pizzaPartIngredients[partNumber] || [];
+    window.previousSelectedPart = partNumber;
+    
+    // Actualizar el selector de especialidades para esta parte
     const specialtySelect = document.getElementById('pizza-specialty-select');
-    const currentSpecialty = partSpecialties[partNumber] || '';
+    const currentSpecialty = window.partSpecialties[partNumber] || '';
     if (specialtySelect) {
       specialtySelect.value = currentSpecialty;
     }
     
-    // Load ingredients for this part
+    // Cargar ingredientes para esta parte
     loadIngredientsForPart(productoId, partNumber, currentSpecialty);
   });
   
@@ -766,10 +794,10 @@ async function setupPizzaCustomizationUI(container, productoId) {
     pizzaCircleManager.drawSegments(parts);
     
     // Reset ingredients for new division
-    pizzaPartIngredients = {};
-    partSpecialties = {};
-    previousSelectedPart = null;
-    currentSelectedPart = null;
+    window.pizzaPartIngredients = {};
+    window.partSpecialties = {};
+    window.previousSelectedPart = null;
+    window.currentSelectedPart = null;
     ingredientesSeleccionados = [];
     
     // Hide ingredients section until a part is selected
@@ -785,23 +813,23 @@ async function setupPizzaCustomizationUI(container, productoId) {
   });
   
   specialtySelect.addEventListener('change', async function() {
-    if (!currentSelectedPart) return;
+    if (!window.currentSelectedPart) return;
     
     const especialidadId = this.value;
-    partSpecialties[currentSelectedPart] = especialidadId;
+    window.partSpecialties[window.currentSelectedPart] = especialidadId;
     
     // Load ingredients for the selected specialty
-    await loadIngredientsForPart(productoId, currentSelectedPart, especialidadId);
+    await loadIngredientsForPart(productoId, window.currentSelectedPart, especialidadId);
   });
   
   // Initialize with pizza divided in 1 part
   pizzaCircleManager.drawSegments(1);
   
-  // Set up variables to track selected parts and ingredients
-  let pizzaPartIngredients = {};
-  let partSpecialties = {};
-  let previousSelectedPart = null;
-  let currentSelectedPart = null;
+  // Initialize global variables if not yet set
+  if (!window.pizzaPartIngredients) window.pizzaPartIngredients = {};
+  if (!window.partSpecialties) window.partSpecialties = {};
+  window.previousSelectedPart = null;
+  window.currentSelectedPart = null;
   
   // Select the whole pizza initially after a short delay
   setTimeout(() => {
@@ -814,26 +842,29 @@ async function setupPizzaCustomizationUI(container, productoId) {
     
     // Method to get all pizza configuration
     getPizzaConfig: function() {
+      // Guardar la configuración actual antes de devolver el resultado
+      saveCurrentPartChanges();
+      
       return {
         size: document.getElementById('pizza-size-select').value,
         parts: parseInt(document.getElementById('pizza-parts-select').value),
-        partIngredients: pizzaPartIngredients,
-        partSpecialties: partSpecialties
+        partIngredients: window.pizzaPartIngredients,
+        partSpecialties: window.partSpecialties
       };
     },
     
     // Method to mark parts with ingredients
     updatePartStatus: function() {
-      for (const partNum in pizzaPartIngredients) {
-        const hasIngredients = pizzaPartIngredients[partNum] && 
-                              pizzaPartIngredients[partNum].length > 0;
+      for (const partNum in window.pizzaPartIngredients) {
+        const hasIngredients = window.pizzaPartIngredients[partNum] && 
+                              window.pizzaPartIngredients[partNum].length > 0;
         pizzaCircleManager.markPartWithIngredients(parseInt(partNum), hasIngredients);
       }
     }
   };
 }
 
-// Function to load ingredients for a specific part of the pizza
+// Actualización de la función loadIngredientsForPart para usar variables globales
 async function loadIngredientsForPart(productoId, partNumber, especialidadId) {
   const seccionIngredientes = document.getElementById('ingredientes-seccion');
   const listaIngredientes = document.getElementById('ingredientes-lista');
@@ -904,12 +935,14 @@ async function loadIngredientsForPart(productoId, partNumber, especialidadId) {
         }
       }
       
-      // Save current ingredients for this part
-      pizzaPartIngredients[partNumber] = [...ingredientesSeleccionados];
+      // Guardar inmediatamente los cambios en la variable global
+      window.pizzaPartIngredients[partNumber] = [...ingredientesSeleccionados];
       
-      // Update the segment to show it has ingredients
-      const hasIngredients = ingredientesSeleccionados.length > 0;
-      pizzaManager.pizzaCircleManager.markPartWithIngredients(partNumber, hasIngredients);
+      // Actualizar el estado visual de la parte
+      if (window.currentPizzaManager && window.currentPizzaManager.pizzaCircleManager) {
+        const hasIngredients = ingredientesSeleccionados.length > 0;
+        window.currentPizzaManager.pizzaCircleManager.markPartWithIngredients(partNumber, hasIngredients);
+      }
       
       // Update price
       actualizarPrecioModal();
@@ -1727,195 +1760,68 @@ function actualizarOrdenUI() {
   calcularTotal();
 }
 
-// Función modificada para guardar instrucciones
-async function guardarInstrucciones() {
+// Actualización de la función guardarInstrucciones para manejar correctamente la configuración de pizza
+function guardarInstrucciones() {
+  if (!productoSeleccionadoInstr) return;
+
+  // Guardar cambios de la parte actual si es pizza antes de procesar
+  if (isPizza(productoSeleccionadoInstr) && window.currentSelectedPart !== null) {
+    saveCurrentPartChanges();
+  }
+
   // Get instructions
   const instrucciones = document.getElementById('producto-instrucciones').value.trim();
-  
-  // Get pizza manager
-  const pizzaManager = window.currentPizzaManager;
-  const esPizza = pizzaManager !== null;
 
-  if (indexItemEditarInstr >= 0) {
-    // Editing an existing item
-    if (indexItemEditarInstr < ordenActual.items.length) {
-      // Update instructions
-      ordenActual.items[indexItemEditarInstr].instrucciones = instrucciones;
+  // Prepare item object
+  const item = {
+    id: productoSeleccionadoInstr.id,
+    nombre: productoSeleccionadoInstr.nombre,
+    precio: productoSeleccionadoInstr.precio || 0,
+    cantidad: 1,
+    instrucciones: instrucciones
+  };
 
-      if (esPizza) {
-        // Get pizza configuration
-        const pizzaConfig = pizzaManager.getPizzaConfig();
-        
-        // Add it to the item
-        ordenActual.items[indexItemEditarInstr].pizzaConfig = pizzaConfig;
-        
-        // Create a consolidated ingredients list from all parts
-        const allIngredients = [];
-        for (const partNum in pizzaConfig.partIngredients) {
-          const partIngs = pizzaConfig.partIngredients[partNum];
-          if (partIngs && partIngs.length > 0) {
-            // Add part number to each ingredient
-            const ingredientsWithPart = partIngs.map(ing => ({
-              ...ing,
-              part: parseInt(partNum)
-            }));
-            allIngredients.push(...ingredientsWithPart);
-          }
-        }
-        
-        // Update item ingredients
-        ordenActual.items[indexItemEditarInstr].ingredientes = allIngredients;
-        ordenActual.items[indexItemEditarInstr].esPizzaDividida = pizzaConfig.parts > 1;
-        ordenActual.items[indexItemEditarInstr].pizzaParts = pizzaConfig.parts;
-        
-        // Create a description of the pizza
-        let descripcion = getPizzaSizes().find(s => s.id === pizzaConfig.size)?.nombre || 'Pizza';
-        if (pizzaConfig.parts > 1) {
-          descripcion += ` dividida en ${pizzaConfig.parts} partes`;
-        }
-        ordenActual.items[indexItemEditarInstr].descripcionPizza = descripcion;
-        
-        // Calculate additional price for ingredients
-        const precioAdicional = allIngredients.reduce((total, ing) => {
-          return total + (ing.precio || 0);
-        }, 0);
-        
-        // Update price if there are additional costs
-        if (precioAdicional > 0) {
-          const precioBase = productoSeleccionadoInstr.precio || 0;
-          ordenActual.items[indexItemEditarInstr].precio = precioBase + precioAdicional;
-          ordenActual.items[indexItemEditarInstr].subtotal =
-            ordenActual.items[indexItemEditarInstr].precio *
-            ordenActual.items[indexItemEditarInstr].cantidad;
-        }
-      } else if (ingredientesSeleccionados.length > 0) {
-        // Update regular product ingredients
-        ordenActual.items[indexItemEditarInstr].ingredientes = ingredientesSeleccionados;
-        
-        // Calculate additional price for ingredients
-        const precioAdicional = ingredientesSeleccionados.reduce((total, ing) => {
-          return total + (ing.precio || 0);
-        }, 0);
-        
-        // Update price if there are additional costs
-        if (precioAdicional > 0) {
-          const precioBase = productoSeleccionadoInstr.precio || 0;
-          ordenActual.items[indexItemEditarInstr].precio = precioBase + precioAdicional;
-          ordenActual.items[indexItemEditarInstr].subtotal =
-            ordenActual.items[indexItemEditarInstr].precio *
-            ordenActual.items[indexItemEditarInstr].cantidad;
-        }
-      }
-      
-      // Update UI
-      actualizarOrdenUI();
-      
-      // Close modal
-      document.getElementById('modal-instrucciones').style.display = 'none';
-      
-      // Notification
-      mostrarNotificacion('Producto actualizado', 'success');
-    }
-  } else {
-    // Adding a new product
-    if (productoSeleccionadoInstr) {
-      if (esPizza) {
-        // Get pizza configuration
-        const pizzaConfig = pizzaManager.getPizzaConfig();
-        
-        // Create a consolidated ingredients list from all parts
-        const allIngredients = [];
-        for (const partNum in pizzaConfig.partIngredients) {
-          const partIngs = pizzaConfig.partIngredients[partNum];
-          if (partIngs && partIngs.length > 0) {
-            // Add part number to each ingredient
-            const ingredientsWithPart = partIngs.map(ing => ({
-              ...ing,
-              part: parseInt(partNum)
-            }));
-            allIngredients.push(...ingredientsWithPart);
-          }
-        }
-        
-        // Calculate additional price for ingredients
-        const precioAdicional = allIngredients.reduce((total, ing) => {
-          return total + (ing.precio || 0);
-        }, 0);
-        
-        // Final product price
-        const precioFinal = (productoSeleccionadoInstr.precio || 0) + precioAdicional;
-        
-        // Create a description of the pizza
-        let descripcion = getPizzaSizes().find(s => s.id === pizzaConfig.size)?.nombre || 'Pizza';
-        if (pizzaConfig.parts > 1) {
-          descripcion += ` dividida en ${pizzaConfig.parts} partes`;
-        }
-        
-        // Create order item
-        const item = {
-          id: productoSeleccionadoInstr.id,
-          nombre: productoSeleccionadoInstr.nombre,
-          precio: precioFinal,
-          cantidad: 1,
-          subtotal: precioFinal,
-          instrucciones: instrucciones,
-          ingredientes: allIngredients,
-          pizzaConfig: pizzaConfig,
-          esPizzaDividida: pizzaConfig.parts > 1,
-          pizzaParts: pizzaConfig.parts,
-          descripcionPizza: descripcion,
-          uniqueId: Date.now() // Add unique identifier
-        };
-        
-        // Add to order
-        ordenActual.items.push(item);
-      } else {
-        // Regular product handling
-        // Calculate additional price for ingredients
-        const precioAdicional = ingredientesSeleccionados.reduce((total, ing) => {
-          return total + (ing.precio || 0);
-        }, 0);
-        
-        // Final product price
-        const precioFinal = (productoSeleccionadoInstr.precio || 0) + precioAdicional;
-        
-        // Calculate ingredient changes for regular products
-        let ingredientChanges = { added: [], removed: [] };
-        if (!esPizza && await tieneIngredientes(productoSeleccionadoInstr.id)) {
-          const defaultIngredientes = await obtenerIngredientesProducto(productoSeleccionadoInstr.id);
-          ingredientChanges = getIngredientChanges(defaultIngredientes, ingredientesSeleccionados);
-        }
-        
-        // Create order item
-        const item = {
-          id: productoSeleccionadoInstr.id,
-          nombre: productoSeleccionadoInstr.nombre,
-          precio: precioFinal,
-          cantidad: 1,
-          subtotal: precioFinal,
-          instrucciones: instrucciones,
-          ingredientes: ingredientesSeleccionados.length > 0 ? ingredientesSeleccionados : undefined,
-          ingredientChanges: ingredientChanges,
-          uniqueId: Date.now() // Add unique identifier
-        };
-        
-        // Add to order
-        ordenActual.items.push(item);
-      }
-      
-      // Update UI
-      actualizarOrdenUI();
-      
-      // Close modal
-      document.getElementById('modal-instrucciones').style.display = 'none';
-      
-      // Notification
-      mostrarNotificacion(`${productoSeleccionadoInstr.nombre} agregado a la orden`, 'success');
-    }
+  // For pizza products, get the configuration
+  if (isPizza(productoSeleccionadoInstr) && window.currentPizzaManager) {
+    item.pizzaConfig = window.currentPizzaManager.getPizzaConfig();
+  } else if (tieneIngredientes(productoSeleccionadoInstr.id)) {
+    // For other products with ingredients
+    item.ingredientes = [...ingredientesSeleccionados];
   }
+
+  // Calculate final price based on ingredients
+  let precioExtra = 0;
+  if (item.ingredientes) {
+    precioExtra = item.ingredientes.reduce((total, ing) => total + (ing.precio || 0), 0);
+  }
+  item.precio += precioExtra;
+
+  // Add or update item
+  if (indexItemEditarInstr >= 0) {
+    // Update existing item
+    ordenActual.items[indexItemEditarInstr] = item;
+  } else {
+    // Add new item
+    ordenActual.items.push(item);
+  }
+
+  // Close modal
+  document.getElementById('modal-instrucciones').style.display = 'none';
+
+  // Update order UI
+  actualizarOrdenUI();
+  calcularTotal();
+
+  // Clear references
+  productoSeleccionadoInstr = null;
+  indexItemEditarInstr = -1;
+  ingredientesSeleccionados = [];
   
-  // Clean up references
-  window.currentPizzaManager = null;
+  // Reset global pizza variables
+  window.pizzaPartIngredients = {};
+  window.partSpecialties = {};
+  window.previousSelectedPart = null;
+  window.currentSelectedPart = null;
 }
 
 
