@@ -1738,8 +1738,6 @@ function actualizarOrdenUI() {
           <div class="orden-item-nombre">${nombreDisplay}</div>
           <div class="orden-item-precio">${formatearMoneda(item.precio)} c/u</div>
           ${ingredientesHTML}
-          ${tieneInstruccionesTexto ?
-            `<div class="orden-item-instrucciones">${item.instrucciones}</div>` : ''}
         </div>
         <div class="orden-item-total">${formatearMoneda(item.subtotal)}</div>
         <div class="orden-item-acciones">
