@@ -969,6 +969,9 @@ function mostrarProductos() {
 function inicializarPagina() {
   // Cargar productos
   cargarProductos();
+  //habilitar la barra de busqueda
+  const barraBusqueda = document.querySelector('.busqueda-container');
+  barraBusqueda.classList.remove('busqueda-display')
 
   // Configurar eventos de filtros de categoría
   document.querySelectorAll('.categoria-principal').forEach(btn => {
@@ -994,11 +997,15 @@ function inicializarPagina() {
 
         // Filtrar productos
         filtrarProductos();
+        //habilitar la barra de busqueda solo en todos
+        barraBusqueda.classList.remove('busqueda-display')
 
       } else {
         // Mostrar subcategorías como grid
         vistaActual = 'subcategorias';
         mostrarSubcategoriasGrid();
+        //deshabilitar la barra de busqueda solo en las demas categorias
+        barraBusqueda.classList.add('busqueda-display')
       }
     });
   });
