@@ -51,36 +51,36 @@ const subcategoriasPorCategoria = {
     { id: 'pizzas', nombre: 'Pizzas', imagen: 'assets/images/subcategorias/pizza.webp' },
     { id: 'alitas', nombre: 'Alitas', imagen: 'assets/images/subcategorias/alitas.webp' },
     { id: 'boneless', nombre: 'Boneless', imagen: 'assets/images/subcategorias/boneless.webp' },
-    { id: 'hotdogs', nombre: 'Hot Dogs', imagen: 'assets/images/subcategorias/hotdog.jpg' },
-    { id: 'sincronizadas', nombre: 'Sincronizadas', imagen: 'assets/images/subcategorias/sincronizada.jpg' },
-    { id: 'papasfritas', nombre: 'Papas Fritas', imagen: 'assets/images/subcategorias/papas.jpg' },
-    { id: 'salchipapas', nombre: 'Salchipapas', imagen: 'assets/images/subcategorias/salchipapas.jpg' },
-    { id: 'papotas', nombre: 'Papotas', imagen: 'assets/images/subcategorias/papotas.jpg' }
+    { id: 'hotdogs', nombre: 'Hot Dogs', imagen: 'assets/images/subcategorias/hotdog.webp' },
+    { id: 'sincronizadas', nombre: 'Sincronizadas', imagen: 'assets/images/subcategorias/sincronizada.webp' },
+    { id: 'papasfritas', nombre: 'Papas Fritas', imagen: 'assets/images/subcategorias/papas.webp' },
+    { id: 'salchipapas', nombre: 'Salchipapas', imagen: 'assets/images/subcategorias/salchipapas.webp' },
+    { id: 'papotas', nombre: 'Papotas', imagen: 'assets/images/subcategorias/papotas.webp' }
   ],
   'snacks': [
     { id: 'dorilocos', nombre: 'Dorilocos', imagen: 'assets/images/subcategorias/dorilocos.webp' },
-    { id: 'doriesquites', nombre: 'Doriesquites', imagen: 'assets/images/subcategorias/doriesquites.jpg' },
-    { id: 'esquites', nombre: 'Esquites', imagen: 'assets/images/subcategorias/esquites.jpg' },
-    { id: 'frituras', nombre: 'Sabritas', imagen: 'assets/images/subcategorias/sabritas.jpg' },
-    { id: 'pringles', nombre: 'Pringles', imagen: 'assets/images/subcategorias/pringles.jpg' },
-    { id: 'barras', nombre: 'Barras', imagen: 'assets/images/subcategorias/barras.jpg' },
-    { id: 'galletas', nombre: 'Galletas', imagen: 'assets/images/subcategorias/galletas.jpg' },
-    { id: 'gomitas', nombre: 'Gomitas', imagen: 'assets/images/subcategorias/gomitas.jpg' }
+    { id: 'doriesquites', nombre: 'Doriesquites', imagen: 'assets/images/subcategorias/doriesquites.webp' },
+    { id: 'esquites', nombre: 'Esquites', imagen: 'assets/images/subcategorias/esquites.webp' },
+    { id: 'frituras', nombre: 'Sabritas', imagen: 'assets/images/subcategorias/sabritas.webp' },
+    { id: 'pringles', nombre: 'Pringles', imagen: 'assets/images/subcategorias/pringles.webp' },
+    { id: 'barras', nombre: 'Barras', imagen: 'assets/images/subcategorias/barras.webp' },
+    { id: 'galletas', nombre: 'Galletas', imagen: 'assets/images/subcategorias/galletas.webp' },
+    { id: 'gomitas', nombre: 'Gomitas', imagen: 'assets/images/subcategorias/gomitas.webp' }
   ],
   'bebidas': [
     { id: 'refresco_botella', nombre: 'Sodas-Botella', imagen: 'assets/images/subcategorias/refresco_botella.webp' },
-    { id: 'refresco_lata', nombre: 'Sodas-Lata', imagen: 'assets/images/subcategorias/refresco_lata.jpg' },
-    { id: 'agua', nombre: 'Agua-Botella', imagen: 'assets/images/subcategorias/agua.jpg' },
-    { id: 'agua_sabor', nombre: 'Aguas-Frescas', imagen: 'assets/images/subcategorias/agua_fresca.jpg' },
-    { id: 'cerveza', nombre: 'Cerveza', imagen: 'assets/images/subcategorias/cerveza.jpg' },
-    { id: 'michelada', nombre: 'Michelada', imagen: 'assets/images/subcategorias/michelada.jpg' },
-    { id: 'new_mix', nombre: 'New Mix', imagen: 'assets/images/subcategorias/new_mix.jpg' },
-    { id: 'jugo_botella', nombre: 'Jugo-Botella', imagen: 'assets/images/subcategorias/jugo_botella.jpg' },
-    { id: 'jugo_lata', nombre: 'Jugo-Lata', imagen: 'assets/images/subcategorias/jugo_lata.jpg' },
-    { id: 'energeticas', nombre: 'Bebidas energéticas', imagen: 'assets/images/subcategorias/energeticas.jpg' },
-    { id: 'malteadas', nombre: 'Malteadas', imagen: 'assets/images/subcategorias/malteada.jpg' },
-    { id: 'frappe', nombre: 'Frappe', imagen: 'assets/images/subcategorias/frappe.jpg' },
-    { id: 'raspados', nombre: 'Raspados', imagen: 'assets/images/subcategorias/raspado.jpg' }
+    { id: 'refresco_lata', nombre: 'Sodas-Lata', imagen: 'assets/images/subcategorias/refresco_lata.webp' },
+    { id: 'agua', nombre: 'Agua-Botella', imagen: 'assets/images/subcategorias/agua.webp' },
+    { id: 'agua_sabor', nombre: 'Aguas-Frescas', imagen: 'assets/images/subcategorias/agua_fresca.webp' },
+    { id: 'cerveza', nombre: 'Cerveza', imagen: 'assets/images/subcategorias/cerveza.webp' },
+    { id: 'michelada', nombre: 'Michelada', imagen: 'assets/images/subcategorias/michelada.webp' },
+    { id: 'new_mix', nombre: 'New Mix', imagen: 'assets/images/subcategorias/new_mix.webp' },
+    { id: 'jugo_botella', nombre: 'Jugo-Botella', imagen: 'assets/images/subcategorias/jugo_botella.webp' },
+    { id: 'jugo_lata', nombre: 'Jugo-Lata', imagen: 'assets/images/subcategorias/jugo_lata.webp' },
+    { id: 'energeticas', nombre: 'Bebidas energéticas', imagen: 'assets/images/subcategorias/energeticas.webp' },
+    { id: 'malteadas', nombre: 'Malteadas', imagen: 'assets/images/subcategorias/malteada.webp' },
+    { id: 'frappe', nombre: 'Frappe', imagen: 'assets/images/subcategorias/frappe.webp' },
+    { id: 'raspados', nombre: 'Raspados', imagen: 'assets/images/subcategorias/raspado.webp' }
   ]
 };
 
