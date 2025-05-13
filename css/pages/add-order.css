@@ -1029,3 +1029,96 @@ svg {
   border-radius: 4px;
   border: 1px solid #ddd;
 }
+
+/* nuevos css para nueva interfaz de pizza */
+.pizza-size-container,
+    .pizza-parts-container,
+    .pizza-specialty-container {
+      margin-bottom: 15px;
+    }
+    
+    .size-title,
+    .parts-title,
+    .specialty-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .circle-container {
+      margin: 20px auto;
+      width: 100%;
+      max-width: 250px;
+    }
+    
+    .circle-header {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    
+    .circle-wrapper {
+      position: relative;
+      width: 100%;
+      padding-bottom: 100%; /* Makes it square */
+    }
+    
+    #pizza-circle {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .segment {
+      fill: #f5f5f5;
+      stroke: #ccc;
+      stroke-width: 1;
+      cursor: pointer;
+      transition: fill 0.3s;
+    }
+    
+    .segment:hover {
+      fill: #e0e0e0;
+    }
+    
+    .segment.selected {
+      fill: #ffeb3b;
+    }
+    
+    .segment.has-ingredients {
+      fill: #81c784;
+    }
+    
+    .segment.selected.has-ingredients {
+      fill: #4caf50;
+    }
+    
+    .selected-part {
+      text-align: center;
+      margin: 10px 0;
+      font-weight: bold;
+    }
+    
+    .parte-pizza {
+      margin-bottom: 10px;
+      border-left: 3px solid #4caf50;
+      padding-left: 8px;
+    }
+    
+    .parte-pizza-header {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .parte-pizza-ingredientes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    
+    select {
+      width: 100%;
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
