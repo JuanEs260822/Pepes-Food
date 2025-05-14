@@ -1,5 +1,9 @@
 // Utilidades comunes para todas las páginas de Pepe's Food
 
+function esModoMovil() {
+  return window.innerWidth <= 1100;
+}
+
 // Formatear moneda en Pesos Mexicanos
 function formatearMoneda(cantidad) {
   return new Intl.NumberFormat('es-MX', {

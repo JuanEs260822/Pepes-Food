@@ -18,66 +18,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Función para verificar el menú móvil
 function verificarMenuMovil() {
-  console.log('Verificando menú móvil...');
-  
-  // Verificar si el botón existe
-  const menuToggle = document.getElementById('menu-toggle');
-  const navContainer = document.getElementById('nav-container');
-  
-  if (menuToggle) {
-    console.log('Botón de menú encontrado:', menuToggle);
-    
-    // Verificar si ya tiene un evento click
-    const clonedBtn = menuToggle.cloneNode(true);
-    menuToggle.parentNode.replaceChild(clonedBtn, menuToggle);
-    
-    // Agregar evento click directamente desde aquí
-    clonedBtn.addEventListener('click', function(e) {
-      console.log('Click en menú toggle desde dashboard.js');
-      e.preventDefault();
-      e.stopPropagation();
-      
-      // Alternar clase en el contenedor de navegación
-      if (navContainer) {
-        navContainer.classList.toggle('active');
-        
-        // Cambiar ícono
-        const icon = this.querySelector('i');
-        if (icon) {
-          if (navContainer.classList.contains('active')) {
-            icon.classList.remove('fa-bars');
-            icon.classList.add('fa-times');
-          } else {
-            icon.classList.remove('fa-times');
-            icon.classList.add('fa-bars');
-          }
-        }
-        
-        // Manejar overlay
-        const menuOverlay = document.getElementById('menu-overlay');
-        if (menuOverlay) {
-          if (navContainer.classList.contains('active')) {
-            menuOverlay.style.display = 'block';
-            setTimeout(() => {
-              menuOverlay.style.opacity = '1';
-            }, 10);
-            document.body.style.overflow = 'hidden';
-          } else {
-            menuOverlay.style.opacity = '0';
-            setTimeout(() => {
-              menuOverlay.style.display = 'none';
-            }, 300);
-            document.body.style.overflow = '';
-          }
-        }
-      }
-    });
-    
-    console.log('Evento click agregado al botón de menú');
-  } else {
-    console.error('Botón de menú no encontrado');
+  try {
+    // Check if direct mobile menu is already initialized
+    const existingButton = document.querySelector('.direct-menu-toggle');
+    if (existingButton) {
+      console.log('Mobile menu already initialized');
+      return;
+    }
+
+    // Create script element to load the mobile menu script
+    const script = document.createElement('script');
+    script.src = 'js/direct-mobile-menu.js';
+    script.onerror = function() {
+      console.error('Error loading mobile menu script');
+    };
+    document.body.appendChild(script);
+  } catch (error) {
+    console.error('Error initializing mobile menu:', error);
   }
 }
+
+// Call this function after DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+  // Wait a short time to ensure all elements are loaded
+  setTimeout(verificarMenuMovil, 500);
+});
 
 async function inicializarDashboard() {
   mostrarCargando(true);
