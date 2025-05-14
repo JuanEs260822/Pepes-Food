@@ -19,8 +19,22 @@ const db = firebase.firestore();
 const auth = firebase.auth();
 const storage = firebase.storage && firebase.storage(); // Verificar si storage está disponible
 
+// Persistence setup with error handling
+try {
+  db.enablePersistence({ synchronizeTabs: true })
+    .catch(err => {
+      if (err.code === 'failed-precondition') {
+        console.warn('Multiple tabs open, persistence can only be enabled in one tab at a time.');
+      } else if (err.code === 'unimplemented') {
+        console.warn('The current browser does not support all of the features required to enable persistence');
+      }
+    });
+} catch (error) {
+  console.error("Error with persistence setup:", error);
+}
+
 // Configuración global para Firestore (opcional)
-db.settings({
+/* db.settings({
   cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
 });
 db.enablePersistence({ synchronizeTabs: true })
@@ -30,37 +44,56 @@ db.enablePersistence({ synchronizeTabs: true })
     } else if (err.code == 'unimplemented') {
       console.warn('Tu navegador no soporta persistencia de datos offline');
     }
-  });
+  });*/
 
 // Función para verificar si el usuario está autenticado
 function verificarAutenticacion() {
   return new Promise((resolve, reject) => {
+    // Add a timeout to prevent hanging indefinitely
+    const timeout = setTimeout(() => {
+      mostrarCargando(false); // Hide loading screen if it gets stuck
+      reject(new Error('Authentication timeout'));
+    }, 10000); // 10 second timeout
+    
     const unsubscribe = auth.onAuthStateChanged(user => {
+      clearTimeout(timeout);
       unsubscribe();
       if (user) {
+        mostrarCargando(false);
         resolve(user);
       } else {
-        // Redirigir al login si no hay usuario autenticado
+        mostrarCargando(false);
         window.location.href = 'index.html';
-        reject(new Error('Usuario no autenticado'));
+        reject(new Error('User not authenticated'));
       }
     }, error => {
+      clearTimeout(timeout);
+      mostrarCargando(false);
+      console.error("Auth state error:", error);
       reject(error);
     });
   });
 }
 
+function mostrarCargando(show) {
+  const loader = document.getElementById('loading-overlay');
+  if (loader) {
+    loader.style.display = show ? 'flex' : 'none';
+  }
+}
+
 // Función para cerrar sesión
 function cerrarSesion() {
+  mostrarCargando(true);
   return auth.signOut()
     .then(() => {
-      // Limpiar cualquier dato de sesión almacenado
       sessionStorage.clear();
-      // Redirigir al login
+      localStorage.clear(); // Clear any localStorage data as well
       window.location.href = 'index.html';
     })
     .catch(error => {
-      console.error('Error al cerrar sesión:', error);
-      throw error;
+      mostrarCargando(false);
+      console.error('Error signing out:', error);
+      alert('Error al cerrar sesión. Intente de nuevo.');
     });
 }
