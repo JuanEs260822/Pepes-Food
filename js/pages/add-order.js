@@ -407,7 +407,7 @@ async function abrirModalEdicionItem(item, index) {
   // Set up pizza UI if it's a pizza
   if (esPizza) {
     medidaContainer.style.display = 'block';
-    pizzaManager = await setupPizzaCustomizationUI(medidaContainer, item.id);
+    pizzaManager = await setupPizzaCustomizationUI(medidaContainer, item.id);//Aqui probablemente se manden llamar para la edicion 
     
     // Restore pizza configuration from saved item
     if (item.pizzaConfig) {
@@ -465,7 +465,7 @@ async function abrirModalEdicionItem(item, index) {
     
     // Load ingredients for the first part
     const especialidadId = window.partSpecialties["1"] || "";
-    loadIngredientsForPart(item.id, 1, especialidadId);
+    //loadIngredientsForPart(item.id, 1, especialidadId);//Aqui probablemente se haga el segundo llamado a los ingredientes 
     
     // Update specialty select for first part
     const specialtySelect = document.getElementById('pizza-specialty-select');
@@ -1036,7 +1036,7 @@ async function setupPizzaCustomizationUI(container, productoId) {
       
       // Load ingredients for part 1
       const specialty = window.partSpecialties["1"] || "";
-      loadIngredientsForPart(productoId, 1, specialty);
+      //loadIngredientsForPart(productoId, 1, specialty);//Aqui quizas se manden llamar los ingredientes cuando cambias de parte
       
       // Update all part visuals
       for (const partNum in window.pizzaPartIngredients) {
@@ -1094,7 +1094,7 @@ async function setupPizzaCustomizationUI(container, productoId) {
       
       // Load ingredients for this specialty
       const specialty = window.partSpecialties["1"] || "";
-      loadIngredientsForPart(productoId, 1, specialty);//Aqui se vuelven a llamar los ingredientes
+      //loadIngredientsForPart(productoId, 1, specialty);//Aqui se vuelven a llamar los ingredientes
     }
   }, 100);
   
@@ -1871,7 +1871,7 @@ async function abrirModalProductoInstrucciones(producto) {
             window.partSpecialties["1"] = producto.id;
             
             // Load ingredients for this specialty
-            await loadIngredientsForPart(producto.id, 1, producto.id);//Aqui se vuelven a llamar los ingredientes
+            //await loadIngredientsForPart(producto.id, 1, producto.id);//Aqui se vuelven a llamar los ingredientes
             
             // Mark the part as having ingredients
             if (window.currentPizzaManager && window.currentPizzaManager.pizzaCircleManager) {
