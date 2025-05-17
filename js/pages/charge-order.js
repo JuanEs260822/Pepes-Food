@@ -461,13 +461,13 @@ function actualizarPanelCobro() {
   }
   
   // Botón de cambiar estado
-  if (ordenSeleccionada.estado !== 'entregado') {
+  /*if (ordenSeleccionada.estado !== 'entregado') {
     html += `
       <button id="btn-cambiar-estado" class="btn btn-secundario">
         <i class="fas fa-arrow-right"></i> Cambiar a ${formatearEstado(obtenerSiguienteEstado(ordenSeleccionada.estado))}
       </button>
     `;
-  }
+  }*/
   
   html += `
     </div>
