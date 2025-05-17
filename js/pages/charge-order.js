@@ -128,11 +128,15 @@ async function cargarOrdenes() {
     
     if (fechaFiltro) {
       // Si hay fecha seleccionada, usarla
-      fechaInicio = new Date(fechaFiltro);
-      fechaInicio.setHours(0, 0, 0, 0);
+      //fechaInicio = new Date(fechaFiltro);
+      fechaInicio = new Date(fechaFiltro + 'T00:00:00');
+      //fechaInicio.setHours(0, 0, 0, 0);
       
-      fechaFin = new Date(fechaFiltro);
-      fechaFin.setHours(23, 59, 59, 999);
+      //fechaFin = new Date(fechaFiltro);
+      fechaFin = new Date(fechaFiltro + 'T23:59:59.999');
+      //fechaFin.setHours(23, 59, 59, 999);
+      console.log(fechaInicio);
+      console.log(fechaFin);
     } else {
       // Si no hay fecha, usar hoy
       fechaInicio = obtenerFechaInicioDia();

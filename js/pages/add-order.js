@@ -2457,7 +2457,7 @@ async function crearOrden() {
       numeroOrden: numeroOrden,
       fechaCreacion: firebase.firestore.FieldValue.serverTimestamp(),
       fechaModificacion: firebase.firestore.FieldValue.serverTimestamp(),
-      estado: 'activo', // activo, ordenado, cocinado, pagado, entregado
+      estado: 'cocinado', // activo, ordenado, cocinado, pagado, entregado Solucion temporal ^ regresar a activo
       productos: ordenActual.items.map(item => ({
         id: item.id,
         nombre: item.nombre,
@@ -2487,7 +2487,7 @@ async function crearOrden() {
 
     // Ofrecer opciones
     if (confirm(`Orden #${numeroOrden} creada correctamente. ¿Deseas ir a la página de órdenes?`)) {
-      window.location.href = 'orders.html';
+      window.location.href = 'charge-order.html'; //Solucion temporal ^ regresar a orders.html
     } else {
       // Limpiar orden para empezar una nueva
       limpiarOrden();
@@ -2504,12 +2504,14 @@ async function crearOrden() {
 function obtenerFechaInicioDia() {
   const ahora = new Date();
   ahora.setHours(0, 0, 0, 0);
+  console.log(ahora);
   return firebase.firestore.Timestamp.fromDate(ahora);
 }
 
 function obtenerFechaFinDia() {
   const ahora = new Date();
   ahora.setHours(23, 59, 59, 999);
+  console.log(ahora);
   return firebase.firestore.Timestamp.fromDate(ahora);
 }
 
