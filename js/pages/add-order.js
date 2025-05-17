@@ -454,7 +454,7 @@ async function abrirModalEdicionItem(item, index) {
 
   // Select first part after a short delay to allow UI to initialize
   setTimeout(() => {
-    pizzaManager.pizzaCircleManager.selectPart(1);
+    //pizzaManager.pizzaCircleManager.selectPart(1);
     
     // Mark parts with ingredients
     for (const partNum in window.pizzaPartIngredients) {
