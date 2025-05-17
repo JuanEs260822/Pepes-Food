@@ -2093,7 +2093,7 @@ function actualizarOrdenUI() {
       ingredientesHTML = `<div class="orden-item-ingredientes pizza-dividida">`;
       
       // Add specialties if available
-      if (item.pizzaConfig && item.pizzaConfig.partSpecialties) {
+      /*if (item.pizzaConfig && item.pizzaConfig.partSpecialties) {
         for (const parte in item.pizzaConfig.partSpecialties) {
           const especialidadId = item.pizzaConfig.partSpecialties[parte];
           if (especialidadId) {
@@ -2121,7 +2121,7 @@ function actualizarOrdenUI() {
             </div>
           </div>
         `;
-      }
+      }*/
       
       ingredientesHTML += `</div>`;
     } else if (item.ingredientes && item.ingredientes.length > 0) {
