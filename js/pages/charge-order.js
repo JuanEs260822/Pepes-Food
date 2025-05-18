@@ -589,7 +589,10 @@ function abrirModalPago() {
   document.getElementById('pago-efectivo-container').style.display = 'block';
   
   // Mostrar modal
-  document.getElementById('modal-pago').style.display = 'block';
+  //document.getElementById('modal-pago').style.display = 'block';
+
+  const modal = document.getElementById('modal-pago');
+  modal.style.display = 'flex';
 }
 
 function calcularCambio() {
@@ -685,4 +688,14 @@ window.addEventListener('beforeunload', function() {
   if (intervalActualizacion) {
     clearInterval(intervalActualizacion);
   }
+});
+
+// event listener para cerrar modal cuando demos click afuera del modal
+window.addEventListener('click', function(event) {
+  const modalPago = document.getElementById('modal-pago');
+ 
+    if (event.target === modalPago) {
+      console.log('clicked outside function')
+      modalPago.style.display = 'none';
+    }
 });
