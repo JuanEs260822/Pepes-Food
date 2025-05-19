@@ -58,14 +58,14 @@
     const enlaces = [
       { text: 'Panel', href: 'dashboard.html', icon: 'fa-home' },
       { text: 'Crear Orden', href: 'add-order.html', icon: 'fa-plus-circle' },
-      { text: 'Órdenes', href: 'orders.html', icon: 'fa-clipboard-list' },
+      { text: 'Órdenes', href: 'construccion.html', icon: 'fa-clipboard-list' },
       { text: 'Cobrar', href: 'charge-order.html', icon: 'fa-cash-register' },
       { text: 'Productos', href: 'products.html', icon: 'fa-hamburger' },
-      { text: 'Historial', href: 'past-orders.html', icon: 'fa-history' },
-      { text: 'Gastos', href: 'expenses.html', icon: 'fa-receipt' },
-      { text: 'Finanzas', href: 'finances.html', icon: 'fa-chart-line' },
-      { text: 'Usuarios', href: 'users.html', icon: 'fa-users' },
-      { text: 'VIP', href: 'vip.html', icon: 'fa-star' }
+      { text: 'Historial', href: 'construccion.html', icon: 'fa-history' },
+      { text: 'Gastos', href: 'construccion.html', icon: 'fa-receipt' },
+      { text: 'Finanzas', href: 'construccion.html', icon: 'fa-chart-line' },
+      { text: 'Usuarios', href: 'construccion.html', icon: 'fa-users' },
+      { text: 'VIP', href: 'construccion.html', icon: 'fa-star' }
     ];
     
     // Create menu links
