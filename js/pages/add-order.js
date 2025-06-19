@@ -36,6 +36,22 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('orden-tab').style.display = 'block';
     document.querySelector('.panel-categorias').style.display = 'flex';
   }
+
+  // Event listener para cerrar modal
+    const cerrarModal = document.querySelector('.cerrar-modal');
+    if (cerrarModal) {
+        cerrarModal.addEventListener('click', limpiarSaboresAlitas);
+    }
+    
+    // Si tienes otros elementos que cierran el modal, agrégalos aquí
+    const modalInstrucciones = document.getElementById('modal-instrucciones');
+    if (modalInstrucciones) {
+        modalInstrucciones.addEventListener('click', function(e) {
+            if (e.target === modalInstrucciones) {
+                limpiarSaboresAlitas();
+            }
+        });
+    }
 });
 
 // Variables globales
@@ -77,7 +93,7 @@ const subcategoriasPorCategoria = {
     { id: 'boneless', nombre: 'Boneless', imagen: 'assets/images/subcategorias/boneless.webp' },
     { id: 'hotdogs', nombre: 'Hot Dogs', imagen: 'assets/images/subcategorias/hotdog.webp' },
     { id: 'sincronizadas', nombre: 'Sincronizadas', imagen: 'assets/images/subcategorias/sincronizada.webp' },
-    { id: 'papasfritas', nombre: 'Papas Fritas', imagen: 'assets/images/subcategorias/papas.webp' },
+    { id: 'papasfritas', nombre: 'Papas Francesa', imagen: 'assets/images/subcategorias/papas.webp' },
     { id: 'salchipapas', nombre: 'Salchipapas', imagen: 'assets/images/subcategorias/salchipapas.webp' },
     { id: 'papotas', nombre: 'Papotas', imagen: 'assets/images/subcategorias/papotas.webp' }
   ],
@@ -92,22 +108,188 @@ const subcategoriasPorCategoria = {
     { id: 'gomitas', nombre: 'Gomitas', imagen: 'assets/images/subcategorias/gomitas.webp' }
   ],
   'bebidas': [
-    { id: 'refresco_botella', nombre: 'Sodas-Botella', imagen: 'assets/images/subcategorias/refresco_botella.webp' },
-    { id: 'refresco_lata', nombre: 'Sodas-Lata', imagen: 'assets/images/subcategorias/refresco_lata.webp' },
-    { id: 'agua', nombre: 'Agua-Botella', imagen: 'assets/images/subcategorias/agua.webp' },
-    { id: 'agua_sabor', nombre: 'Aguas-Frescas', imagen: 'assets/images/subcategorias/agua_fresca.webp' },
+    { id: 'refresco_botella', nombre: 'Refresco Botella', imagen: 'assets/images/subcategorias/refresco_botella.webp' },
+    { id: 'refresco_lata', nombre: 'Refresco Lata', imagen: 'assets/images/subcategorias/refresco_lata.webp' },
+    { id: 'agua', nombre: 'Agua Botella', imagen: 'assets/images/subcategorias/agua.webp' },
+    { id: 'cafe', nombre: 'Café', imagen: 'assets/images/subcategorias/agua_fresca.webp' },
     { id: 'cerveza', nombre: 'Cerveza', imagen: 'assets/images/subcategorias/cerveza.webp' },
-    { id: 'michelada', nombre: 'Michelada', imagen: 'assets/images/subcategorias/michelada.webp' },
-    { id: 'new_mix', nombre: 'New Mix', imagen: 'assets/images/subcategorias/new_mix.webp' },
-    { id: 'jugo_botella', nombre: 'Jugo-Botella', imagen: 'assets/images/subcategorias/jugo_botella.webp' },
-    { id: 'jugo_lata', nombre: 'Jugo-Lata', imagen: 'assets/images/subcategorias/jugo_lata.webp' },
-    { id: 'energeticas', nombre: 'Bebidas energéticas', imagen: 'assets/images/subcategorias/energeticas.webp' },
+    { id: 'micheladas', nombre: 'Micheladas', imagen: 'assets/images/subcategorias/michelada.webp' },
+    { id: 'bebidas_alcoholicas', nombre: 'Bebidas Alcoholicas', imagen: 'assets/images/subcategorias/new_mix.webp' },
+    { id: 'jugo_vidrio', nombre: 'Jugo Vidrio', imagen: 'assets/images/subcategorias/jugo_botella.webp' },
+    { id: 'jugo_lata', nombre: 'Jugo Lata', imagen: 'assets/images/subcategorias/jugo_lata.webp' },
+    { id: 'energeticas', nombre: 'Bebidas Energéticas', imagen: 'assets/images/subcategorias/energeticas.webp' },
     { id: 'malteadas', nombre: 'Malteadas', imagen: 'assets/images/subcategorias/malteada.webp' },
-    { id: 'frappe', nombre: 'Frappe', imagen: 'assets/images/subcategorias/frappe.webp' },
+    { id: 'esquimos', nombre: 'Esquimos', imagen: 'assets/images/subcategorias/frappe.webp' },
     { id: 'raspados', nombre: 'Raspados', imagen: 'assets/images/subcategorias/raspado.webp' }
   ]
 };
 
+// 1. FUNCIÓN PARA LIMPIAR SABORES (agregar al inicio de tu archivo)
+function limpiarSaboresAlitas() {
+    const flavorContainer = document.querySelector('.multi-flavor-container');
+    if (flavorContainer) {
+        flavorContainer.remove();
+    }
+}
+
+// FUNCIÓN MODIFICADA PARA CREAR LA INTERFAZ DE SABORES CON SABORES DINÁMICOS
+function crearInterfazSabores(producto, esEdicion = false, saboresGuardados = null) {
+    // Limpiar cualquier interfaz previa
+    limpiarSaboresAlitas();
+    
+    // OBTENER SABORES DINÁMICAMENTE
+    const saboresDisponibles = obtenerNombresPorCategoria('alitas');
+    
+    const flavorContainer = document.createElement('div');
+    flavorContainer.className = 'multi-flavor-container';
+    
+    // Si es edición y hay sabores guardados, usar esos datos
+    let primerSabor = '';
+    let segundoSabor = null;
+    let proporcion1 = '100%';
+    let proporcion2 = '50%';
+    
+    if (esEdicion && saboresGuardados && saboresGuardados.length > 0) {
+        primerSabor = saboresGuardados[0].sabor || '';
+        proporcion1 = saboresGuardados[0].proporcion || '100%';
+        
+        if (saboresGuardados.length > 1) {
+            segundoSabor = saboresGuardados[1].sabor || '';
+            proporcion2 = saboresGuardados[1].proporcion || '50%';
+        }
+    }
+    
+    // GENERAR OPTIONS DINÁMICAMENTE
+    function generarOptions(saborSeleccionado = '') {
+        return saboresDisponibles.map(sabor => {
+            const selected = sabor === saborSeleccionado ? 'selected' : '';
+            return `<option value="${sabor}" ${selected}>${sabor}</option>`;
+        }).join('');
+    }
+    
+    flavorContainer.innerHTML = `
+        <div class="instrucciones-title">Sabores:</div>
+        <div class="wings-flavors-container">
+            <div class="wings-flavor" data-index="0">
+                <div class="flavor-header">
+                    <span>Sabor 1</span>
+                    <span class="proportion">${proporcion1}</span>
+                </div>
+                <select class="flavor-select" id="flavor-select-0">
+                    ${generarOptions(primerSabor)}
+                </select>
+            </div>
+            ${segundoSabor ? `
+            <div class="wings-flavor" data-index="1">
+                <div class="flavor-header">
+                    <span>Sabor 2</span>
+                    <span class="proportion">${proporcion2}</span>
+                    <button class="remove-flavor"><i class="fas fa-times"></i></button>
+                </div>
+                <select class="flavor-select" id="flavor-select-1">
+                    ${generarOptions(segundoSabor)}
+                </select>
+            </div>
+            ` : ''}
+            <button id="add-wings-flavor" class="btn btn-secundario">
+                <i class="fas fa-plus"></i> Agregar otro sabor
+            </button>
+        </div>
+    `;
+    
+    // Insertar después de la sección de ingredientes
+    document.getElementById('ingredientes-seccion').after(flavorContainer);
+    
+    // Agregar event listeners
+    configurarEventListenersSabores();
+}
+
+// FUNCIÓN MODIFICADA PARA CONFIGURAR EVENT LISTENERS CON SABORES DINÁMICOS
+function configurarEventListenersSabores() {
+    // Obtener sabores disponibles
+    const saboresDisponibles = obtenerNombresPorCategoria('alitas');
+    
+    // Función para generar options
+    function generarOptions() {
+        return saboresDisponibles.map(sabor => 
+            `<option value="${sabor}">${sabor}</option>`
+        ).join('');
+    }
+    
+    const addButton = document.getElementById('add-wings-flavor');
+    if (addButton) {
+        addButton.addEventListener('click', function() {
+            const flavorCount = document.querySelectorAll('.wings-flavor').length;
+            if (flavorCount < 2) {
+                const newIndex = flavorCount;
+                const newFlavor = document.createElement('div');
+                newFlavor.className = 'wings-flavor';
+                newFlavor.setAttribute('data-index', newIndex);
+                newFlavor.innerHTML = `
+                    <div class="flavor-header">
+                        <span>Sabor ${newIndex + 1}</span>
+                        <span class="proportion">50%</span>
+                        <button class="remove-flavor"><i class="fas fa-times"></i></button>
+                    </div>
+                    <select class="flavor-select" id="flavor-select-${newIndex}">
+                        ${generarOptions()}
+                    </select>
+                `;
+                
+                // Actualizar proporciones
+                document.querySelectorAll('.wings-flavor').forEach(flavor => {
+                    flavor.querySelector('.proportion').textContent = '50%';
+                });
+                
+                // Agregar antes del botón
+                this.before(newFlavor);
+                
+                // Agregar event listener para remover
+                newFlavor.querySelector('.remove-flavor').addEventListener('click', function() {
+                    newFlavor.remove();
+                    document.querySelectorAll('.wings-flavor').forEach(flavor => {
+                        flavor.querySelector('.proportion').textContent = '100%';
+                    });
+                });
+            } else {
+                mostrarNotificacion('Máximo 2 sabores para alitas/boneless', 'info');
+            }
+        });
+    }
+    
+    // Agregar event listeners para botones de remover existentes
+    document.querySelectorAll('.remove-flavor').forEach(button => {
+        button.addEventListener('click', function() {
+            button.closest('.wings-flavor').remove();
+            document.querySelectorAll('.wings-flavor').forEach(flavor => {
+                flavor.querySelector('.proportion').textContent = '100%';
+            });
+        });
+    });
+}
+
+
+
+// 7. FUNCIÓN PARA OBTENER SABORES SELECCIONADOS (para usar al guardar)
+function obtenerSaboresSeleccionados() {
+    const sabores = [];
+    const flavorsContainers = document.querySelectorAll('.wings-flavor');
+    
+    flavorsContainers.forEach((container, index) => {
+        const select = container.querySelector('.flavor-select');
+        const proportion = container.querySelector('.proportion');
+        
+        if (select && proportion) {
+            sabores.push({
+                sabor: select.value,
+                proporcion: proportion.textContent,
+                orden: index + 1
+            });
+        }
+    });
+    
+    return sabores;
+}
 // Function to get pizza sizes
 function getPizzaSizes() {
   return [
@@ -152,6 +334,10 @@ function isProductInSubcategory(producto, subcategoria) {
 
 function isPizza(producto) {
   return isProductInSubcategory(producto, 'pizzas');
+}
+
+function isAlita(producto) {
+  return isProductInSubcategory(producto, 'alitas') || isProductInSubcategory(producto, 'boneless');
 }
 
 // Función para verificar múltiples productos con ingredientes en una sola operación
@@ -348,136 +534,126 @@ function initializePizzaFeatures() {
 
 // En la función abrirModalEdicionItem, asegúrate de restaurar correctamente la configuración de la pizza
 async function abrirModalEdicionItem(item, index) {
-  // Find the original product from productosData to get the correct base price
-  const productoOriginal = productosData.find(p => p.id === item.id);
-  
-  if (!productoOriginal) {
-    console.error("Producto original no encontrado");
-    return;
-  }
-  
-  // Create a properly initialized object with the BASE price from the original product
-  productoSeleccionadoInstr = {
-    id: item.id,
-    nombre: item.nombre,
-    precio: productoOriginal.precio || 0, // Always use the ORIGINAL base price
-    instrucciones: item.instrucciones || ''
-  };
-  
-  indexItemEditarInstr = index;
+    const productoOriginal = productosData.find(p => p.id === item.id);
+    
+    if (!productoOriginal) {
+        console.error("Producto original no encontrado");
+        return;
+    }
+    
+    productoSeleccionadoInstr = {
+        id: item.id,
+        nombre: item.nombre,
+        precio: productoOriginal.precio || 0,
+        instrucciones: item.instrucciones || ''
+    };
+    
+    indexItemEditarInstr = index;
 
-  // Update modal title
-  document.getElementById('modal-producto-nombre-instr').textContent = item.nombre;
+    document.getElementById('modal-producto-nombre-instr').textContent = item.nombre;
 
-  // Get the modal content
-  const modalContent = document.querySelector('.modal-content');
-  const medidaContainer = document.querySelector('.medida');
+    const modalContent = document.querySelector('.modal-content');
+    const medidaContainer = document.querySelector('.medida');
 
-  // Check if this is a pizza
-  const esPizza = isPizza(productoOriginal);
-  let pizzaManager = null;
+    const esPizza = isPizza(productoOriginal);
+    let pizzaManager = null;
 
-  // Clear any previous pizza UI
-  const previousPizzaContainer = document.querySelector('.pizza-size-container');
-  if (previousPizzaContainer) {
-    previousPizzaContainer.parentNode.removeChild(previousPizzaContainer);
-  }
-  
-  const previousPartsContainer = document.querySelector('.pizza-parts-container');
-  if (previousPartsContainer) {
-    previousPartsContainer.parentNode.removeChild(previousPartsContainer);
-  }
-  
-  const previousSpecialtyContainer = document.querySelector('.pizza-specialty-container');
-  if (previousSpecialtyContainer) {
-    previousSpecialtyContainer.parentNode.removeChild(previousSpecialtyContainer);
-  }
-  
-  const previousCircleContainer = document.querySelector('.circle-container');
-  if (previousCircleContainer) {
-    previousCircleContainer.parentNode.removeChild(previousCircleContainer);
-  }
+    // LIMPIAR SABORES AL INICIO DE LA EDICIÓN
+    limpiarSaboresAlitas();
 
-  // Reset global variables for pizza customization
-  window.pizzaPartIngredients = {};
-  window.partSpecialties = {};
-  window.currentSelectedPart = null;
-  window.previousSelectedPart = null;
-  
-  // Set up pizza UI if it's a pizza
-  if (esPizza) {
-    medidaContainer.style.display = 'block';
-    pizzaManager = await setupPizzaCustomizationUI(medidaContainer, item.id);//Aqui probablemente se manden llamar para la edicion 
+    // Clear any previous pizza UI
+    const previousPizzaContainer = document.querySelector('.pizza-size-container');
+    if (previousPizzaContainer) {
+        previousPizzaContainer.parentNode.removeChild(previousPizzaContainer);
+    }
+    
+    const previousPartsContainer = document.querySelector('.pizza-parts-container');
+    if (previousPartsContainer) {
+        previousPartsContainer.parentNode.removeChild(previousPartsContainer);
+    }
+    
+    const previousSpecialtyContainer = document.querySelector('.pizza-specialty-container');
+    if (previousSpecialtyContainer) {
+        previousSpecialtyContainer.parentNode.removeChild(previousSpecialtyContainer);
+    }
+    
+    const previousCircleContainer = document.querySelector('.circle-container');
+    if (previousCircleContainer) {
+        previousCircleContainer.parentNode.removeChild(previousCircleContainer);
+    }
+
+    window.pizzaPartIngredients = {};
+    window.partSpecialties = {};
+    window.currentSelectedPart = null;
+    window.previousSelectedPart = null;
+    
+    // Set up pizza UI if it's a pizza
+    if (esPizza) {
+        medidaContainer.style.display = 'block';
+        pizzaManager = await setupPizzaCustomizationUI(medidaContainer, item.id);
     
     // Restore pizza configuration from saved item
     if (item.pizzaConfig) {
-      // Set size
-      const sizeSelect = document.getElementById('pizza-size-select');
-      if (sizeSelect && item.pizzaConfig.size) {
-        sizeSelect.value = item.pizzaConfig.size;
-      }
-      
-      // Set parts
-      const partsSelect = document.getElementById('pizza-parts-select');
-      if (partsSelect && item.pizzaConfig.parts) {
-        partsSelect.value = item.pizzaConfig.parts;
-        // Redraw the segments with the correct number of parts
-        pizzaManager.pizzaCircleManager.drawSegments(item.pizzaConfig.parts);
-      }
-      
-      // Restore part specialties
-      if (item.pizzaConfig.partSpecialties) {
-        window.partSpecialties = JSON.parse(JSON.stringify(item.pizzaConfig.partSpecialties));
-      }
-      
-  // Group ingredients by parts
-  if (item.ingredientes && item.ingredientes.length > 0) {
-    const ingByPart = {};
-    
-    item.ingredientes.forEach(ing => {
-      const part = ing.part || 1;
-      if (!ingByPart[part]) {
-        ingByPart[part] = [];
-      }
-      ingByPart[part].push(ing);
-    });
-    
-    // Restore ingredients for each part
-    for (const part in ingByPart) {
-      window.pizzaPartIngredients[part] = [...ingByPart[part]];
-    }
-  } 
-  else if (item.pizzaConfig.partIngredients) {
-    // If we have saved partIngredients, use those directly
-    window.pizzaPartIngredients = JSON.parse(JSON.stringify(item.pizzaConfig.partIngredients));
-  }
+            const sizeSelect = document.getElementById('pizza-size-select');
+            if (sizeSelect && item.pizzaConfig.size) {
+                sizeSelect.value = item.pizzaConfig.size;
+            }
+            
+            const partsSelect = document.getElementById('pizza-parts-select');
+            if (partsSelect && item.pizzaConfig.parts) {
+                partsSelect.value = item.pizzaConfig.parts;
+                pizzaManager.pizzaCircleManager.drawSegments(item.pizzaConfig.parts);
+            }
+            
+            if (item.pizzaConfig.partSpecialties) {
+                window.partSpecialties = JSON.parse(JSON.stringify(item.pizzaConfig.partSpecialties));
+            }
+            
+            if (item.ingredientes && item.ingredientes.length > 0) {
+                const ingByPart = {};
+                
+                item.ingredientes.forEach(ing => {
+                    const part = ing.part || 1;
+                    if (!ingByPart[part]) {
+                        ingByPart[part] = [];
+                    }
+                    ingByPart[part].push(ing);
+                });
+                
+                for (const part in ingByPart) {
+                    window.pizzaPartIngredients[part] = [...ingByPart[part]];
+                }
+            } 
+            else if (item.pizzaConfig.partIngredients) {
+                window.pizzaPartIngredients = JSON.parse(JSON.stringify(item.pizzaConfig.partIngredients));
+            }
 
-  // Select first part after a short delay to allow UI to initialize
-  setTimeout(() => {
-    //pizzaManager.pizzaCircleManager.selectPart(1);
-    
-    // Mark parts with ingredients
-    for (const partNum in window.pizzaPartIngredients) {
-      const hasIngredients = window.pizzaPartIngredients[partNum] && 
-                            window.pizzaPartIngredients[partNum].length > 0;
-      pizzaManager.pizzaCircleManager.markPartWithIngredients(parseInt(partNum), hasIngredients);
+            setTimeout(() => {
+                for (const partNum in window.pizzaPartIngredients) {
+                    const hasIngredients = window.pizzaPartIngredients[partNum] && 
+                                          window.pizzaPartIngredients[partNum].length > 0;
+                    pizzaManager.pizzaCircleManager.markPartWithIngredients(parseInt(partNum), hasIngredients);
+                }
+                
+                const especialidadId = window.partSpecialties["1"] || "";
+                
+                const specialtySelect = document.getElementById('pizza-specialty-select');
+                if (specialtySelect && window.partSpecialties["1"]) {
+                    specialtySelect.value = window.partSpecialties["1"];
+                }
+            }, 100);
+        }
+    } else {
+        medidaContainer.style.display = 'none';
     }
-    
-    // Load ingredients for the first part
-    const especialidadId = window.partSpecialties["1"] || "";
-    //loadIngredientsForPart(item.id, 1, especialidadId);//Aqui probablemente se haga el segundo llamado a los ingredientes 
-    
-    // Update specialty select for first part
-    const specialtySelect = document.getElementById('pizza-specialty-select');
-    if (specialtySelect && window.partSpecialties["1"]) {
-      specialtySelect.value = window.partSpecialties["1"];
+
+    // MANEJAR ALITAS Y BONELESS - EDICIÓN (con datos guardados)
+    if (isProductInSubcategory(productoOriginal, 'alitas') || isProductInSubcategory(productoOriginal, 'boneless')) {
+        medidaContainer.style.display = 'none';
+        // Pasar los sabores guardados si existen
+        const saboresGuardados = item.sabores || null;
+        crearInterfazSabores(productoOriginal, true, saboresGuardados); // true = es edición
     }
-  }, 100);
-  }
-  } else {
-  // Hide for non-pizza products
-  medidaContainer.style.display = 'none';
-  }
 
   // For non-pizza products, handle ingredients normally
   if (!esPizza) {
@@ -1807,191 +1983,172 @@ async function filtrarProductos() {
   });
 }
 
+
+
+function obtenerNombresPorCategoria(subcategoria) {
+    return productosData
+        .filter(producto => producto.subcategoria === subcategoria)
+        .map(producto => producto.nombre);
+}
+      //const nombresComida = obtenerNombresPorCategoria('alitas');
+
+
+
 async function abrirModalProductoInstrucciones(producto) {
-  productoSeleccionadoInstr = producto;
-  indexItemEditarInstr = -1; // -1 indicates a new product, not an edit
+    productoSeleccionadoInstr = producto;
+    indexItemEditarInstr = -1;
 
-  // Update modal title
-  document.getElementById('modal-producto-nombre-instr').textContent = producto.nombre;
+    // Update modal title
+    document.getElementById('modal-producto-nombre-instr').textContent = producto.nombre;
 
-  // Reset ingredients
-  ingredientesSeleccionados = [];
-  let pizzaManager = null;
+    // Reset ingredients
+    ingredientesSeleccionados = [];
+    let pizzaManager = null;
 
-  // Get the modal content
-  const modalContent = document.querySelector('.modal-content');
-  const medidaContainer = document.querySelector('.medida');
+    // Get the modal content
+    const modalContent = document.querySelector('.modal-content');
+    const medidaContainer = document.querySelector('.medida');
 
-  // Check if this is a pizza
-  const esPizza = isPizza(producto);
+    // Check if this is a pizza
+    const esPizza = isPizza(producto);
+    const esAlita = isAlita(producto);
 
-  // Clear any previous pizza UI
-  const previousPizzaContainer = document.querySelector('.pizza-size-container');
-  if (previousPizzaContainer) {
-    previousPizzaContainer.parentNode.removeChild(previousPizzaContainer);
-  }
-  
-  const previousPartsContainer = document.querySelector('.pizza-parts-container');
-  if (previousPartsContainer) {
-    previousPartsContainer.parentNode.removeChild(previousPartsContainer);
-  }
-  
-  const previousSpecialtyContainer = document.querySelector('.pizza-specialty-container');
-  if (previousSpecialtyContainer) {
-    previousSpecialtyContainer.parentNode.removeChild(previousSpecialtyContainer);
-  }
-  
-  const previousCircleContainer = document.querySelector('.circle-container');
-  if (previousCircleContainer) {
-    previousCircleContainer.parentNode.removeChild(previousCircleContainer);
-  }
+    // LIMPIAR SABORES AL INICIO
+    limpiarSaboresAlitas();
 
-  // Reset global variables for pizza parts
-  window.pizzaPartIngredients = {};
-  window.partSpecialties = {};
-  window.currentSelectedPart = null;
-  window.previousSelectedPart = null;
-
-  // Set up pizza UI for all pizzas
-  if (esPizza) {
-    medidaContainer.style.display = 'block';
-    pizzaManager = await setupPizzaCustomizationUI(medidaContainer, producto.id);//posible llamado a ingredientes
+    // Clear any previous pizza UI
+    const previousPizzaContainer = document.querySelector('.pizza-size-container');
+    if (previousPizzaContainer) {
+        previousPizzaContainer.parentNode.removeChild(previousPizzaContainer);
+    }
     
-    // Pre-select the current product as specialty for the first part
-    setTimeout(async () => {
-      //pizzaManager.pizzaCircleManager.selectPart(1);
-      const specialtySelect = document.getElementById('pizza-specialty-select');
-      if (specialtySelect) {
-        // Look for the current product in the specialty options
-        for (let i = 0; i < specialtySelect.options.length; i++) {
-          if (specialtySelect.options[i].value === producto.id) {
-            specialtySelect.selectedIndex = i;
-            
-            // Set the specialty for part 1
-            window.partSpecialties["1"] = producto.id;
-            
-            // Load ingredients for this specialty
-            //await loadIngredientsForPart(producto.id, 1, producto.id);//Aqui se vuelven a llamar los ingredientes
-            
-            // Mark the part as having ingredients
-            if (window.currentPizzaManager && window.currentPizzaManager.pizzaCircleManager) {
-              window.currentPizzaManager.pizzaCircleManager.markPartWithIngredients(1, true);
-            }
-            
-            break;
-          }
-        }
-      }
-    }, 200); // Short delay to ensure the specialty select is populated
-  } else {
-    // Hide for non-pizza products
-    medidaContainer.style.display = 'none';
-  }
+    const previousPartsContainer = document.querySelector('.pizza-parts-container');
+    if (previousPartsContainer) {
+        previousPartsContainer.parentNode.removeChild(previousPartsContainer);
+    }
+    
+    const previousSpecialtyContainer = document.querySelector('.pizza-specialty-container');
+    if (previousSpecialtyContainer) {
+        previousSpecialtyContainer.parentNode.removeChild(previousSpecialtyContainer);
+    }
+    
+    const previousCircleContainer = document.querySelector('.circle-container');
+    if (previousCircleContainer) {
+        previousCircleContainer.parentNode.removeChild(previousCircleContainer);
+    }
 
+    // Reset global variables for pizza parts
+    window.pizzaPartIngredients = {};
+    window.partSpecialties = {};
+    window.currentSelectedPart = null;
+    window.previousSelectedPart = null;
+
+    // Set up pizza UI for all pizzas
+    if (esPizza) {
+        medidaContainer.style.display = 'block';
+        pizzaManager = await setupPizzaCustomizationUI(medidaContainer, producto.id);
+        
+        setTimeout(async () => {
+            const specialtySelect = document.getElementById('pizza-specialty-select');
+            if (specialtySelect) {
+                for (let i = 0; i < specialtySelect.options.length; i++) {
+                    if (specialtySelect.options[i].value === producto.id) {
+                        specialtySelect.selectedIndex = i;
+                        window.partSpecialties["1"] = producto.id;
+                        
+                        if (window.currentPizzaManager && window.currentPizzaManager.pizzaCircleManager) {
+                            window.currentPizzaManager.pizzaCircleManager.markPartWithIngredients(1, true);
+                        }
+                        break;
+                    }
+                }
+            }
+        }, 200);
+    } else {
+        medidaContainer.style.display = 'none';
+    }
+
+    // MANEJAR ALITAS Y BONELESS - NUEVO PRODUCTO (sin datos guardados)
+    if (isProductInSubcategory(producto, 'alitas') || isProductInSubcategory(producto, 'boneless')) {
+        medidaContainer.style.display = 'none';
+        crearInterfazSabores(producto, false); // false = no es edición
+    }
   // For non-pizza products, handle ingredients normally
   if (!esPizza) {
-    // Check if the product has ingredients
-    const tieneIngs = await tieneIngredientes(producto.id);
-    const seccionIngredientes = document.getElementById('ingredientes-seccion');
-    const listaIngredientes = document.getElementById('ingredientes-lista');
+        const tieneIngs = await tieneIngredientes(producto.id);
+        const seccionIngredientes = document.getElementById('ingredientes-seccion');
+        const listaIngredientes = document.getElementById('ingredientes-lista');
 
-    if (tieneIngs) {
-      // Clear ingredients list
-      listaIngredientes.innerHTML = '';
+        if (tieneIngs) {
+            listaIngredientes.innerHTML = '';
+            seccionIngredientes.style.display = 'block';
+            const ingredientes = await obtenerIngredientesProducto(producto.id);
 
-      // Show ingredients section
-      seccionIngredientes.style.display = 'block';
+            ingredientes.forEach(ingrediente => {
+                const ingredienteItem = document.createElement('div');
+                ingredienteItem.className = 'ingrediente-item';
 
-      // Load product ingredients
-      const ingredientes = await obtenerIngredientesProducto(producto.id);
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'ingrediente-checkbox';
+                checkbox.id = 'ingrediente-' + ingrediente.id;
+                checkbox.checked = ingrediente.default;
 
-      // Create UI for each ingredient
-      ingredientes.forEach(ingrediente => {
-        // Create ingredient item
-        const ingredienteItem = document.createElement('div');
-        ingredienteItem.className = 'ingrediente-item';
+                if (ingrediente.default) {
+                    ingredientesSeleccionados.push({
+                        id: ingrediente.id,
+                        nombre: ingrediente.nombre,
+                        precio: ingrediente.precio || 0
+                    });
+                }
 
-        // Create checkbox
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.className = 'ingrediente-checkbox';
-        checkbox.id = 'ingrediente-' + ingrediente.id;
-        checkbox.checked = ingrediente.default;
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        ingredientesSeleccionados.push({
+                            id: ingrediente.id,
+                            nombre: ingrediente.nombre,
+                            precio: ingrediente.precio || 0
+                        });
+                    } else {
+                        const index = ingredientesSeleccionados.findIndex(i => i.id === ingrediente.id);
+                        if (index >= 0) {
+                            ingredientesSeleccionados.splice(index, 1);
+                        }
+                    }
+                    actualizarPrecioModal();
+                });
 
-        // Add to selected ingredients if checked by default
-        if (ingrediente.default) {
-          ingredientesSeleccionados.push({
-            id: ingrediente.id,
-            nombre: ingrediente.nombre,
-            precio: ingrediente.precio || 0
-          });
-        }
+                const nombre = document.createElement('label');
+                nombre.htmlFor = 'ingrediente-' + ingrediente.id;
+                nombre.className = 'ingrediente-nombre';
+                nombre.textContent = ingrediente.nombre;
 
-        // Handle checkbox change
-        checkbox.addEventListener('change', function() {
-          if (this.checked) {
-            // Add to selected ingredients
-            ingredientesSeleccionados.push({
-              id: ingrediente.id,
-              nombre: ingrediente.nombre,
-              precio: ingrediente.precio || 0
+                let precioElement = null;
+                if (ingrediente.precio > 0) {
+                    precioElement = document.createElement('span');
+                    precioElement.className = 'ingrediente-precio';
+                    precioElement.textContent = '+ ' + formatearMoneda(ingrediente.precio || 0);
+                }
+
+                ingredienteItem.appendChild(checkbox);
+                ingredienteItem.appendChild(nombre);
+                if (precioElement) {
+                    ingredienteItem.appendChild(precioElement);
+                }
+
+                listaIngredientes.appendChild(ingredienteItem);
             });
-          } else {
-            // Remove from selected ingredients
-            const index = ingredientesSeleccionados.findIndex(i => i.id === ingrediente.id);
-            if (index >= 0) {
-              ingredientesSeleccionados.splice(index, 1);
-            }
-          }
-
-          // Update price
-          actualizarPrecioModal();
-        });
-
-        // Create label for name
-        const nombre = document.createElement('label');
-        nombre.htmlFor = 'ingrediente-' + ingrediente.id;
-        nombre.className = 'ingrediente-nombre';
-        nombre.textContent = ingrediente.nombre;
-
-        // Create price element if needed
-        let precioElement = null;
-        if (ingrediente.precio > 0) {
-          precioElement = document.createElement('span');
-          precioElement.className = 'ingrediente-precio';
-          precioElement.textContent = '+ ' + formatearMoneda(ingrediente.precio || 0);
+        } else {
+            seccionIngredientes.style.display = 'none';
         }
-
-        // Add elements to item
-        ingredienteItem.appendChild(checkbox);
-        ingredienteItem.appendChild(nombre);
-        if (precioElement) {
-          ingredienteItem.appendChild(precioElement);
-        }
-
-        // Add to list
-        listaIngredientes.appendChild(ingredienteItem);
-      });
-    } else {
-      // Hide ingredients section for non-pizza products without ingredients
-      seccionIngredientes.style.display = 'none';
     }
-  }
 
-  // Clear previous instructions
-  document.getElementById('producto-instrucciones').value = '';
-
-  // Show modal
-  document.getElementById('modal-instrucciones').style.display = 'flex';
-
-  // Change button text
-  document.getElementById('btn-guardar-instrucciones').textContent = 'Agregar a la orden';
-  
-  // Save references for the save function
-  window.currentPizzaManager = pizzaManager;
-  
-  // Initialize price display
-  actualizarPrecioModal();
+    document.getElementById('producto-instrucciones').value = '';
+    document.getElementById('modal-instrucciones').style.display = 'flex';
+    document.getElementById('btn-guardar-instrucciones').textContent = 'Agregar a la orden';
+    
+    window.currentPizzaManager = pizzaManager;
+    actualizarPrecioModal();
 }
 
 // Modify the agregarProductoDirecto function to handle unique ingredients
@@ -2352,6 +2509,12 @@ function guardarInstrucciones() {
   window.partSpecialties = {};
   window.previousSelectedPart = null;
   window.currentSelectedPart = null;
+
+  // En tu función de guardar
+const saboresSeleccionados = obtenerSaboresSeleccionados();
+if (saboresSeleccionados.length > 0) {
+    item.sabores = saboresSeleccionados;
+}
 }
 
 function calcularTotal() {

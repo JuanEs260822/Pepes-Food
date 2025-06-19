@@ -24,7 +24,7 @@ const subcategoriasPorCategoria = {
     { id: 'boneless', nombre: 'Boneless' },
     { id: 'hotdogs', nombre: 'Hot Dogs' },
     { id: 'sincronizadas', nombre: 'Sincronizadas' },
-    { id: 'papasfritas', nombre: 'Papas Fritas' },
+    { id: 'papasfritas', nombre: 'Papas Francesa' },
     { id: 'salchipapas', nombre: 'Salchipapas' },
     { id: 'papotas', nombre: 'Papotas' }
   ],
@@ -39,19 +39,19 @@ const subcategoriasPorCategoria = {
     { id: 'gomitas', nombre: 'Gomitas' }
   ],
   'bebidas': [
-    { id: 'refresco_botella', nombre: 'Sodas-Botella' },
-    { id: 'refresco_lata', nombre: 'Sodas-Lata' },
-    { id: 'agua', nombre: 'Agua-Botella' },
+    { id: 'refresco_botella', nombre: 'Refresco Botella' },
+    { id: 'refresco_lata', nombre: 'Refresco Lata' },
+    { id: 'agua', nombre: 'Agua Botella' },
+    { id: 'cafe', nombre: 'Café' },
     { id: 'cerveza', nombre: 'Cerveza' },
-    { id: 'michelada', nombre: 'Michelada' },
-    { id: 'new_mix', nombre: 'New Mix' },
-    { id: 'jugo_botella', nombre: 'Jugo-Vidrio' },
-    { id: 'jugo_lata', nombre: 'Jugo-Lata' },
+    { id: 'micheladas', nombre: 'Micheladas' },
+    { id: 'bebidas_alcoholicas', nombre: 'Bebidas Alcoholicas' },
+    { id: 'jugo_vidrio', nombre: 'Jugo Vidrio' },
+    { id: 'jugo_lata', nombre: 'Jugo Lata' },
     { id: 'energeticas', nombre: 'Bebidas Energéticas' },
     { id: 'malteadas', nombre: 'Malteadas' },
-    { id: 'frappe', nombre: 'Esquimos' },
-    { id: 'raspados', nombre: 'Raspados' },
-    { id: 'cafe', nombre: 'Café' }
+    { id: 'esquimos', nombre: 'Esquimos' },
+    { id: 'raspados', nombre: 'Raspados' }
   ],
   'suministros': [
     { id: 'harina', nombre: 'Harina' },
