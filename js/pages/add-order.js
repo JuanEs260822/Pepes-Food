@@ -93,9 +93,7 @@ const subcategoriasPorCategoria = {
     { id: 'boneless', nombre: 'Boneless', imagen: 'assets/images/subcategorias/boneless.webp' },
     { id: 'hotdogs', nombre: 'Hot Dogs', imagen: 'assets/images/subcategorias/hotdog.webp' },
     { id: 'sincronizadas', nombre: 'Sincronizadas', imagen: 'assets/images/subcategorias/sincronizada.webp' },
-    { id: 'papasfritas', nombre: 'Papas Francesa', imagen: 'assets/images/subcategorias/papas.webp' },
-    { id: 'salchipapas', nombre: 'Salchipapas', imagen: 'assets/images/subcategorias/salchipapas.webp' },
-    { id: 'papotas', nombre: 'Papotas', imagen: 'assets/images/subcategorias/papotas.webp' }
+    { id: 'papas', nombre: 'Papas', imagen: 'assets/images/subcategorias/papas.webp' }
   ],
   'snacks': [
     { id: 'dorilocos', nombre: 'Dorilocos', imagen: 'assets/images/subcategorias/dorilocos.webp' },
@@ -293,11 +291,11 @@ function obtenerSaboresSeleccionados() {
 // Function to get pizza sizes
 function getPizzaSizes() {
   return [
-    { id: 'gigante', nombre: 'Gigante (24pz)', precio: 0 },
-    { id: 'grande', nombre: 'Grande (12pz)', precio: 0 },
-    { id: 'mediana', nombre: 'Mediana (8pz)', precio: 0 },
-    { id: 'personal', nombre: 'Personal (4pz)', precio: 0 },
-    { id: 'rebanada', nombre: 'Rebanada', precio: 0 }
+    { id: 'gigante', nombre: 'Gigante (24pz)', precio: 240 },
+    { id: 'grande', nombre: 'Grande (12pz)', precio: 189 },
+    { id: 'mediana', nombre: 'Mediana (8pz)', precio: 129 },
+    { id: 'personal', nombre: 'Personal (4pz)', precio: 60 },
+    { id: 'rebanada', nombre: 'Rebanada', precio: 25 }
   ];
 }
 
@@ -595,6 +593,7 @@ async function abrirModalEdicionItem(item, index) {
     // Restore pizza configuration from saved item
     if (item.pizzaConfig) {
             const sizeSelect = document.getElementById('pizza-size-select');
+            //sizeSelect.addEventListener('change', actualizarPrecioModal);
             if (sizeSelect && item.pizzaConfig.size) {
                 sizeSelect.value = item.pizzaConfig.size;
             }
@@ -1282,7 +1281,6 @@ async function setupPizzaCustomizationUI(container, productoId) {
     getPizzaConfig: function() {
       // Save the current configuration before returning the result
       saveCurrentPartChanges();
-      
       return {
         size: document.getElementById('pizza-size-select').value,
         parts: parseInt(document.getElementById('pizza-parts-select').value),
@@ -1599,7 +1597,17 @@ async function actualizarPrecioModal() {
       }
     }
     
-    precioFinal += precioIngredientes;
+    // Asumiendo que tu select tiene un id="miSelect"
+const select = document.getElementById('pizza-size-select');
+
+const selectedOption = select.options[select.selectedIndex];
+const precioTamano = parseInt(selectedOption.getAttribute('data-precio'));
+console.log(precioTamano);
+
+precioFinal = precioIngredientes += precioTamano;
+select.addEventListener('change', actualizarPrecioModal);
+ 
+
   } else {
     // For regular products with ingredients
     let precioIngredientes = 0;

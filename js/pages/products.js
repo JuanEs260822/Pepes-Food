@@ -24,9 +24,7 @@ const subcategoriasPorCategoria = {
     { id: 'boneless', nombre: 'Boneless' },
     { id: 'hotdogs', nombre: 'Hot Dogs' },
     { id: 'sincronizadas', nombre: 'Sincronizadas' },
-    { id: 'papasfritas', nombre: 'Papas Francesa' },
-    { id: 'salchipapas', nombre: 'Salchipapas' },
-    { id: 'papotas', nombre: 'Papotas' }
+    { id: 'papas', nombre: 'Papas' }
   ],
   'snacks': [
     { id: 'dorilocos', nombre: 'Dorilocos' },
