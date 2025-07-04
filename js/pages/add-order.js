@@ -652,13 +652,66 @@ async function abrirModalEdicionItem(item, index) {
         }
       }, 100);
     }
+  } else if (isProductInSubcategory(productoOriginal, 'sincronizadas')) {
+    medidaContainer.style.display = 'block';
+    pizzaManager = await setupQuesadillaCustomizationUI(medidaContainer, item.id);
+  
+    // Restore quesadilla configuration from saved item
+    if (item.quesadillaConfig) {
+      const sizeSelect = document.getElementById('quesadilla-size-select');
+      if (sizeSelect && item.quesadillaConfig.size) {
+        sizeSelect.value = item.quesadillaConfig.size;
+      }
+  
+      const partsSelect = document.getElementById('quesadilla-parts-select');
+      if (partsSelect && item.quesadillaConfig.parts) {
+        partsSelect.value = item.quesadillaConfig.parts;
+        pizzaManager.quesadillaCircleManager.drawSegments(item.quesadillaConfig.parts);
+      }
+  
+      if (item.quesadillaConfig.partSpecialties) {
+        window.partSpecialties = JSON.parse(JSON.stringify(item.quesadillaConfig.partSpecialties));
+      }
+  
+      if (item.ingredientes && item.ingredientes.length > 0) {
+        const ingByPart = {};
+  
+        item.ingredientes.forEach(ing => {
+          const part = ing.part || 1;
+          if (!ingByPart[part]) {
+            ingByPart[part] = [];
+          }
+          ingByPart[part].push(ing);
+        });
+  
+        for (const part in ingByPart) {
+          window.quesadillaPartIngredients[part] = [...ingByPart[part]];
+        }
+      }
+      else if (item.quesadillaConfig.partIngredients) {
+        window.quesadillaPartIngredients = JSON.parse(JSON.stringify(item.quesadillaConfig.partIngredients));
+      }
+  
+      setTimeout(() => {
+        for (const partNum in window.quesadillaPartIngredients) {
+          const hasIngredients = window.quesadillaPartIngredients[partNum] &&
+            window.quesadillaPartIngredients[partNum].length > 0;
+          pizzaManager.quesadillaCircleManager.markPartWithIngredients(parseInt(partNum), hasIngredients);
+        }
+  
+        const specialtySelect = document.getElementById('quesadilla-specialty-select');
+        if (specialtySelect && window.partSpecialties["1"]) {
+          specialtySelect.value = window.partSpecialties["1"];
+        }
+      }, 100);
+    }
   } else {
     medidaContainer.style.display = 'none';
   }
 
 
 
-    if (isProductInSubcategory(productoOriginal, 'sincronizadas')) {
+  /*if (isProductInSubcategory(productoOriginal, 'sincronizadas')) {
     medidaContainer.style.display = 'block';
     pizzaManager = await setupQuesadillaCustomizationUI(medidaContainer, item.id);
 
@@ -714,7 +767,7 @@ async function abrirModalEdicionItem(item, index) {
         }
       }, 100);
     }
-  }
+  }*/
 
 
   // MANEJAR ALITAS Y BONELESS - EDICIÓN (con datos guardados)
@@ -826,6 +879,7 @@ async function abrirModalEdicionItem(item, index) {
 
   // Save references for the save function
   window.currentPizzaManager = pizzaManager;
+  window.currentQuesadillaManager = pizzaManager;
 
   // Update price display
   actualizarPrecioModal();
@@ -1173,20 +1227,20 @@ function setupPizzaDivision(container, onPartSelect) {
 function saveCurrentPartChanges() {
   // Save the currently selected ingredients for the current part
   if (window.currentSelectedPart !== null) {
-    (window.pizzaPartIngredients[window.currentSelectedPart] = [...ingredientesSeleccionados]) || (window.quesadillaPartIngredients[window.currentSelectedPart] = [...ingredientesSeleccionados]);
-    //window.quesadillaPartIngredients[window.currentSelectedPart] = [...ingredientesSeleccionados];
-
-    // Update visual indicator for parts with ingredients
+    // Check if we're dealing with pizza or quesadilla
     if (window.currentPizzaManager && window.currentPizzaManager.pizzaCircleManager) {
+      window.pizzaPartIngredients[window.currentSelectedPart] = [...ingredientesSeleccionados];
+      
+      // Update visual indicator for parts with ingredients
       const hasIngredients = ingredientesSeleccionados.length > 0;
       window.currentPizzaManager.pizzaCircleManager.markPartWithIngredients(
         window.currentSelectedPart,
         hasIngredients
       );
-    }
-
-    // Update visual indicator for quesadillas with ingredients
-    if (window.currentQuesadillaManager && window.currentQuesadillaManager.quesadillaCircleManager) {
+    } else if (window.currentQuesadillaManager && window.currentQuesadillaManager.quesadillaCircleManager) {
+      window.quesadillaPartIngredients[window.currentSelectedPart] = [...ingredientesSeleccionados];
+      
+      // Update visual indicator for quesadillas with ingredients
       const hasIngredients = ingredientesSeleccionados.length > 0;
       window.currentQuesadillaManager.quesadillaCircleManager.markPartWithIngredients(
         window.currentSelectedPart,
@@ -1198,17 +1252,26 @@ function saveCurrentPartChanges() {
 
 
 async function setupQuesadillaCustomizationUI(container, productoId) {
-  // Create size selection
-  /*const sizeContainer = document.createElement('div');
-  sizeContainer.className = 'quesadilla-size-container modal-section';
-  sizeContainer.innerHTML = `
-    <div class="size-title">Tamaño:</div>
-    <select id="quesadilla-size-select">
-      ${getQuesadillaSizes().map(size => 
-        `<option value="${size.id}" data-precio="${size.precio}">${size.nombre}</option>`
-      ).join('')}
-    </select>
-  `;*/
+  // Clear any existing quesadilla UI elements
+  const existingSizeContainer = container.querySelector('.quesadilla-size-container');
+  if (existingSizeContainer) {
+    existingSizeContainer.remove();
+  }
+  
+  const existingPartsContainer = container.querySelector('.quesadilla-parts-container');
+  if (existingPartsContainer) {
+    existingPartsContainer.remove();
+  }
+  
+  const existingSpecialtyContainer = container.querySelector('.quesadilla-specialty-container');
+  if (existingSpecialtyContainer) {
+    existingSpecialtyContainer.remove();
+  }
+  
+  const existingQuesadillaContainer = container.querySelector('.quesadilla-container');
+  if (existingQuesadillaContainer) {
+    existingQuesadillaContainer.remove();
+  }
 
   // Create parts selection
   const partsContainer = document.createElement('div');
@@ -1286,54 +1349,46 @@ async function setupQuesadillaCustomizationUI(container, productoId) {
   // Set up event listeners
   const partsSelect = document.getElementById('quesadilla-size-select');
   partsSelect.addEventListener('change', () => {
-    const oldParts = Object.keys(window.quesadillaPartIngredients).length > 0 ?
-      parseInt(Object.keys(window.quesadillaPartIngredients).sort((a, b) => parseInt(a) - parseInt(b)).pop()) : 0;
     const newParts = parseInt(partsSelect.value);
-
+    
     // Save the current part's changes first
     saveCurrentPartChanges();
-
+    
+    // Clear existing ingredients for parts that no longer exist
+    const existingParts = Object.keys(window.quesadillaPartIngredients).map(k => parseInt(k));
+    existingParts.forEach(partNum => {
+      if (partNum > newParts) {
+        delete window.quesadillaPartIngredients[partNum];
+        delete window.partSpecialties[partNum];
+      }
+    });
+  
     // Redraw the quesadillas with the new number
     quesadillaCircleManager.drawSegments(newParts);
-
-    // If we're increasing parts, initialize new parts with a default specialty
-    // Keep data for existing parts
-    if (newParts > oldParts) {
-      // Get available specialties to assign to new parts
-      const specialties = [];
-      for (let i = 0; i < specialtySelect.options.length; i++) {
-        if (specialtySelect.options[i].value) {
-          specialties.push(specialtySelect.options[i].value);
-        }
-      }
-
-      // Loop through all parts to initialize new ones
-      for (let i = 1; i <= newParts; i++) {
-        // If this part doesn't have a specialty assigned yet, assign one
-        if (!window.partSpecialties[i] && i > oldParts) {
-          // Use the first specialty for the first part if not set
-          if (i === 1 && specialties.length > 0) {
-            window.partSpecialties[i] = specialties[0];
-          }
-          // For additional parts, use the next specialty in the list
-          else if (specialties.length > i - 1) {
-            window.partSpecialties[i] = specialties[Math.min(i - 1, specialties.length - 1)];
+  
+    // Initialize new parts if increasing
+    for (let i = 1; i <= newParts; i++) {
+      if (!window.partSpecialties[i]) {
+        // Only set default for first part if no specialty exists
+        if (i === 1 && specialtySelect.options.length > 1) {
+          for (let j = 1; j < specialtySelect.options.length; j++) {
+            if (specialtySelect.options[j].value) {
+              window.partSpecialties[i] = specialtySelect.options[j].value;
+              break;
+            }
           }
         }
       }
     }
-
+  
     // Select the first quesadilla automatically
     setTimeout(() => {
       quesadillaCircleManager.selectPart(1);
-
-      // Load ingredients for quesadilla 1
-      const specialty = window.partSpecialties["1"] || "";
-
+  
       // Update all quesadilla visuals
       for (const partNum in window.quesadillaPartIngredients) {
         const partNumber = parseInt(partNum);
-        if (partNumber <= newParts) { // Only update quesadillas that still exist
+        if (partNumber <= newParts) {
           const hasIngredients = window.quesadillaPartIngredients[partNum] &&
             window.quesadillaPartIngredients[partNum].length > 0;
           quesadillaCircleManager.markPartWithIngredients(partNumber, hasIngredients);
@@ -1552,6 +1607,7 @@ function setupQuesadillaDivision(container, onPartSelect) {
 // Actualiza la función setupPizzaCustomizationUI para manejar mejor el cambio entre partes
 async function setupPizzaCustomizationUI(container, productoId) {
   // Create size selection
+  container.innerHTML = []
   const sizeContainer = document.createElement('div');
   sizeContainer.className = 'pizza-size-container modal-section';
   sizeContainer.innerHTML = `
@@ -2075,7 +2131,8 @@ async function actualizarPrecioModal() {
     const precioTamano = parseInt(selectedOption.getAttribute('data-precio'));
     console.log(precioTamano);
 
-    precioFinal = precioIngredientes += precioTamano;
+    precioFinal = precioTamano + precioIngredientes;
+    productoSeleccionadoInstr.precioCalculado = precioFinal;
     select.addEventListener('change', actualizarPrecioModal);
 
 
@@ -2102,7 +2159,7 @@ async function actualizarPrecioModal() {
     const select = document.getElementById('quesadilla-size-select');
     const selectedOption = select.options[select.selectedIndex];
     const precioQuesadilla = selectedOption.getAttribute('value');  
-const precioTamano = parseInt(select.options[0].getAttribute('data-precio'));
+    const precioTamano = parseInt(select.options[0].getAttribute('data-precio'));
     console.log(precioTamano);
     console.log(selectedOption)
 
@@ -2118,8 +2175,9 @@ const precioTamano = parseInt(select.options[0].getAttribute('data-precio'));
       precioFinal = ((precioFinal*2)+10) + precioIngredientes;
     }
 
-    select.addEventListener('change', actualizarPrecioModal);
+    productoSeleccionadoInstr.precioCalculado = precioFinal;
 
+    select.addEventListener('change', actualizarPrecioModal);
 
   } else {
     // For regular products with ingredients
@@ -2165,6 +2223,9 @@ function inicializarPagina() {
   window.currentSelectedPart = null;
   window.previousSelectedPart = null;
   window.partSpecialties = {};
+  window.quesadillaPartIngredients = {};
+  window.currentQuesadillaManager = null;
+
   // Cargar productos
   cargarProductos();
   //habilitar la barra de busqueda
@@ -2587,11 +2648,32 @@ async function abrirModalProductoInstrucciones(producto) {
         }
       }
     }, 200);
-  } else {
+  } else if (isProductInSubcategory(producto, 'sincronizadas')) {
+    medidaContainer.style.display = 'block';
+    pizzaManager = await setupQuesadillaCustomizationUI(medidaContainer, producto.id);
+  
+    setTimeout(async () => {
+      const specialtySelect = document.getElementById('quesadilla-specialty-select');
+      if (specialtySelect) {
+        for (let i = 0; i < specialtySelect.options.length; i++) {
+          if (specialtySelect.options[i].value === producto.id) {
+            specialtySelect.selectedIndex = i;
+            window.partSpecialties["1"] = producto.id;
+  
+            if (window.currentQuesadillaManager && window.currentQuesadillaManager.quesadillaCircleManager) {
+              window.currentQuesadillaManager.quesadillaCircleManager.markPartWithIngredients(1, true);
+            }
+            break;
+          }
+        }
+      }
+    }, 200);
+  }
+  else {
     medidaContainer.style.display = 'none';
   }
 
-  if (isProductInSubcategory(producto, 'sincronizadas')) {
+  /* if (isProductInSubcategory(producto, 'sincronizadas')) {
     medidaContainer.style.display = 'block';
     pizzaManager = await setupQuesadillaCustomizationUI(medidaContainer, producto.id);
 
@@ -2611,7 +2693,7 @@ async function abrirModalProductoInstrucciones(producto) {
         }
       }
     }, 200);
-  }
+  } */
 
   // MANEJAR ALITAS Y BONELESS - NUEVO PRODUCTO (sin datos guardados)
   if (isProductInSubcategory(producto, 'alitas') || isProductInSubcategory(producto, 'boneless')) {
@@ -2693,6 +2775,8 @@ async function abrirModalProductoInstrucciones(producto) {
   document.getElementById('btn-guardar-instrucciones').textContent = 'Agregar a la orden';
 
   window.currentPizzaManager = pizzaManager;
+  window.currentQuesadillaManager = pizzaManager;
+
   actualizarPrecioModal();
 }
 
@@ -2948,7 +3032,9 @@ function guardarInstrucciones() {
     return;
   }
 
-  const precioBase = productoOriginal.precio || 0;
+const precioBase = productoSeleccionadoInstr.precioCalculado !== undefined 
+  ? productoSeleccionadoInstr.precioCalculado 
+  : (productoOriginal.precio || 0);
 
   // Save changes of the current part for pizzas before processing
   if (isPizza(productoOriginal) && window.currentSelectedPart !== null) {
@@ -3017,12 +3103,22 @@ function guardarInstrucciones() {
 
   // Calculate final price based on ingredients
   let precioExtra = 0;
-  if (item.ingredientes && item.ingredientes.length > 0) {
-    precioExtra = item.ingredientes.reduce((total, ing) => total + (ing.precio || 0), 0);
+  if (isPizza(productoOriginal) || isProductInSubcategory(productoOriginal, 'sincronizadas')) {
+    // Price already includes size and ingredients
+    item.precio = precioBase;
+  } else {
+    // For regular products, calculate final price based on ingredients
+    let precioExtra = 0;
+    if (item.ingredientes && item.ingredientes.length > 0) {
+      precioExtra = item.ingredientes.reduce((total, ing) => total + (ing.precio || 0), 0);
+    }
+    
+    // Set the final price with ingredients
+    item.precio = precioBase + precioExtra;
   }
 
   // Set the final price with ingredients
-  item.precio = precioBase + precioExtra;
+  //item.precio = precioBase + precioExtra;
   item.subtotal = item.precio; // Set initial subtotal
 
   // Add or update item
@@ -3044,6 +3140,10 @@ function guardarInstrucciones() {
   actualizarOrdenUI();
   calcularTotal();
 
+  if (productoSeleccionadoInstr) {
+    delete productoSeleccionadoInstr.precioCalculado;
+  }
+  
   // Clear references
   productoSeleccionadoInstr = null;
   indexItemEditarInstr = -1;
